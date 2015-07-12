@@ -16,7 +16,8 @@ DTCVCanvas::DTCVCanvas(double dim_x_min,
   dim_y[0] = dim_y_min;
   dim_y[1] = dim_y_max;
 
-  unsigned dim[2] = {500,500};
+  dim[0] = 500;
+  dim[1] = 500;
   if (dim_x[1] - dim_x[0] > dim_y[1] - dim_y[0])
     dim[1] = dim[0]*(dim_x[1] - dim_x[0])/(dim_y[1] - dim_y[0]);
   else
@@ -28,6 +29,8 @@ DTCVCanvas::DTCVCanvas(double dim_x_min,
   image = cv::Scalar(255,255,255) - image;
 
   pointRadius = 4;
+
+  delay_ms = 1.e2;
 }
 
 void DTCVCanvas::DrawPoint(const DTPoint& point,const DTColor& color)
@@ -50,7 +53,11 @@ void DTCVCanvas::DrawCircle(const DTPoint& center,double radius,const DTColor& c
 void DTCVCanvas::Update()
 {
   cv::imshow("Image",image); 
-  cv::waitKey(0);
+  // cv::waitKey(0);
+  cv::waitKey(delay_ms);
+  image = cv::Mat::zeros(dim[0],dim[1],CV_8UC3); 
+  image = cv::Scalar(255,255,255) - image;
+  cv::imshow("Image",image); 
 }
 
 cv::Scalar DTCVCanvas::ColorToCVScalar(const DTColor& color)

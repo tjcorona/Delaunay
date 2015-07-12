@@ -9,11 +9,26 @@ set (TRIANGLE_SOURCE
     DTColor.cc
     DTTriangle.cc
     DTCVCanvas.cc
+    Random.cc
     Triangle.cc
 )
 
 list (APPEND APPLICATIONS Triangle)
 add_executable( Triangle ${TRIANGLE_SOURCE} )
 target_link_libraries( Triangle ${OpenCV_LIBS} )
+
+set (MESH_SOURCE
+    DTColor.cc
+    DTTriangle.cc
+    DTCVCanvas.cc
+    Random.cc
+    DTMesh.cc
+    DTDelaunayMesh.cc
+    Mesh.cc
+)
+
+list (APPEND APPLICATIONS Mesh)
+add_executable( Mesh ${MESH_SOURCE} )
+target_link_libraries( Mesh ${OpenCV_LIBS} )
 
 install (TARGETS ${APPLICATIONS} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

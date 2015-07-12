@@ -1,12 +1,10 @@
-#ifndef DTPOINT_HH
-#define DTPOINT_HH
-
-#define EPSILON 1.e-12
+#ifndef DTVECTOR_HH
+#define DTVECTOR_HH
 
 #include <cmath>
 #include <ostream>
 
-class DTPoint
+class DTVector
 {
 public:
   DTPoint(double xx,double yy) : x(xx), y(yy) {}
@@ -18,7 +16,7 @@ public:
 
   friend bool operator==(const DTPoint& p1,const DTPoint& p2)
   {
-    return (fabs(p1.x - p2.x) < EPSILON && fabs(p1.y - p2.y) < EPSILON);
+    return (p1.x == p2.x && p1.y == p2.y);
   }
 
   friend bool operator!=(const DTPoint& p1,const DTPoint& p2)

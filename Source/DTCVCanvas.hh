@@ -24,6 +24,7 @@ public:
   void DrawTriangle(const DTTriangle&,const DTColor& color=Green);
   void DrawCircle(const DTPoint&,double,const DTColor& color=Black);
   void Update();
+  void SetTimeDelay(double d) { delay_ms = d*((double)1.e3); }
 
 private:
   cv::Scalar ColorToCVScalar(const DTColor&);
@@ -31,9 +32,11 @@ private:
   cv::Mat image;
   unsigned pointRadius;
   double conversionRatio;
-  
+  double delay_ms;
+
   double dim_x[2];
   double dim_y[2];
+  double dim[2];
 };
 
 #endif /* DTCVCANVAS_HH */

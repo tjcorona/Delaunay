@@ -1,15 +1,12 @@
-#ifndef DTPOINT_HH
-#define DTPOINT_HH
+#ifndef DTLINE_HH
+#define DTLINE_HH
 
-#define EPSILON 1.e-12
+#include "DTPoint.hh"
 
-#include <cmath>
-#include <ostream>
-
-class DTPoint
+class DTLine
 {
 public:
-  DTPoint(double xx,double yy) : x(xx), y(yy) {}
+  DTLine(const DTPoint& p1,const DTPoint& yy) : x(xx), y(yy) {}
 
   double Distance(const DTPoint& p) const { return sqrt((x-p.x)*(x-p.x) + (y-p.y)*(y-p.y)); }
   
@@ -54,4 +51,4 @@ public:
 };
 
 
-#endif /* DTPOINT_HH */
+#endif /* DTLINE_HH */
