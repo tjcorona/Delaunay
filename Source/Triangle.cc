@@ -58,6 +58,7 @@ int main(int /*argc*/,char** /*argv*/)
       canvas.DrawPoint(p,Black);
   }
 
+  canvas.SetTimeDelay(0);
   canvas.Update();
 
   return 0;

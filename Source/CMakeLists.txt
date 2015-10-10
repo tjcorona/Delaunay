@@ -31,4 +31,27 @@ list (APPEND APPLICATIONS Mesh)
 add_executable( Mesh ${MESH_SOURCE} )
 target_link_libraries( Mesh ${OpenCV_LIBS} )
 
+set (FUNCTION_SOURCE
+    DTColor.cc
+    DTQuadraticFunction.cc
+    DTCVCanvas.cc
+    Function.cc
+)
+
+list (APPEND APPLICATIONS Function)
+add_executable( Function ${FUNCTION_SOURCE} )
+target_link_libraries( Function ${OpenCV_LIBS} )
+
+set (BEZIER_SOURCE
+    DTColor.cc
+    DTBezierCurve.cc
+    DTCVCanvas.cc
+    Random.cc
+    BezierCurve.cc
+)
+
+list (APPEND APPLICATIONS BezierCurve)
+add_executable( BezierCurve ${BEZIER_SOURCE} )
+target_link_libraries( BezierCurve ${OpenCV_LIBS} )
+
 install (TARGETS ${APPLICATIONS} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

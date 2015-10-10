@@ -46,6 +46,31 @@ public:
     return !(p1>p2);
   }
 
+  friend DTPoint operator*(double d,const DTPoint& p)
+  {
+    return DTPoint(p.x*d,p.y*d);
+  }
+
+  friend DTPoint operator*(const DTPoint& p,double d)
+  {
+    return operator*(d,p);
+  }
+
+  friend DTPoint operator/(const DTPoint& p,double d)
+  {
+    return DTPoint(p.x/d,p.y/d);
+  }
+
+  friend DTPoint operator+(const DTPoint& p1,const DTPoint& p2)
+  {
+    return DTPoint(p1.x + p2.x,p1.y + p2.y);
+  }
+
+  friend DTPoint operator-(const DTPoint& p1,const DTPoint& p2)
+  {
+    return DTPoint(p1.x - p2.x,p1.y - p2.y);
+  }
+
   friend std::ostream& operator<<(std::ostream& s,const DTPoint& p)
   {
     s<<"("<< p.x<<","<<p.y<<")";
