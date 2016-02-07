@@ -54,4 +54,17 @@ list (APPEND APPLICATIONS BezierCurve)
 add_executable( BezierCurve ${BEZIER_SOURCE} )
 target_link_libraries( BezierCurve ${OpenCV_LIBS} )
 
+set (POLYGON_SOURCE
+    DTColor.cc
+    DTPolygon.cc
+    DTTriangle.cc
+    DTCVCanvas.cc
+    Random.cc
+    Polygon.cc
+)
+
+list (APPEND APPLICATIONS Polygon)
+add_executable( Polygon ${POLYGON_SOURCE} )
+target_link_libraries( Polygon ${OpenCV_LIBS} )
+
 install (TARGETS ${APPLICATIONS} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

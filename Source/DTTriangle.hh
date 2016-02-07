@@ -49,7 +49,7 @@ public:
     {
       return !(e1<e2);
     }
-  
+
     friend bool operator>(const Edge& e1,const Edge& e2)
     {
       return (e1.A != e2.A ? e1.A > e2.A : e1.B > e2.B);
@@ -59,7 +59,7 @@ public:
     {
       return !(e1>e2);
     }
-  
+
     mutable TriangleSet triangles;
     const Vertex& A;
     const Vertex& B;
@@ -87,7 +87,7 @@ public:
   {
     return !(t1<t2);
   }
-  
+
   friend bool operator>(const DTTriangle& t1,const DTTriangle& t2)
   {
     return (t1.A!=t2.A ? t1.A>t2.A : (t1.B!=t2.B ? t1.B>t2.B : t1.C>t2.C));
@@ -104,7 +104,7 @@ public:
   const Edge& AB;
   const Edge& BC;
   const Edge& AC;
-  
+
   DTPoint circumcenter;
   double circumradius;
 

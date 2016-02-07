@@ -9,7 +9,16 @@
 class Sin : public DTFunction
 {
 public:
-  double operator () (double x) const { return sin(1.*x); }
+  Sin(double alt=1., double freq=1., double off=0.) :
+    altitude(alt), frequency(freq), offset(off) {}
+
+  double operator () (double x) const
+    { return offset + altitude*sin(frequency*x); }
+
+private:
+  double altitude;
+  double frequency;
+  double offset;
 };
 
 int main(int /*argc*/,char** /*argv*/)
@@ -20,7 +29,7 @@ int main(int /*argc*/,char** /*argv*/)
   // create a quadratic function
   // DTQuadraticFunction x2;
 
-  Sin sinFunc;
+  Sin sinFunc(1.,10.,0.);
 
   // draw function
   // canvas.DrawFunction(x2,NULL,Red);

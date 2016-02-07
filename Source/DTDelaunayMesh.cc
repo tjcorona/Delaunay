@@ -1,8 +1,35 @@
 #include "DTDelaunayMesh.hh"
 
 #include <cassert>
-#include <limits>
+#include <exception>
 #include <iostream>
+#include <limits>
+
+namespace
+{
+  typedef DTPoint Vector;
+  typedef DTMesh::Vertex Vertex;
+
+  const double EPS = 1.e-6;
+
+  int ConvexityOfStep(const Vertex* vtx0,const Vertex* vtx1,const Vertex* vtx2)
+  {
+    // -1: the step breaks convexity
+    // 0:  the step is linear
+    // 1:  the step maintains convexity
+
+    Vector v1 = (*vtx1) - (*vtx0);
+    Vector v2 = (*vtx2) - (*vtx1);
+
+    double unnormalizedSin = v1.x*v2.y - v2.x*v1.y;
+    if (fabs(unnormalizedSin) < EPS)
+      return 0;
+    else if (unnormalizedSin > 0.)
+      return 1;
+    else
+      return -1;
+  }
+}
 
 void DTDelaunayMesh::AddPerimeterPoint(const DTPoint& p)
 {
@@ -11,6 +38,7 @@ void DTDelaunayMesh::AddPerimeterPoint(const DTPoint& p)
   fPerimeter.push_back(vtx);
   fVertices.insert(vtx);
 
+//////
   if (fVertices.size()<3)
     return;
 
@@ -20,16 +48,81 @@ void DTDelaunayMesh::AddPerimeterPoint(const DTPoint& p)
     VertexSet::iterator it = fVertices.begin();
     for (unsigned i=0;i<3;i++)
       vs[i] = *it++;
-    
+
     Triangle* t = new Triangle(*vs[0],*vs[1],*vs[2]);
     fTriangles.insert(t);
     return;
   }
   ExtendMesh(vtx);
+//////
+}
+
+/*
+void DTDelaunayMesh::ConstructConvexHulls(const Vertex* v,
+					  std::vector<Perimeter>& openHulls,
+					  std::vector<Perimeter>& closedHulls)
+{
+  std::vector<Perimeter>::reverse_iterator hull = openHulls.rbegin();
+  const Vertex* v1,v2;
+  for (;hull!=hulls.rend();++hull)
+  {
+    std::vector<Perimeter>::iterator it = (*hull).end();
+    v1 = *(--it);
+    v2 = *(--it);
+
+    int convexity = ConvexityOfStep(v1,v2,v);
+    if (convexity != -1)
+      break;
+  }
+
+  if (hull == hulls.rend())
+    {
+    hulls.push_back(Perimeter(2,v2,v));
+    hull = --hulls.rend();
+    }
+
+  (*hull).push_back(v);
+}
+*/
+
+void DTDelaunayMesh::ConstructInitialMeshFromPerimeter()
+{
+/*
+  if (GetTriangles().size() != 0)
+    return;
+
+  if (fPerimeter.size() < 3)
+    throw(std::domain_error("Too few perimeter elements"));
+
+  Perimeter::iterator perimeterVtx = fPerimeter.begin();
+
+  std::vector<Perimeter> closedConvexHulls;
+  std::vector<Perimeter> openConvexHulls(1);
+  convexHulls[0].push_back(*(perimeterVtx++));
+  convexHulls[0].push_back(*(perimeterVtx++));
+
+  for (;perimeterVtx!=fPerimeter.end();++perimeterVtx)
+    ConstructConvexHulls(*perimeterVtx,openConvexHulls,closedConvexHulls);
+
+  std::vector<Perimeter>::iterator hull;
+  for (hull = convexHulls.begin(); hull != convexHulls.end(); ++hull)
+    {
+      Perimeter::iterator vtx = (*hull).begin();
+      const Vertex* v1 = *(vtx++);
+      const Vertex* v2 = *(vtx++);
+      for (; vtx != (*hull).end(); ++vtx)
+	{
+
+	}
+    }
+*/
 }
 
 void DTDelaunayMesh::AddInteriorPoint(const DTPoint& p)
 {
+  if (GetTriangles().size() == 0)
+    ConstructInitialMeshFromPerimeter();
+
   Vertex* vtx = new Vertex(p);
 
   const Triangle* containingTriangle = FindContainingTriangle(*vtx);
@@ -43,6 +136,7 @@ const DTMesh::Triangle* DTDelaunayMesh::FindContainingTriangle(const DTPoint& p)
   for (TriangleSet::iterator it=fTriangles.begin();it!=fTriangles.end();++it)
     if ((*it)->Contains(p))
       return (*it);
+
   return NULL;
 }
 
@@ -78,12 +172,12 @@ void DTDelaunayMesh::ExtendMesh(const Vertex* v)
 
   double minPerimeterToArea = std::numeric_limits<double>::max();
   const Edge* minEdge = NULL;
-  
+
   const Vertex* vlast = NULL;
   const Vertex* vi = *(fVertices.begin());
 
   unsigned vtx_counter = 0;
-  
+
   do
   {
     EdgeSet::iterator edge = vi->edges.begin();
@@ -162,7 +256,7 @@ void DTDelaunayMesh::LegalizeEdges(const Vertex* v,EdgeSet &edges)
 
   if (edge->triangles.size() == 1)
     return LegalizeEdges(v,edges);
-  
+
   const Triangle* t1 = *(edge->triangles.begin());
   const Triangle* t2 = *(++(edge->triangles.begin()));
 
@@ -214,7 +308,7 @@ void DTDelaunayMesh::LegalizeEdges(const Vertex* v,EdgeSet &edges)
 	  edges.insert(*edge);
     }
   }
-  
+
   if (!isLegal)
   {
     const Triangle* new_t1 = new Triangle(*I,*L,*K);

@@ -28,12 +28,30 @@ int main(int /*argc*/,char** /*argv*/)
 
   DTCVCanvas canvas(x_min,x_max,y_min,y_max);
   canvas.SetTimeDelay(1.e-2);
-  
+  // canvas.SetTimeDelay(5.e-1);
+
+  unsigned nPerimeterEdge = 1;
+
   DTDelaunayMesh mesh;
   mesh.AddPerimeterPoint(p0);
   mesh.AddPerimeterPoint(p1);
   mesh.AddPerimeterPoint(p2);
   mesh.AddPerimeterPoint(p3);
+
+/*
+  mesh.AddPerimeterPoint(p0);
+  for (unsigned i=0;i<nPerimeterEdge;i++)
+    mesh.AddPerimeterPoint(DTPoint(x_min,y_min + (y_max - y_min)*i));
+  mesh.AddPerimeterPoint(p1);
+  for (unsigned i=0;i<nPerimeterEdge;i++)
+    mesh.AddPerimeterPoint(DTPoint(x_min + (x_max - x_min)*i,y_max));
+  mesh.AddPerimeterPoint(p2);
+  for (unsigned i=0;i<nPerimeterEdge;i++)
+    mesh.AddPerimeterPoint(DTPoint(x_min,y_min + (y_max - y_min)*(nPerimeterEdge - 1 - i)));
+  mesh.AddPerimeterPoint(p3);
+  for (unsigned i=0;i<nPerimeterEdge;i++)
+    mesh.AddPerimeterPoint(DTPoint(x_min + (x_max - x_min)*(nPerimeterEdge - 1 - i),y_min));
+*/
 
   unsigned nPoly = 20;
 
@@ -63,7 +81,7 @@ int main(int /*argc*/,char** /*argv*/)
 
   // Random::GetInstance().Seed(0);
 
-  for (unsigned i=0;i<1000;i++)
+  for (unsigned i=0;i<100;i++)
   {
     DTPoint p(x_min + Random::GetInstance().Uniform(1000)/1000.*(x_max-x_min),
   	      y_min + Random::GetInstance().Uniform(1000)/1000.*(y_max-y_min));
@@ -76,33 +94,33 @@ int main(int /*argc*/,char** /*argv*/)
     DrawMesh(mesh,illegalTriangles,canvas);
   }
 
-  // std::vector<DTPoint> points;
-  // std::vector<int> pointIndex;
-  // unsigned counter = 0;
-  
-  // unsigned nGridPoints = 10;
+  std::vector<DTPoint> points;
+  std::vector<int> pointIndex;
+  unsigned counter = 0;
 
-  // for (unsigned i=0;i<nGridPoints;i++)
-  // {
-  //   for (unsigned j=0;j<nGridPoints;j++)
-  //   {
-  //     points.push_back(DTPoint(x_min + ((i+.5)/nGridPoints)*(x_max-x_min),
-  // 			       y_min + ((j+.5)/nGridPoints)*(y_max-y_min)));
+  unsigned nGridPoints = 10;
 
-  //     pointIndex.push_back(counter++);
-  //   }
-  // }
+  for (unsigned i=0;i<nGridPoints;i++)
+  {
+    for (unsigned j=0;j<nGridPoints;j++)
+    {
+      points.push_back(DTPoint(x_min + ((i+.5)/nGridPoints)*(x_max-x_min),
+  			       y_min + ((j+.5)/nGridPoints)*(y_max-y_min)));
 
-  // Random::GetInstance().Shuffle(pointIndex);
+      pointIndex.push_back(counter++);
+    }
+  }
 
-  // for (std::vector<int>::iterator it=pointIndex.begin();it!=pointIndex.end();++it)
-  // {
-  //   mesh.AddInteriorPoint(points[*it]);
-  //   std::set<const DTTriangle*> illegalTriangles;
-  //   if (!mesh.TestDelaunayCondition(illegalTriangles))
-  //     std::cout<<"Failed"<<std::endl;
-  //   DrawMesh(mesh,illegalTriangles,canvas);
-  // }
+  Random::GetInstance().Shuffle(pointIndex);
+
+  for (std::vector<int>::iterator it=pointIndex.begin();it!=pointIndex.end();++it)
+  {
+    mesh.AddInteriorPoint(points[*it]);
+    std::set<const DTTriangle*> illegalTriangles;
+    if (!mesh.TestDelaunayCondition(illegalTriangles))
+      std::cout<<"Failed"<<std::endl;
+    DrawMesh(mesh,illegalTriangles,canvas);
+  }
 
   return 0;
 }
@@ -113,13 +131,13 @@ void DrawMesh(const DTMesh& mesh,
 {
   const DTMesh::TriangleSet& triangles = mesh.GetTriangles();
   const DTMesh::VertexSet& vertices = mesh.GetVertices();
-  
+
   for (DTMesh::TriangleSet::const_iterator it=triangles.begin();it!=triangles.end();++it)
   {
     // canvas.DrawCircle((*it)->circumcenter,(*it)->circumradius,Red);
     canvas.DrawTriangle(*(*it),Black);
   }
-  
+
   for (std::set<const DTTriangle*>::const_iterator it=illegalTriangles.begin();it!=illegalTriangles.end();++it)
   {
     canvas.DrawTriangle(*(*it),Red);

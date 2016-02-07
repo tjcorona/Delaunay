@@ -21,47 +21,35 @@ namespace
 						  const DTTriangle::Vertex& p2,
 						  const DTTriangle::Vertex& p3)
   {
+    // First vertex: smallest, according to defined ordering
+    // Second, third vertices: counterclockwise ordering
+
     if (p1 < p2 && p1 < p3)
     {
       orderedVertices[0] = &p1;
-      if (p2 < p3)
-      {
-	orderedVertices[1] = &p2;
-	orderedVertices[2] = &p3;
-      }
-      else
-      {
-	orderedVertices[1] = &p3;
-	orderedVertices[2] = &p2;
-      }
+      orderedVertices[1] = &p2;
+      orderedVertices[2] = &p3;
     }
     else if (p2 < p1 && p2 < p3)
     {
       orderedVertices[0] = &p2;
-      if (p1 < p3)
-      {
-	orderedVertices[1] = &p1;
-	orderedVertices[2] = &p3;
-      }
-      else
-      {
-	orderedVertices[1] = &p3;
-	orderedVertices[2] = &p1;
-      }
+      orderedVertices[1] = &p1;
+      orderedVertices[2] = &p3;
     }
     else
     {
       orderedVertices[0] = &p3;
-      if (p1 < p2)
-      {
-	orderedVertices[1] = &p1;
-	orderedVertices[2] = &p2;
-      }
-      else
-      {
-	orderedVertices[1] = &p2;
-	orderedVertices[2] = &p1;
-      }
+      orderedVertices[1] = &p1;
+      orderedVertices[2] = &p2;
+    }
+
+    DTPoint v1 = *orderedVertices[1] - *orderedVertices[0];
+    DTPoint v2 = *orderedVertices[2] - *orderedVertices[0];
+    if (v1.x*v2.y < v1.y*v2.x)
+    {
+      const DTTriangle::Vertex* tmp = orderedVertices[1];
+      orderedVertices[1] = orderedVertices[2];
+      orderedVertices[2] = tmp;
     }
 
     typedef DTTriangle::Edge Edge;
@@ -76,11 +64,11 @@ namespace
 	  if (&((*it)->A) == orderedVertices[1] ||
 	      &((*it)->B) == orderedVertices[1])
 	    orderedEdges[0] = *it;
-      
+
       if (!orderedEdges[0])
 	orderedEdges[0] = new Edge(*orderedVertices[0],*orderedVertices[1]);
     }
-    
+
     // Set BC
     {
       orderedEdges[1] = NULL;
@@ -90,11 +78,11 @@ namespace
 	  if (&((*it)->A) == orderedVertices[2] ||
 	      &((*it)->B) == orderedVertices[2])
 	    orderedEdges[1] = *it;
-      
+
       if (!orderedEdges[1])
 	orderedEdges[1] = new Edge(*orderedVertices[1],*orderedVertices[2]);
     }
-    
+
     // Set AC
     {
       orderedEdges[2] = NULL;
@@ -104,7 +92,7 @@ namespace
 	  if (&((*it)->A) == orderedVertices[2] ||
 	      &((*it)->B) == orderedVertices[2])
 	    orderedEdges[2] = *it;
-      
+
       if (!orderedEdges[2])
 	orderedEdges[2] = new Edge(*orderedVertices[0],*orderedVertices[2]);
     }
@@ -154,14 +142,14 @@ bool DTTriangle::Contains(const DTPoint& p) const
   double acy = C.y - A.y;
   double apx = p.x - A.x;
   double apy = p.y - A.y;
-  
+
   double a = abx/aby;
   double b = acx - a*acy;
   double c = apx - a*apy;
-  
+
   double t = c/b;
   double s = apy/aby - (acy/aby)*t;
-  
+
   return (s >= 0.&& t >= 0. && (s + t) <= 1.);
 }
 

@@ -9,6 +9,7 @@
 
 class DTPoint;
 class DTTriangle;
+class DTPolygon;
 class DTFunction;
 class DTColor;
 
@@ -23,6 +24,7 @@ public:
 
   void DrawPoint(const DTPoint&,const DTColor& color=Green);
   void DrawTriangle(const DTTriangle&,const DTColor& color=Green);
+  void DrawPolygon(const DTPolygon&,const DTColor& color=Red);
   void DrawCircle(const DTPoint&,double,const DTColor& color=Black);
   void DrawFunction(const DTFunction&,double* =NULL,const DTColor& color=Blue);
   void DrawParametricCurve(const DTParametricCurve&,const DTColor& color=Cyan);

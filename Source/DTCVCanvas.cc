@@ -2,6 +2,7 @@
 
 #include "DTPoint.hh"
 #include "DTTriangle.hh"
+#include "DTPolygon.hh"
 #include "DTFunction.hh"
 #include "DTParametricCurve.hh"
 
@@ -27,7 +28,7 @@ DTCVCanvas::DTCVCanvas(double dim_x_min,
 
   conversionRatio = dim[0]/(dim_x[1] - dim_x[0]);
 
-  image = cv::Mat::zeros(dim[1],dim[0],CV_8UC3); 
+  image = cv::Mat::zeros(dim[1],dim[0],CV_8UC3);
   image = cv::Scalar(255,255,255) - image;
 
   pointRadius = 4;
@@ -47,6 +48,17 @@ void DTCVCanvas::DrawTriangle(const DTTriangle& triangle,const DTColor& color)
   cv::line(image,PointToCVPoint(triangle.C),PointToCVPoint(triangle.A),ColorToCVScalar(color),1,8);
 }
 
+void DTCVCanvas::DrawPolygon(const DTPolygon& polygon,const DTColor& color)
+{
+  const unsigned size = polygon.Vertices.size();
+  for (unsigned i=0;i<size;i++)
+  {
+    cv::line(image,PointToCVPoint(polygon.Vertices[i]),
+  	     PointToCVPoint(polygon.Vertices[(i+1)%size]),
+  	     ColorToCVScalar(color),1,8);
+  }
+}
+
 void DTCVCanvas::DrawCircle(const DTPoint& center,double radius,const DTColor& color)
 {
   cv::circle(image,PointToCVPoint(center),radius*conversionRatio,ColorToCVScalar(color),1,8);
@@ -54,11 +66,11 @@ void DTCVCanvas::DrawCircle(const DTPoint& center,double radius,const DTColor& c
 
 void DTCVCanvas::Update()
 {
-  cv::imshow("Image",image); 
+  cv::imshow("Image",image);
   cv::waitKey(delay_ms);
-  image = cv::Mat::zeros(dim[0],dim[1],CV_8UC3); 
+  image = cv::Mat::zeros(dim[0],dim[1],CV_8UC3);
   image = cv::Scalar(255,255,255) - image;
-  cv::imshow("Image",image); 
+  cv::imshow("Image",image);
 }
 
 cv::Scalar DTCVCanvas::ColorToCVScalar(const DTColor& color)
@@ -116,7 +128,7 @@ void DTCVCanvas::DrawFunction(const DTFunction& function, double* domain,const D
       step_x *= .5;
     }
     while (step_y > min_step_y);
-    
+
     x += 2.*step_x;
     cvp.y = (dim_y[1] - y)*conversionRatio;
   }
@@ -151,7 +163,7 @@ void DTCVCanvas::DrawParametricCurve(const DTParametricCurve& curve,const DTColo
     t += step_t;
     pointVec.push_back(DTPoint(curve(t)));
   }
-  
+
   pointVec.push_back(DTPoint(curve(1.)));
 
   cv::vector<cv::Point> cvPointVec;

@@ -15,8 +15,9 @@ public:
   void AddInteriorPoint(const DTPoint& p);
 
   bool TestDelaunayCondition(TriangleSet& illegalTriangles) const;
-  
+
 private:
+  void ConstructInitialMeshFromPerimeter();
   const Triangle* FindContainingTriangle(const DTPoint& p) const;
   void SplitTriangle(const Triangle* t,const Vertex* v);
   void ExtendMesh(const Vertex* v);

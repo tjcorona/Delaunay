@@ -3,6 +3,7 @@
 
 class DTPoint;
 class DTTriangle;
+class DTPolygon;
 class DTFunction;
 class DTParametricCurve;
 class DTColor;
@@ -14,6 +15,7 @@ public:
 
   virtual void DrawPoint(const DTPoint&,const DTColor&) = 0;
   virtual void DrawTriangle(const DTTriangle&,const DTColor&) = 0;
+  virtual void DrawPolygon(const DTPolygon&,const DTColor&) = 0;
   virtual void DrawCircle(const DTPoint&,double,const DTColor&) = 0;
   virtual void DrawFunction(const DTFunction&,double*,const DTColor&) = 0;
   virtual void DrawParametricCurve(const DTParametricCurve&,const DTColor&) = 0;
