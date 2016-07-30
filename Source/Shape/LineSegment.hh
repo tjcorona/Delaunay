@@ -11,16 +11,16 @@ namespace Shape
 class LineSegment
 {
 public:
-  LineSegment(const Point& pp1,const Point& pp2) : p1(pp1), p2(pp2) {}
+  LineSegment(const Point& a,const Point& b) : A(a), B(b) {}
 
-  const Point& p1;
-  const Point& p2;
+  const Point& A;
+  const Point& B;
 
   bool Contains(const Point& p) const;
 
   friend bool operator==(const LineSegment& l1,const LineSegment& l2)
   {
-    return l1.p1 == l2.p1 && l1.p2 == l2.p2;
+    return l1.A == l2.A && l1.B == l2.B;
   }
 
   friend bool operator!=(const LineSegment& l1,const LineSegment& l2)
@@ -30,7 +30,7 @@ public:
 
   friend bool operator<(const LineSegment& l1,const LineSegment& l2)
   {
-    return (l1.p1 != l2.p1 ? l1.p1 < l2.p1 : l1.p2 < l2.p2);
+    return (l1.A != l2.A ? l1.A < l2.A : l1.B < l2.B);
   }
 
   friend bool operator>=(const LineSegment& l1,const LineSegment& l2)
@@ -40,7 +40,7 @@ public:
 
   friend bool operator>(const LineSegment& l1,const LineSegment& l2)
   {
-    return (l1.p1 != l2.p1 ? l1.p1 > l2.p1 : l1.p2 > l2.p2);
+    return (l1.A != l2.A ? l1.A > l2.A : l1.B > l2.B);
   }
 
   friend bool operator<=(const LineSegment& l1,const LineSegment& l2)
@@ -50,7 +50,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& s,const LineSegment& l)
   {
-    s<<"("<< l.p1<<","<<l.p2<<")";
+    s<<"("<< l.A<<","<<l.B<<")";
     return s;
   }
 };

@@ -1,6 +1,6 @@
 set(Shape_Source_Files
   BezierCurve.cc
-  Polygon.cc
+#  Polygon.cc
   Triangle.cc)
 
 add_library (DelaunayShape SHARED ${Shape_Source_Files})

@@ -1,5 +1,5 @@
 add_subdirectory(Shape)
 add_subdirectory(Misc)
-add_subdirectory(Discretization)
+#add_subdirectory(Discretization)
 add_subdirectory(Visualization)
 add_subdirectory(Test)

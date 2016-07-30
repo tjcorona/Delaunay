@@ -14,49 +14,12 @@ namespace Shape
 class Triangle
 {
 public:
-  bool Contains(const Point& p) const;
-
-  class Edge;
-  typedef std::set<const Triangle*> TriangleSet;
-  typedef std::set<const Edge*> EdgeSet;
-
-  class Vertex : public Point
-  {
-  public:
-    Vertex(const Point& p) : Point(p) {}
-    Vertex(double x,double y) : Point(x,y) {}
-
-    mutable TriangleSet triangles;
-    mutable EdgeSet edges;
-  };
-
-  class Edge : public LineSegment
-  {
-  public:
-    Edge(const Vertex& p1, const Vertex& p2) : LineSegment(p2,p2),
-					       A(p1), B(p2)
-    {
-      A.edges.insert(this);
-      B.edges.insert(this);
-    }
-
-    ~Edge()
-    {
-      A.edges.erase(this);
-      B.edges.erase(this);
-    }
-
-    mutable TriangleSet triangles;
-    const Vertex& A;
-    const Vertex& B;
-  };
-
-  Triangle(const Vertex&,const Vertex&,const Vertex&);
-  ~Triangle();
+  Triangle(const LineSegment&,const LineSegment&,const LineSegment&);
+  ~Triangle() {}
 
   friend bool operator==(const Triangle& t1,const Triangle& t2)
   {
-    return (t1.A == t2.A && t1.B == t2.B && t1.C == t2.C);
+    return (t1.AB == t2.AB && t1.BC == t2.BC && t1.AC == t2.AC);
   }
 
   friend bool operator!=(const Triangle& t1,const Triangle& t2)
@@ -66,7 +29,8 @@ public:
 
   friend bool operator<(const Triangle& t1,const Triangle& t2)
   {
-    return (t1.A!=t2.A ? t1.A<t2.A : (t1.B!=t2.B ? t1.B<t2.B : t1.C<t2.C));
+    return (t1.AB!=t2.AB ? t1.AB<t2.AB :
+	    (t1.BC!=t2.BC ? t1.BC<t2.BC : t1.AC<t2.AC));
   }
 
   friend bool operator>=(const Triangle& t1,const Triangle& t2)
@@ -76,7 +40,8 @@ public:
 
   friend bool operator>(const Triangle& t1,const Triangle& t2)
   {
-    return (t1.A!=t2.A ? t1.A>t2.A : (t1.B!=t2.B ? t1.B>t2.B : t1.C>t2.C));
+    return (t1.AB!=t2.AB ? t1.AB>t2.AB :
+	    (t1.BC!=t2.BC ? t1.BC>t2.BC : t1.AC>t2.AC));
   }
 
   friend bool operator<=(const Triangle& t1,const Triangle& t2)
@@ -84,12 +49,11 @@ public:
     return !(t1>t2);
   }
 
-  const Vertex& A;
-  const Vertex& B;
-  const Vertex& C;
-  const Edge& AB;
-  const Edge& BC;
-  const Edge& AC;
+  const LineSegment& AB;
+  const LineSegment& BC;
+  const LineSegment& AC;
+
+  bool Contains(const Point& p) const;
 
   Point circumcenter;
   double circumradius;

@@ -127,9 +127,9 @@ void CVCanvas::Draw(const Triangle& triangle,const Color& lineColor,
   if (!lineColor.alpha && !fillColor.alpha)
     return;
 
-  const cv::Point points[3] = {PointToCVPoint(triangle.A),
-			       PointToCVPoint(triangle.B),
-			       PointToCVPoint(triangle.C)};
+  const cv::Point points[3] = {PointToCVPoint(triangle.AB.A),
+			       PointToCVPoint(triangle.AB.B),
+			       PointToCVPoint(triangle.BC.B)};
   cv::Mat* im;
 
   if (fillColor.alpha)
