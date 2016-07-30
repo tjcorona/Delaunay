@@ -4,6 +4,7 @@
 #include <set>
 
 #include "Point.hh"
+#include "LineSegment.hh"
 
 namespace Delaunay
 {
@@ -29,40 +30,20 @@ public:
     mutable EdgeSet edges;
   };
 
-  class Edge
+  class Edge : public LineSegment
   {
   public:
-    Edge(const Vertex& p1,const Vertex& p2);
-    ~Edge();
-
-    friend bool operator==(const Edge& e1,const Edge& e2)
+    Edge(const Vertex& p1, const Vertex& p2) : LineSegment(p2,p2),
+					       A(p1), B(p2)
     {
-      return (e1.A == e2.A && e1.B == e2.B);
+      A.edges.insert(this);
+      B.edges.insert(this);
     }
 
-    friend bool operator!=(const Edge& e1,const Edge& e2)
+    ~Edge()
     {
-      return !(e1==e2);
-    }
-
-    friend bool operator<(const Edge& e1,const Edge& e2)
-    {
-      return (e1.A != e2.A ? e1.A < e2.A : e1.B < e2.B);
-    }
-
-    friend bool operator>=(const Edge& e1,const Edge& e2)
-    {
-      return !(e1<e2);
-    }
-
-    friend bool operator>(const Edge& e1,const Edge& e2)
-    {
-      return (e1.A != e2.A ? e1.A > e2.A : e1.B > e2.B);
-    }
-
-    friend bool operator<=(const Edge& e1,const Edge& e2)
-    {
-      return !(e1>e2);
+      A.edges.erase(this);
+      B.edges.erase(this);
     }
 
     mutable TriangleSet triangles;
