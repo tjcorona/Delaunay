@@ -5,31 +5,36 @@ namespace Delaunay
 namespace Visualization
 {
 
-const Color White(255,255,255);
-const Color Black(0,0,0);
-const Color Red(255,0,0);
-const Color Orange(255,128,0);
-const Color Yellow(255,255,0);
-const Color Green(128,255,0);
-const Color Blue(0,0,255);
-const Color Indigo(75,0,130);
-const Color Violet(139,0,255);
-const Color Cyan(0,255,255);
-const Color Purple(128,0,255);
+const Color Clear(0,0,0,0);
+const Color White(255,255,255,255);
+const Color Black(0,0,0,255);
+const Color Red(255,0,0,255);
+const Color Orange(255,128,0,255);
+const Color Yellow(255,255,0,255);
+const Color Green(128,255,0,255);
+const Color Blue(0,0,255,255);
+const Color Indigo(75,0,130,255);
+const Color Violet(139,0,255,255);
+const Color Cyan(0,255,255,255);
+const Color Purple(128,0,255,255);
 
 Color::Color(unsigned char r,
 	     unsigned char g,
-	     unsigned char b) : red(r), green(g), blue(b) {}
+	     unsigned char b,
+	     unsigned char al) : red(r), green(g), blue(b), alpha(al) {}
 
-Color::Color(unsigned hex)
+Color::Color(unsigned hex, unsigned char al) : alpha(al)
 {
   red   = ((hex & 0xFF0000) >> 16);
   green = ((hex & 0x00FF00) >> 8);
   blue  = (hex & 0x0000FF);
 }
 
-Color::Color(double range, Color::Palette palette)
+Color::Color(double range, Color::Palette palette, unsigned char al) : alpha(al)
 {
+  if (range < 0.) range = 0.;
+  if (range > 1.) range = 1.;
+
   switch(palette)
   {
   case Rainbow:
@@ -78,6 +83,12 @@ Color::Color(double range, Color::Palette palette)
     break;
   }
   }
+}
+
+bool Color::operator==(const Color& other) const
+{
+  return (red == other.red && green == other.green &&
+	  blue == other.green && alpha == other.alpha);
 }
 
 }

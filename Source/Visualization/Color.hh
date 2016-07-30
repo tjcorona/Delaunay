@@ -16,16 +16,20 @@ public:
   Grayscale
 };
 
+  Color(unsigned char r,unsigned char g,unsigned char b, unsigned char al=255);
+  Color(unsigned hex, unsigned char al=255);
+  Color(double range,Palette palette=Rainbow, unsigned char al=255);
 
-  Color(unsigned char r,unsigned char g,unsigned char b);
-  Color(unsigned hex);
-  Color(double range,Palette palette=Rainbow);
+  bool operator==(const Color&) const;
+  bool operator!=(const Color& other) const { return !((*this) == other); }
 
   unsigned char red;
   unsigned char green;
   unsigned char blue;
+  unsigned char alpha;
 };
 
+extern const Color Clear;
 extern const Color White;
 extern const Color Black;
 extern const Color Red;

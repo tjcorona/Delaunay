@@ -41,9 +41,12 @@ public:
   void Draw(const Misc::Function&,double* =NULL,const Color& color=Blue);
 
   void Draw(const Shape::Point&,const Color& color=Green);
-  void Draw(const Shape::Triangle&,const Color& color=Green);
-  void Draw(const Shape::Polygon&,const Color& color=Red);
-  void Draw(const Shape::Circle&,const Color& color=Black);
+  void Draw(const Shape::Triangle&,const Color& lineColor=Green,
+	    const Color& fillColor=Clear);
+  void Draw(const Shape::Polygon&,const Color& lineColor=Red,
+	    const Color& fillColor=Clear);
+  void Draw(const Shape::Circle&,const Color& lineColor=Black,
+	    const Color& fillColor=Clear);
   void Draw(const Shape::ParametricCurve&,const Color& color=Cyan);
   void Update();
   void SetTimeDelay(double d) { delay_ms = d*((double)1.e3); }
@@ -51,7 +54,13 @@ public:
 private:
   cv::Scalar ColorToCVScalar(const Color&);
   cv::Point  PointToCVPoint(const Shape::Point&);
+  void       SetAlpha(unsigned char a) { alpha = a; }
+  cv::Mat*   PreDraw();
+  void       PostDraw();
+
+  unsigned char alpha;
   cv::Mat image;
+  cv::Mat cloneImage;
   unsigned pointRadius;
   double conversionRatio;
   double delay_ms;

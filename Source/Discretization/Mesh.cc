@@ -7,10 +7,12 @@ namespace Discretization
 
 Mesh::~Mesh()
 {
-  for (TriangleSet::iterator it=fTriangles.begin();it!=fTriangles.end();++it)
+  for (TriangleSet::iterator it = this->Triangles.begin();
+       it != this->Triangles.end(); ++it)
     delete *it;
 
-  for (VertexSet::iterator it=fVertices.begin();it!=fVertices.end();++it)
+  for (VertexSet::iterator it = this->Vertices.begin();
+       it != this->Vertices.end(); ++it)
     delete *it;
 }
 

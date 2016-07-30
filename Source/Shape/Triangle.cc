@@ -5,18 +5,6 @@ namespace Delaunay
 namespace Shape
 {
 
-Triangle::Edge::Edge(const Vertex& p1,const Vertex& p2) : A(p1), B(p2)
-{
-  A.edges.insert(this);
-  B.edges.insert(this);
-}
-
-Triangle::Edge::~Edge()
-{
-  A.edges.erase(this);
-  B.edges.erase(this);
-}
-
 namespace
 {
   const Triangle::Vertex* orderedVertices[3];

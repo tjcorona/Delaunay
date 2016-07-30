@@ -13,8 +13,8 @@ class LineSegment
 public:
   LineSegment(const Point& pp1,const Point& pp2) : p1(pp1), p2(pp2) {}
 
-  const Point p1;
-  const Point p2;
+  const Point& p1;
+  const Point& p2;
 
   bool Contains(const Point& p) const;
 

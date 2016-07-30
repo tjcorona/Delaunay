@@ -31,9 +31,9 @@ public:
   virtual void Draw(const Misc::Function&,double*,const Color&) = 0;
 
   virtual void Draw(const Shape::Point&,const Color&) = 0;
-  virtual void Draw(const Shape::Triangle&,const Color&) = 0;
-  virtual void Draw(const Shape::Polygon&,const Color&) = 0;
-  virtual void Draw(const Shape::Circle&,const Color&) = 0;
+  virtual void Draw(const Shape::Triangle&,const Color&,const Color&) = 0;
+  virtual void Draw(const Shape::Polygon&,const Color&,const Color&) = 0;
+  virtual void Draw(const Shape::Circle&,const Color&,const Color&) = 0;
   virtual void Draw(const Shape::ParametricCurve&,const Color&) = 0;
   virtual void Update() {}
 };

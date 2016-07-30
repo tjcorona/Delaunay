@@ -212,6 +212,8 @@ int main(int argc,char** argv)
     case RandomEvolve:
       std::cout<<"RandomEvolve"<<std::endl;
       break;
+    default:
+      assert(false);
   }
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
@@ -288,19 +290,21 @@ int main(int argc,char** argv)
 
   for (unsigned i=0;i<triangles.size();i++)
   {
-    canvas.Draw(*triangles[i],Green);
+    canvas.Draw(*triangles[i],Clear,Visualization::Color(0,0,255,100));
     canvas.Draw((triangles[i]->A + triangles[i]->B + triangles[i]->C)/3.,
-		     Green);
+    		     Green);
   }
 
-  canvas.Draw(polygon,Red);
+  Color faintRed(255,0,0,128);
+
+  canvas.Draw(polygon,faintRed);
 
   for (unsigned i=0;i<polygon.Vertices.size();i++)
     canvas.Draw(vertices[i],
-		     Visualization::Color(i/(polygon.Vertices.size()-1.),
-					  Visualization::Color::BlueToRed));
+  		Visualization::Color(i/(polygon.Vertices.size()-1.),
+  				     Visualization::Color::BlueToRed));
 
-  canvas.SetTimeDelay(1.);
+  canvas.SetTimeDelay(0.);
   if (!success)
     canvas.SetTimeDelay(0.);
   canvas.Update();
