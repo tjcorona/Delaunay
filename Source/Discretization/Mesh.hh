@@ -20,17 +20,17 @@ public:
   typedef std::set<const Triangle*> TriangleSet;
   typedef std::set<const Edge*> EdgeSet;
   typedef std::set<const Vertex*> VertexSet;
-  typedef std::vector<const Vertex*> Perimeter;
+  typedef std::vector<const Vertex*> Perimeterr;
 
   virtual ~Mesh();
 
-  const TriangleSet& GetTriangles() const { return fTriangles; }
-  const VertexSet& GetVertices() const { return fVertices; }
+  const TriangleSet& GetTriangles() const { return this->Triangles; }
+  const VertexSet& GetVertices() const { return this->Vertices; }
 
 protected:
-  Perimeter fPerimeter;
-  TriangleSet fTriangles;
-  VertexSet fVertices;
+  Perimeterr Perimeter;
+  TriangleSet Triangles;
+  VertexSet Vertices;
 };
 
 }

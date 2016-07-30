@@ -40,22 +40,22 @@ void DelaunayMesh::AddPerimeterPoint(const Point& p)
 {
   Vertex* vtx = new Vertex(p);
 
-  fPerimeter.push_back(vtx);
-  fVertices.insert(vtx);
+  this->Perimeter.push_back(vtx);
+  this->Vertices.insert(vtx);
 
 //////
-  if (fVertices.size()<3)
+  if (this->Vertices.size()<3)
     return;
 
-  if (fVertices.size()==3)
+  if (this->Vertices.size()==3)
   {
     const Vertex* vs[3];
-    VertexSet::iterator it = fVertices.begin();
+    VertexSet::iterator it = this->Vertices.begin();
     for (unsigned i=0;i<3;i++)
       vs[i] = *it++;
 
     Triangle* t = new Triangle(*vs[0],*vs[1],*vs[2]);
-    fTriangles.insert(t);
+    this->Triangles.insert(t);
     return;
   }
   ExtendMesh(vtx);
@@ -96,17 +96,17 @@ void DelaunayMesh::ConstructInitialMeshFromPerimeter()
   if (GetTriangles().size() != 0)
     return;
 
-  if (fPerimeter.size() < 3)
+  if (this->Perimeter.size() < 3)
     throw(std::domain_error("Too few perimeter elements"));
 
-  Perimeter::iterator perimeterVtx = fPerimeter.begin();
+  Perimeter::iterator perimeterVtx = this->Perimeter.begin();
 
   std::vector<Perimeter> closedConvexHulls;
   std::vector<Perimeter> openConvexHulls(1);
   convexHulls[0].push_back(*(perimeterVtx++));
   convexHulls[0].push_back(*(perimeterVtx++));
 
-  for (;perimeterVtx!=fPerimeter.end();++perimeterVtx)
+  for (;perimeterVtx!=this->Perimeter.end();++perimeterVtx)
     ConstructConvexHulls(*perimeterVtx,openConvexHulls,closedConvexHulls);
 
   std::vector<Perimeter>::iterator hull;
@@ -138,7 +138,8 @@ void DelaunayMesh::AddInteriorPoint(const Point& p)
 
 const Mesh::Triangle* DelaunayMesh::FindContainingTriangle(const Point& p) const
 {
-  for (TriangleSet::iterator it=fTriangles.begin();it!=fTriangles.end();++it)
+  for (TriangleSet::iterator it = this->Triangles.begin();
+       it != this->Triangles.end(); ++it)
     if ((*it)->Contains(p))
       return (*it);
 
@@ -159,14 +160,14 @@ void DelaunayMesh::SplitTriangle(const Triangle* t, const Vertex* v)
   edges.insert(&(t->BC));
   edges.insert(&(t->AC));
 
-  fTriangles.insert(new Triangle(A,B,D));
-  fTriangles.insert(new Triangle(A,C,D));
-  fTriangles.insert(new Triangle(B,C,D));
+  this->Triangles.insert(new Triangle(A,B,D));
+  this->Triangles.insert(new Triangle(A,C,D));
+  this->Triangles.insert(new Triangle(B,C,D));
 
-  fTriangles.erase(t);
+  this->Triangles.erase(t);
   delete t;
 
-  fVertices.insert(v);
+  this->Vertices.insert(v);
 
   LegalizeEdges(v,edges);
 }
@@ -179,7 +180,7 @@ void DelaunayMesh::ExtendMesh(const Vertex* v)
   const Edge* minEdge = NULL;
 
   const Vertex* vlast = NULL;
-  const Vertex* vi = *(fVertices.begin());
+  const Vertex* vi = *(this->Vertices.begin());
 
   unsigned vtx_counter = 0;
 
@@ -223,11 +224,11 @@ void DelaunayMesh::ExtendMesh(const Vertex* v)
     vlast = vi;
     vi = (vi == &((*edge)->A) ? &((*edge)->B) : &((*edge)->A));
   }
-  while (vi != *(fVertices.begin()));
+  while (vi != *(this->Vertices.begin()));
 
   Triangle* t = new Triangle(*v,minEdge->A,minEdge->B);
-  fVertices.insert(v);
-  fTriangles.insert(t);
+  this->Vertices.insert(v);
+  this->Triangles.insert(t);
 
   {
     const Vertex& A = t->A;
@@ -318,10 +319,10 @@ void DelaunayMesh::LegalizeEdges(const Vertex* v,EdgeSet &edges)
   {
     const Triangle* new_t1 = new Triangle(*I,*L,*K);
     const Triangle* new_t2 = new Triangle(*J,*L,*K);
-    fTriangles.insert(new_t1);
-    fTriangles.insert(new_t2);
-    fTriangles.erase(t1);
-    fTriangles.erase(t2);
+    this->Triangles.insert(new_t1);
+    this->Triangles.insert(new_t2);
+    this->Triangles.erase(t1);
+    this->Triangles.erase(t2);
     delete t1;
     delete t2;
   }
@@ -330,7 +331,7 @@ void DelaunayMesh::LegalizeEdges(const Vertex* v,EdgeSet &edges)
 
 bool DelaunayMesh::TestDelaunayCondition(TriangleSet& illegalTriangles) const
 {
-  for (VertexSet::iterator vtx=fVertices.begin();vtx!=fVertices.end();++vtx)
+  for (VertexSet::iterator vtx=this->Vertices.begin();vtx!=this->Vertices.end();++vtx)
   {
     for (Triangle::EdgeSet::iterator edge=(*vtx)->edges.begin();edge!=(*vtx)->edges.end();++edge)
     {
