@@ -11,14 +11,10 @@ namespace Shape
 class Circle
 {
 public:
-  Circle(const Point& c, double r) : center(c), radius(r) {}
+  Circle(const Point& c, double r) : Center(c), Radius(r) {}
 
-  const Point& Center() const { return this->center; }
-  double Radius() const { return this->radius; }
-
-private:
-  Point center;
-  double radius;
+  const Point& Center;
+  const double Radius;
 };
 
 }

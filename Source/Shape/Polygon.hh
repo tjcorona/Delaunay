@@ -1,16 +1,14 @@
 #ifndef DELAUNAY_SHAPE_POLYGON_HH
 #define DELAUNAY_SHAPE_POLYGON_HH
 
-#include <functional>
-#include <vector>
+#include "Shape/PointVector.hh"
 
 namespace Delaunay
 {
 namespace Shape
 {
-class Point;
 
-typedef std::vector<std::reference_wrapper<const Point> > PointVector;
+class Point;
 
 class Polygon
 {

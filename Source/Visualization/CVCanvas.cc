@@ -214,8 +214,8 @@ void CVCanvas::Draw(const Circle& circle,const Color& lineColor,
   {
     SetAlpha(fillColor.alpha);
     im = PreDraw();
-    cv::circle(*im,PointToCVPoint(circle.Center()),
-	       circle.Radius()*conversionRatio,ColorToCVScalar(lineColor),-1,8);
+    cv::circle(*im,PointToCVPoint(circle.Center),
+	       circle.Radius*conversionRatio,ColorToCVScalar(lineColor),-1,8);
     PostDraw();
     return;
   }
@@ -224,8 +224,8 @@ void CVCanvas::Draw(const Circle& circle,const Color& lineColor,
   {
     SetAlpha(fillColor.alpha);
     im = PreDraw();
-    cv::circle(*im,PointToCVPoint(circle.Center()),
-	       circle.Radius()*conversionRatio,ColorToCVScalar(fillColor),-1,8);
+    cv::circle(*im,PointToCVPoint(circle.Center),
+	       circle.Radius*conversionRatio,ColorToCVScalar(fillColor),-1,8);
 
     if (lineColor.alpha != fillColor.alpha)
       PostDraw();
@@ -238,8 +238,8 @@ void CVCanvas::Draw(const Circle& circle,const Color& lineColor,
       SetAlpha(lineColor.alpha);
       im = PreDraw();
     }
-    cv::circle(*im,PointToCVPoint(circle.Center()),
-	       circle.Radius()*conversionRatio,ColorToCVScalar(lineColor),1,8);
+    cv::circle(*im,PointToCVPoint(circle.Center),
+	       circle.Radius*conversionRatio,ColorToCVScalar(lineColor),1,8);
     PostDraw();
   }
 }

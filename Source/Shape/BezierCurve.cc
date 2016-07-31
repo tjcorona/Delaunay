@@ -7,11 +7,17 @@ namespace Delaunay
 namespace Shape
 {
 
+BezierCurve::BezierCurve(const PointVector& pts, bool closed) :
+  ParametricCurve(closed), Points(pts)
+{
+
+}
+
 const Point BezierCurve::operator() (double t) const
 {
-  std::vector<Point> v1 = points;
-  if (Closed())
-    v1.push_back(Point(points.front()));
+  std::vector<Point> v1(this->Points.begin(),this->Points.end());
+  if (this->Closed)
+    v1.push_back(Point(this->Points.front()));
   std::vector<Point> v2;
 
   return RecursiveBezier(t,v1,v2);

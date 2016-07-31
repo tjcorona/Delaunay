@@ -11,15 +11,12 @@ class Point;
 class ParametricCurve
 {
 public:
+  ParametricCurve(bool c) : Closed(c) {}
   virtual ~ParametricCurve() {}
 
   virtual const Point operator() (double) const = 0;
 
-  void Closed(bool choice) { closed = choice; }
-  bool Closed() const { return closed; }
-
-private:
-  bool closed;
+  const bool Closed;
 };
 
 }

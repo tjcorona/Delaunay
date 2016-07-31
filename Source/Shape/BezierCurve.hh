@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "ParametricCurve.hh"
-#include "Point.hh"
+#include "PointVector.hh"
 
 namespace Delaunay
 {
@@ -16,15 +16,15 @@ class Point;
 class BezierCurve : public ParametricCurve
 {
 public:
+  BezierCurve(const PointVector&,bool closed=false);
+
   const Point operator() (double) const;
 
-  void AddPoint(const Point& p) { points.push_back(Point(p)); }
-
 protected:
-  const Point RecursiveBezier(double,std::vector<Point>&,std::vector<Point>&) const;
-  // std::vector<Point> C1Continuity() const;
+  const Point RecursiveBezier(double,std::vector<Point>&,
+			      std::vector<Point>&) const;
 
-  std::vector<Point> points;
+  PointVector Points;
 };
 
 }

@@ -182,7 +182,7 @@ enum PolygonType
 
 int main(int argc,char** argv)
 {
-  PolygonType testType = Regular;
+  PolygonType testType = Random;
 
   if (argc > 1)
     testType = static_cast<PolygonType>(atoi(argv[1]));
