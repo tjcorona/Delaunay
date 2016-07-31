@@ -26,11 +26,6 @@ public:
 
   Point(double xx,double yy) : x(ToGrid(xx)), y(ToGrid(yy)) {}
 
-  double Distance(const Point& p) const { return sqrt((x-p.x)*(x-p.x) + (y-p.y)*(y-p.y)); }
-
-  const double x;
-  const double y;
-
   friend bool operator==(const Point& p1,const Point& p2)
   {
     return (fabs(p1.x - p2.x) < EPSILON && fabs(p1.y - p2.y) < EPSILON);
@@ -96,6 +91,14 @@ public:
     s<<"("<< p.x<<","<<p.y<<")";
     return s;
   }
+
+  double DistanceSquared(const Point& p) const
+    { return (x-p.x)*(x-p.x) + (y-p.y)*(y-p.y); }
+
+  double Distance(const Point& p) const { return sqrt(DistanceSquared(p)); }
+
+  const double x;
+  const double y;
 };
 
 }

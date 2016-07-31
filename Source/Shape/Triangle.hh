@@ -50,16 +50,15 @@ public:
   }
 
   const LineSegment& AB;
-  const LineSegment& BC;
   const LineSegment& AC;
+  const LineSegment& BC;
 
-  bool Contains(const Point& p) const;
+  bool   Contains(const Point& p) const;
+  double Distance(const Point& p) const;
 
   Point circumcenter;
   double circumradius;
 
-private:
-  Point ComputeCircumcenter() const;
 };
 
 }

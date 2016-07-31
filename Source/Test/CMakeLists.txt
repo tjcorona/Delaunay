@@ -9,20 +9,20 @@ target_link_libraries(Triangle LINK_PUBLIC
 #add_executable( Mesh Mesh.cc )
 #target_link_libraries(Mesh LINK_PUBLIC
 #  DelaunayShape DelaunayMisc DelaunayDiscretization DelaunayVisualization)
-#
-#list (APPEND APPLICATIONS Function)
-#add_executable( Function Function.cc )
-#target_link_libraries(Function LINK_PUBLIC
-#  DelaunayMisc DelaunayVisualization)
-#
-#list (APPEND APPLICATIONS BezierCurve)
-#add_executable(BezierCurve BezierCurve.cc)
-#target_link_libraries(BezierCurve LINK_PUBLIC
-#  DelaunayShape DelaunayVisualization)
-#
-#list (APPEND APPLICATIONS Polygon)
-#add_executable( Polygon Polygon.cc )
-#target_link_libraries(Polygon LINK_PUBLIC
-#  DelaunayShape DelaunayVisualization)
+
+list (APPEND APPLICATIONS Function)
+add_executable( Function Function.cc )
+target_link_libraries(Function LINK_PUBLIC
+  DelaunayMisc DelaunayVisualization)
+
+list (APPEND APPLICATIONS BezierCurve)
+add_executable(BezierCurve BezierCurve.cc)
+target_link_libraries(BezierCurve LINK_PUBLIC
+  DelaunayShape DelaunayVisualization)
+
+list (APPEND APPLICATIONS Polygon)
+add_executable( Polygon Polygon.cc )
+target_link_libraries(Polygon LINK_PUBLIC
+  DelaunayShape DelaunayVisualization)
 
 install (TARGETS ${APPLICATIONS} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

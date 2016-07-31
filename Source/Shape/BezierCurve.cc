@@ -30,10 +30,10 @@ const Point BezierCurve::RecursiveBezier(double t,std::vector<Point>& v1,std::ve
     return v2[0];
 }
 
-std::vector<Point> BezierCurve::C1Continuity() const
-{
+// std::vector<Point> BezierCurve::C1Continuity() const
+// {
 
-}
+// }
 
 }
 }

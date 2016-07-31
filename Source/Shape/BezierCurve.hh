@@ -22,7 +22,7 @@ public:
 
 protected:
   const Point RecursiveBezier(double,std::vector<Point>&,std::vector<Point>&) const;
-  std::vector<Point> C1Continuity() const;
+  // std::vector<Point> C1Continuity() const;
 
   std::vector<Point> points;
 };

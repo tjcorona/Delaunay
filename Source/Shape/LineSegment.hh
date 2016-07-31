@@ -1,7 +1,7 @@
 #ifndef DELAUNAY_SHAPE_LINESEGMENT_HH
 #define DELAUNAY_SHAPE_LINESEGMENT_HH
 
-#include "Point.hh"
+#include "Shape/Point.hh"
 
 namespace Delaunay
 {
@@ -11,12 +11,7 @@ namespace Shape
 class LineSegment
 {
 public:
-  LineSegment(const Point& a,const Point& b) : A(a), B(b) {}
-
-  const Point& A;
-  const Point& B;
-
-  bool Contains(const Point& p) const;
+  LineSegment(const Point& a,const Point& b);
 
   friend bool operator==(const LineSegment& l1,const LineSegment& l2)
   {
@@ -53,6 +48,12 @@ public:
     s<<"("<< l.A<<","<<l.B<<")";
     return s;
   }
+
+  bool   Contains(const Point& p) const;
+  double Distance(const Point& p) const;
+
+  const Point& A;
+  const Point& B;
 };
 
 }
