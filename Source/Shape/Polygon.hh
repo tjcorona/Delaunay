@@ -2,6 +2,7 @@
 #define DELAUNAY_SHAPE_POLYGON_HH
 
 #include "Shape/LineSegment.hh"
+#include "Shape/Point.hh"
 
 namespace Delaunay
 {
@@ -21,6 +22,7 @@ public:
   double Distance(const Point& p) const;
 
   const LineSegmentVector LineSegments;
+  PointVector Points;
 };
 
 }

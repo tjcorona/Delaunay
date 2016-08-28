@@ -167,10 +167,10 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
     return;
 
   std::vector<cv::Point> points;
-  const unsigned size = polygon.LineSegments.size();
+  const unsigned size = polygon.Points.size();
   for (unsigned i=0;i<size;i++)
   {
-    points.push_back(PointToCVPoint(polygon.LineSegments[i].get().A));
+    points.push_back(PointToCVPoint(polygon.Points[i]));
   }
 
   cv::Mat* im;
