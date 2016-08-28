@@ -4,6 +4,7 @@
 
 #include "Shape/Circle.hh"
 #include "Shape/Triangle.hh"
+#include "Shape/TriangleUtilities.hh"
 
 #include "Visualization/Color.hh"
 #include "Visualization/CVCanvas.hh"
@@ -59,7 +60,7 @@ int main(int /*argc*/,char** /*argv*/)
     Shape::Point p(Misc::Random::GetInstance().Uniform(1000)/100.,
 		   Misc::Random::GetInstance().Uniform(1000)/100.);
 
-    if (triangle.Contains(p))
+    if (Contains(triangle,p))
       canvas.Draw(p,Green);
     else
       canvas.Draw(p,Black);

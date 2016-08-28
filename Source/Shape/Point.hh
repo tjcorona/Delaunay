@@ -5,7 +5,9 @@
 // #define GRIDRES 8
 
 #include <cmath>
+#include <functional>
 #include <ostream>
+#include <vector>
 
 namespace Delaunay
 {
@@ -28,7 +30,7 @@ public:
 
   friend bool operator==(const Point& p1,const Point& p2)
   {
-    return (fabs(p1.x - p2.x) < EPSILON && fabs(p1.y - p2.y) < EPSILON);
+    return (std::abs(p1.x - p2.x) < EPSILON && std::abs(p1.y - p2.y) < EPSILON);
   }
 
   friend bool operator!=(const Point& p1,const Point& p2)
@@ -81,25 +83,17 @@ public:
     return Point(p1.x - p2.x,p1.y - p2.y);
   }
 
-  friend double Dot(const Point& p1,const Point& p2)
-  {
-    return p1.x*p2.x + p1.y*p2.y;
-  }
-
   friend std::ostream& operator<<(std::ostream& s,const Point& p)
   {
     s<<"("<< p.x<<","<<p.y<<")";
     return s;
   }
 
-  double DistanceSquared(const Point& p) const
-    { return (x-p.x)*(x-p.x) + (y-p.y)*(y-p.y); }
-
-  double Distance(const Point& p) const { return sqrt(DistanceSquared(p)); }
-
   const double x;
   const double y;
 };
+
+typedef std::vector<std::reference_wrapper<const Point> > PointVector;
 
 }
 }

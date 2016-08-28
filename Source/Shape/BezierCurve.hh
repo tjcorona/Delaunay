@@ -4,14 +4,12 @@
 #include <vector>
 
 #include "ParametricCurve.hh"
-#include "PointVector.hh"
+#include "Point.hh"
 
 namespace Delaunay
 {
 namespace Shape
 {
-
-class Point;
 
 class BezierCurve : public ParametricCurve
 {

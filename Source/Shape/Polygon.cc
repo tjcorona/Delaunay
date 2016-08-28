@@ -1,22 +1,22 @@
 #include "Polygon.hh"
 
-#include "Shape/Point.hh"
+#include "Shape/LineSegment.hh"
 
 namespace
 {
-typedef Delaunay::Shape::PointVector PointVector;
+typedef Delaunay::Shape::LineSegmentVector LineSegmentVector;
 
-PointVector Sort(const PointVector& points)
+LineSegmentVector Sort(const LineSegmentVector& lineSegments)
 {
-  PointVector pts;
+  LineSegmentVector pts;
 
-  unsigned positionOfSmallest = std::distance(points.begin(),
-					      std::min_element(points.begin(),
-							       points.end()));
-  unsigned size = points.size();
+  unsigned positionOfSmallest =
+    std::distance(lineSegments.begin(), std::min_element(lineSegments.begin(),
+							 lineSegments.end()));
+  unsigned size = lineSegments.size();
   for (unsigned i=0;i<size;i++)
   {
-    pts.push_back(std::cref(points[(i+positionOfSmallest)%size]));
+    pts.push_back(std::cref(lineSegments[(i+positionOfSmallest)%size]));
   }
 
   return pts;
@@ -28,7 +28,8 @@ namespace Delaunay
 namespace Shape
 {
 
-Polygon::Polygon(const PointVector& points) : Points(Sort(points))
+Polygon::Polygon(const LineSegmentVector& lineSegments) :
+  LineSegments(Sort(lineSegments))
 {
 }
 

@@ -3,44 +3,29 @@
 
 #include <set>
 
-#include "Vertex.hh"
-#include "Edge.hh"
+#include "Mesh/Vertex.hh"
+#include "Mesh/Edge.hh"
+
+#include "Shape/Triangle.hh"
 
 namespace Delaunay
 {
 namespace Mesh
 {
 
-class Triangle
+class Triangle : public Shape::Triangle
 {
 public:
-  Triangle(const Edge& ab,const Edge& bc,const Edge& ac) :
-    Shape::Triangle(ab,bc,ac)
-  {
-    A.triangles.insert(this);
-    B.triangles.insert(this);
-    C.triangles.insert(this);
-    AB.triangles.insert(this);
-    BC.triangles.insert(this);
-    AC.triangles.insert(this);
-  }
+  Triangle(const Edge& ab,const Edge& bc,const Edge& ac);
 
-  ~Triangle()
-  {
-    A.triangles.erase(this);
-    B.triangles.erase(this);
-    C.triangles.erase(this);
-    AB.triangles.erase(this);
-    BC.triangles.erase(this);
-    AC.triangles.erase(this);
-  }
+  ~Triangle();
 
-  const Edge& AB() { return static_cast<const Edge&>(this->AB); }
-  const Edge& BC() { return static_cast<const Edge&>(this->BC); }
-  const Edge& AC() { return static_cast<const Edge&>(this->AC); }
-  const Vertex& A() { return this->AB().A(); }
-  const Vertex& B() { return this->AB().B(); }
-  const Vertex& C() { return this->BC().B(); }
+  const Edge& AB() const;
+  const Edge& BC() const;
+  const Edge& AC() const;
+  const Vertex& A() const;
+  const Vertex& B() const;
+  const Vertex& C() const;
 };
 
 }

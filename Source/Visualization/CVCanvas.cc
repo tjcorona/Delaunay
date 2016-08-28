@@ -4,6 +4,7 @@
 
 #include "Shape/Circle.hh"
 #include "Shape/Point.hh"
+#include "Shape/PointUtilities.hh"
 #include "Shape/Triangle.hh"
 #include "Shape/Polygon.hh"
 #include "Shape/ParametricCurve.hh"
@@ -166,10 +167,10 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
     return;
 
   std::vector<cv::Point> points;
-  const unsigned size = polygon.Points.size();
+  const unsigned size = polygon.LineSegments.size();
   for (unsigned i=0;i<size;i++)
   {
-    points.push_back(PointToCVPoint(polygon.Points[i]));
+    points.push_back(PointToCVPoint(polygon.LineSegments[i].get().A));
   }
 
   cv::Mat* im;
@@ -266,7 +267,7 @@ void CVCanvas::Draw(const ParametricCurve& curve,const Color& color)
     while (step>min_step)
     {
       Point p = curve(t+step_t);
-      step = p.Distance(pointVec.back());
+      step = Distance(p,pointVec.back());
       step_t *= .5;
     }
     t += step_t;

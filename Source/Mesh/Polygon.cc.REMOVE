@@ -1,7 +1,5 @@
 #include "Shape/Polygon.hh"
 
-#include "Mesh/Vertex.hh"
-
 #include "Shape/Triangle.hh"
 
 #include <algorithm>

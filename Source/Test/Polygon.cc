@@ -1,5 +1,6 @@
 #include <opencv2/opencv.hpp>
 
+#include "Shape/LineSegment.hh"
 #include "Shape/Polygon.hh"
 #include "Shape/Point.hh"
 
@@ -275,23 +276,25 @@ int main(int argc,char** argv)
       vertices.push_back(Shape::Point(verts[i].x,verts[i].y));
   }
 
-  // for (unsigned i=0;i<vertices.size();i++)
-  //   std::cout<<"vertices.push_back(Shape::Point("<<vertices[i].x<<","<<vertices[i].y<<"));"<<std::endl;
-  // std::cout<<""<<std::endl;
+  std::vector<Shape::LineSegment> lines;
+  for (unsigned i=0;i<nPoints;i++)
+  {
+    lines.push_back(Shape::LineSegment(vertices[i],vertices[(i+1)%nPoints]));
+  }
 
-  // create a point vector from the above-defined vertices
-  Shape::PointVector points(vertices.begin(),vertices.end());
+  // create a LineSegmentVector from the above-defined vertices
+  Shape::LineSegmentVector lineSegments(lines.begin(),lines.end());
 
   // create a polygon from the point vector
-  Shape::Polygon polygon(points);
+  Shape::Polygon polygon(lineSegments);
 
   Color faintRed(255,0,0,128);
 
   canvas.Draw(polygon,Red,faintRed);
 
-  for (unsigned i=0;i<polygon.Points.size();i++)
+  for (unsigned i=0;i<polygon.LineSegments.size();i++)
     canvas.Draw(vertices[i],
-  		Visualization::Color(i/(polygon.Points.size()-1.),
+  		Visualization::Color(i/(polygon.LineSegments.size()-1.),
   				     Visualization::Color::BlueToRed));
 
   canvas.SetTimeDelay(0.);

@@ -3,6 +3,9 @@
 
 #include "Shape/Point.hh"
 
+#include <functional>
+#include <vector>
+
 namespace Delaunay
 {
 namespace Shape
@@ -49,12 +52,12 @@ public:
     return s;
   }
 
-  bool   Contains(const Point& p) const;
-  double Distance(const Point& p) const;
-
   const Point& A;
   const Point& B;
 };
+
+typedef std::vector<std::reference_wrapper<const LineSegment> >
+LineSegmentVector;
 
 }
 }

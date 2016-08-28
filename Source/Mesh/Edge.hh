@@ -3,8 +3,8 @@
 
 #include <set>
 
-#include "LineSegment.hh"
-#include "Vertex.hh"
+#include "Shape/LineSegment.hh"
+#include "Mesh/Vertex.hh"
 
 namespace Delaunay
 {
@@ -14,10 +14,10 @@ namespace Mesh
 class Triangle;
 typedef std::set<const Triangle*> TriangleSet;
 
-class Edge : public LineSegment
+class Edge : public Shape::LineSegment
 {
 public:
-  Edge(const Vertex& a, const Vertex& b) : Shape::LineSegment(a,b)
+  Edge(const Vertex& a, const Vertex& b) : LineSegment(a,b)
   {
     this->A().edges.insert(this);
     this->B().edges.insert(this);
@@ -29,8 +29,14 @@ public:
     this->B().edges.erase(this);
   }
 
-  const Vertex& A() { return static_cast<const Vertex&>(A); }
-  const Vertex& B() { return static_cast<const Vertex&>(B); }
+  const Vertex& A() const
+  {
+    return static_cast<const Vertex&>(this->Shape::LineSegment::A);
+  }
+  const Vertex& B() const
+  {
+    return static_cast<const Vertex&>(this->Shape::LineSegment::B);
+  }
 
   mutable TriangleSet triangles;
 };

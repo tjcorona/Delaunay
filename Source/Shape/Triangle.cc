@@ -1,4 +1,6 @@
-#include "Triangle.hh"
+#include "Shape/Triangle.hh"
+
+#include "Shape/PointUtilities.hh"
 
 #include <iostream>
 
@@ -65,36 +67,7 @@ Triangle::Triangle(const LineSegment& ab,
   AB(First(ab,bc,ac)), AC(Second(ab,bc,ac)), BC(Third(ab,bc,ac)),
   circumcenter(ComputeCircumcenter(ab,ac))
 {
-  this->circumradius = this->circumcenter.Distance(AB.A);
-}
-
-bool Triangle::Contains(const Point& p) const
-{
-  const Point& A = AB.A;
-  const Point& B = AB.B;
-  const Point& C = AC.B;
-
-  double abx = B.x - A.x;
-  double aby = B.y - A.y;
-  double acx = C.x - A.x;
-  double acy = C.y - A.y;
-  double apx = p.x - A.x;
-  double apy = p.y - A.y;
-
-  double a = abx/aby;
-  double b = acx - a*acy;
-  double c = apx - a*apy;
-
-  double t = c/b;
-  double s = apy/aby - (acy/aby)*t;
-
-  return (s >= 0.&& t >= 0. && (s + t) <= 1.);
-}
-
-double Triangle::Distance(const Point& p) const
-{
-  (void)p;
-  return 0.;
+  this->circumradius = Distance(this->circumcenter,AB.A);
 }
 
 }

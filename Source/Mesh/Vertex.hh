@@ -1,25 +1,22 @@
-#ifndef DELAUNAY_MESH_TRIANGLE_HH
-#define DELAUNAY_MESH_TRIANGLE_HH
+#ifndef DELAUNAY_MESH_VERTEX_HH
+#define DELAUNAY_MESH_VERTEX_HH
 
 #include <set>
 
-#include "Point.hh"
-#include "LineSegment.hh"
+#include "Shape/Point.hh"
+
+#include "Mesh/EdgeSet.hh"
+#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
 namespace Mesh
 {
 
-class Triangle;
-class Edge;
-typedef std::set<const Triangle*> TriangleSet;
-typedef std::set<const Edge*> EdgeSet;
-
-class Vertex : public Point
+class Vertex : public Shape::Point
 {
 public:
-  Vertex(const Point& p) : Point(p) {}
+  Vertex(const Shape::Point& p) : Point(p) {}
   Vertex(double x,double y) : Point(x,y) {}
 
   mutable TriangleSet triangles;
