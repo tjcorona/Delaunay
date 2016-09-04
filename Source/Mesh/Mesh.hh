@@ -12,14 +12,19 @@ namespace Delaunay
 {
 namespace Mesh
 {
-
-typedef std::set<const Vertex>   VertexSet;
-typedef std::set<const Edge>     EdgeSet;
-typedef std::set<const Triangle> TriangleSet;
+class Mesher;
 
 class Mesh
 {
 public:
+  typedef Delaunay::Shape::Polygon Polygon;
+  typedef std::set<const Vertex>   VertexSet;
+  typedef std::set<const Edge>     EdgeSet;
+  typedef std::set<const Triangle> TriangleSet;
+
+  friend class Mesher;
+
+  Mesh() : Perimeter(Shape::PointVector()) {}
   virtual ~Mesh() {}
 
   const Polygon&     GetPerimeter() const { return this->Perimeter; }

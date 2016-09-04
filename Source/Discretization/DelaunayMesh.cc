@@ -62,65 +62,175 @@ void DelaunayMesh::AddPerimeterPoint(const Point& p)
 //////
 }
 
-/*
-void DelaunayMesh::ConstructConvexHulls(const Vertex* v,
-					  std::vector<Perimeter>& openHulls,
-					  std::vector<Perimeter>& closedHulls)
+namespace
 {
-  std::vector<Perimeter>::reverse_iterator hull = openHulls.rbegin();
-  const Vertex* v1,v2;
-  for (;hull!=hulls.rend();++hull)
+  class Ring
   {
-    std::vector<Perimeter>::iterator it = (*hull).end();
-    v1 = *(--it);
-    v2 = *(--it);
+  public:
+    typedef std::vector<const Delaunay::Mesh::Vertex*> Vertices;
+    typedef Vertices::iterator VtxIt;
 
-    int convexity = ConvexityOfStep(v1,v2,v);
-    if (convexity != -1)
-      break;
-  }
-
-  if (hull == hulls.rend())
+    Ring(const Delaunay::Mesh::Polygon& p)
     {
-    hulls.push_back(Perimeter(2,v2,v));
-    hull = --hulls.rend();
+      this->Verts.resize(p.Points.size());
+      for (unsigned i=0; i<p.Points.size(); i++)
+      {
+	this->Verts[i] = &p[i];
+      }
     }
 
-  (*hull).push_back(v);
+    VtxIt first() { return this->Verts.begin(); }
+
+    VtxIt next(VtxIt it)
+    {
+      VtxIt next = it;
+      ++next;
+      if (next == this->Verts.end())
+	next = this->Verts.begin();
+      return next;
+    }
+
+    VtxIt previous(VtxIt it)
+    {
+      VtxIt previous = it;
+      if (previous == this->Verts.begin())
+	previous = this->Verts.end();
+      return --previous;
+    }
+
+    bool ear(VtxIt it)
+    {
+      return this->Ear[std::distance(this->Verts.begin(), it)];
+    }
+
+    void ear(VtxIt it, bool isEar)
+    {
+      this->Ear[std::distance(this->Verts.begin(), it)] = isEar;
+    }
+
+  private:
+    Vertices Verts;
+    std::vector<bool> Ear;
+  };
+
+  // Is line segment (b,w) within the angle (a,b,c)?
+  bool IsInternal(const Point* a, const Point* b, const Point* c,
+		  const Point* w)
+  {
+    if (Delaunay::Shape::Orientation(*a,*b,*c) >= 0)
+      return Delaunay::Shape::Orientation(*b,*w,*a) == 1 &&
+	Delaunay::Shape::Orientation(*w,*b,*c) == 1;
+    else
+      return !(Delaunay::Shape::Orientation(*b,*w,*c) >= 0 &&
+	       Delaunay::Shape::Orientation(*w,*b,*a) >= 0);
+  }
+
+  // Does line segment (v,w) lie entirely in the polygon?
+  bool IsADiagonal(Ring& r, Ring::VtxIt& v, Ring::VtxIt& w)
+  {
+    // First check if the ray from v to w starts off within the polygon, and
+    // similarly for the ray from w to v
+    if (!IsInternal(*r.previous(v),*v,*r.next(v),*w) ||
+	!IsInternal(*r.previous(w),*w,*r.next(w),*v))
+      return false;
+
+    // Now that we know (v,w) begins and ends within the polygon, we check
+    // each edge in the polygon that does not contain v or w to ensure that
+    // (v,w) never leaves the polygon
+    Ring::VtxIt pFirst, p1, p2;
+    pFirst = p1 = v;
+    p2 = r.next(p1);
+    do
+    {
+      if (p1!=v && p1!=w && p2!=v && p2!=w &&
+	  Delaunay::Shape::Intersect(Delaunay::Shape::LineSegment(**v,**w),
+				     Delaunay::Shape::LineSegment(**p1,**p2)))
+    	return false;
+      p1 = p2;
+      p2 = r.next(p2);
+    }
+    while (p1 != pFirst);
+
+    return true;
+  }
 }
-*/
 
 void DelaunayMesh::ConstructInitialMeshFromPerimeter()
 {
-/*
   if (GetTriangles().size() != 0)
     return;
 
   if (this->Perimeter.size() < 3)
     throw(std::domain_error("Too few perimeter elements"));
 
-  Perimeter::iterator perimeterVtx = this->Perimeter.begin();
 
-  std::vector<Perimeter> closedConvexHulls;
-  std::vector<Perimeter> openConvexHulls(1);
-  convexHulls[0].push_back(*(perimeterVtx++));
-  convexHulls[0].push_back(*(perimeterVtx++));
 
-  for (;perimeterVtx!=this->Perimeter.end();++perimeterVtx)
-    ConstructConvexHulls(*perimeterVtx,openConvexHulls,closedConvexHulls);
+  const Polygon::Vertex *vstart,*v0,*v1,*v2,*v3,*v4;
+  unsigned n = this->Vertices.size();
+  std::vector<bool> ear(this->Vertices.size());
+  std::vector<Triangle::Vertex*> triVertices;
 
-  std::vector<Perimeter>::iterator hull;
-  for (hull = convexHulls.begin(); hull != convexHulls.end(); ++hull)
+  vstart = v2 = &this->Vertices.front();
+
+  bool hasEars = false;
+
+  unsigned counter = 0;
+
+  do
+  {
+    triVertices.push_back(new Triangle::Vertex(v2->x,v2->y));
+    ear[v2->Idx] = IsADiagonal(v2->Previous(),v2->Next());
+    hasEars |= ear[v2->Idx];
+    v2 = &v2->Next();
+    if (++counter == n+1)
+      break;
+  }
+  while (v2 != vstart);
+
+  if (n == 3)
+  {
+    triangles.push_back(new Triangle(*triVertices[0],
+  				       *triVertices[1],
+  				       *triVertices[2]));
+    return true;
+  }
+
+  if (!hasEars || counter != n || n < 3)
+    return false;
+
+  unsigned n_last = 0;
+
+  while (n > 2)
+  {
+    if (n_last == n)
+      break;
+    n_last = n;
+    v2 = vstart;
+    do
     {
-      Perimeter::iterator vtx = (*hull).begin();
-      const Vertex* v1 = *(vtx++);
-      const Vertex* v2 = *(vtx++);
-      for (; vtx != (*hull).end(); ++vtx)
-	{
+      if (ear[v2->Idx])
+      {
+  	v3 = &v2->Next(); v4 = &v3->Next();
+  	v1 = &v2->Previous(); v0 = &v1->Previous();
 
-	}
+  	ear[v1->Idx] = IsADiagonal(*v0,*v3);
+  	ear[v3->Idx] = IsADiagonal(*v1,*v4);
+
+  	triangles.push_back(new Triangle(*triVertices[v1->Idx],
+  					   *triVertices[v2->Idx],
+  					   *triVertices[v3->Idx]));
+
+  	v1->NextIdx = v3->Idx;
+  	v3->PrevIdx = v1->Idx;
+  	vstart = v3;
+
+  	n--;
+  	break;
+      }
+      v2 = &v2->Next();
     }
-*/
+    while (v2 != vstart);
+  }
 }
 
 void DelaunayMesh::AddInteriorPoint(const Point& p)

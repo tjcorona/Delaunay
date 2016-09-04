@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Shape/Point.hh"
+#include "Mesh/Vertex.hh"
 #include "Shape/Polygon.hh"
 
 namespace Delaunay
@@ -14,11 +14,14 @@ namespace Mesh
 class Polygon : public Shape::Polygon
 {
 public:
-  Polygon(const std::vector<Point>&);
-  Polygon(const Polygon&);
+  Polygon(const Shape::PointVector&);
   ~Polygon() {}
 
+  unsigned size() const { return this->Points.size(); }
+  const Vertex& operator[](unsigned) const;
+
 private:
+
 };
 
 }

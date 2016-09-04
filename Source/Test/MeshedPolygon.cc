@@ -1,7 +1,12 @@
 #include <opencv2/opencv.hpp>
 
+#include "Shape/LineSegment.hh"
 #include "Shape/Polygon.hh"
-#include "Shape/Triangle.hh"
+#include "Shape/Point.hh"
+
+#include "Mesh/Mesh.hh"
+
+#include "Discretization/PolygonDiscretizer.hh"
 
 #include "Misc/Random.hh"
 
@@ -94,7 +99,7 @@ bool Intersect(const Coord& p1, const Coord& p2,
 	  orientation[2]*orientation[3] == -1);
 }
 
-void RandomPolygon(int nVertices,
+void RandomPolygon(int nPoints,
 		   std::vector<Coord>& vertices,
 		   double* bounds,
 		   unsigned nSteps)
@@ -111,31 +116,31 @@ void RandomPolygon(int nVertices,
 
   std::vector<double> direction;
   std::vector<double> velocity;
-  for (unsigned i=0;i<nVertices;i++)
+  for (unsigned i=0;i<nPoints;i++)
   {
-    vertices.push_back(Coord(5. + 2.5*cos(i*2.*M_PI/nVertices),
-			     5. + 2.5*sin(i*2.*M_PI/nVertices)));
+    vertices.push_back(Coord(5. + 2.5*cos(i*2.*M_PI/nPoints),
+			     5. + 2.5*sin(i*2.*M_PI/nPoints)));
     direction.push_back((Misc::Random::GetInstance().Uniform(1000)/1000.)*(2.*M_PI));
     velocity.push_back((Misc::Random::GetInstance().Uniform(1000)/1000.)*.25);
   }
 
   for (unsigned step=0;step<nSteps;step++)
   {
-    for (unsigned i=0;i<nVertices;i++)
+    for (unsigned i=0;i<nPoints;i++)
     {
       Coord c(vertices[i].x + velocity[i]*cos(direction[i]),
 	      vertices[i].y + velocity[i]*sin(direction[i]));
 
-      unsigned last = (i + nVertices - 1) % nVertices;
-      unsigned next = (i + 1) % nVertices;
+      unsigned last = (i + nPoints - 1) % nPoints;
+      unsigned next = (i + 1) % nPoints;
 
       bool valid = true;
-      for (unsigned j=0;j<nVertices;j++)
+      for (unsigned j=0;j<nPoints;j++)
       {
 	if (last == j || i == j)
 	  continue;
 
-	unsigned n = (j + 1) % nVertices;
+	unsigned n = (j + 1) % nPoints;
 
 	if (Intersect(vertices[last],c,vertices[j],vertices[n]) ||
 	    Intersect(vertices[next],c,vertices[j],vertices[n]))
@@ -171,6 +176,26 @@ void RandomPolygon(int nVertices,
   }
 }
 
+void Draw(const Mesh::Mesh& mesh,
+	  Visualization::CVCanvas& canvas)
+{
+  const Mesh::Mesh::TriangleSet& triangles = mesh.GetTriangles();
+  const Mesh::Mesh::VertexSet& vertices = mesh.GetVertices();
+
+  for (Mesh::Mesh::TriangleSet::const_iterator it=triangles.begin();it!=triangles.end();++it)
+  {
+    // canvas.Draw((*it)->circumcenter,(*it)->circumradius,Red);
+    canvas.Draw((*it),Black);
+  }
+
+  for (Mesh::Mesh::VertexSet::const_iterator it=vertices.begin();it!=vertices.end();++it)
+  {
+    canvas.Draw((*it),Black);
+  }
+
+  canvas.Update();
+}
+
 enum PolygonType
 {
   Regular,
@@ -182,7 +207,7 @@ enum PolygonType
 
 int main(int argc,char** argv)
 {
-  PolygonType testType = Regular;
+  PolygonType testType = Random;
 
   if (argc > 1)
     testType = static_cast<PolygonType>(atoi(argv[1]));
@@ -190,10 +215,10 @@ int main(int argc,char** argv)
   if (testType < 0 || testType > 3)
   {
     std::cout<<"Polygon: possible options:"<<std::endl;
-    std::cout<<"         0: Regular (default)"<<std::endl;
+    std::cout<<"         0: Regular"<<std::endl;
     std::cout<<"         1: Star Convex"<<std::endl;
     std::cout<<"         2: Random Evolve"<<std::endl;
-    std::cout<<"         3: Random"<<std::endl;
+    std::cout<<"         3: Random (default)"<<std::endl;
     return 1;
   }
 
@@ -220,29 +245,29 @@ int main(int argc,char** argv)
   double bounds[4] = {0.,10.,0.,10.};
   Visualization::CVCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
 
-  const unsigned nVertices = 3 + Misc::Random::GetInstance().Uniform(100);
+  const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(100);
   std::vector<Shape::Point> vertices;
 
   if (testType == Regular)
   {
     double theta = 0.;
-    for (unsigned i=0;i<nVertices;i++)
+    for (unsigned i=0;i<nPoints;i++)
     {
       vertices.push_back(Shape::Point(5. + 4.*cos(theta), 5. + 4.*sin(theta)));
-      theta += 2.*M_PI/nVertices;
+      theta += 2.*M_PI/nPoints;
     }
   }
   else if (testType == StarConvex)
     {
-      std::vector<double> thetas(nVertices);
-      std::vector<double> radii(nVertices);
+      std::vector<double> thetas(nPoints);
+      std::vector<double> radii(nPoints);
       bool sharedTheta = true;
       while (sharedTheta)
       {
 	sharedTheta = false;
 	double min_radius =.1+3.9*(Misc::Random::GetInstance().Uniform(10000)/10000.);
 	double max_radius = 5. - min_radius;
-	for (unsigned i=0;i<nVertices;i++)
+	for (unsigned i=0;i<nPoints;i++)
 	{
 	  radii[i] = (min_radius +
 		      max_radius*(Misc::Random::GetInstance().Uniform(10000)/10000.));
@@ -251,9 +276,9 @@ int main(int argc,char** argv)
 	std::sort(thetas.begin(),thetas.end());
 
 	unsigned i_next;
-	for (unsigned i=0;i<nVertices;i++)
+	for (unsigned i=0;i<nPoints;i++)
 	{
-	  i_next = (i+1)%nVertices;
+	  i_next = (i+1)%nPoints;
 	  if (fabs(thetas[i]-thetas[i_next]) < 1.e-6)
 	  {
 	    sharedTheta = true;
@@ -262,51 +287,40 @@ int main(int argc,char** argv)
 	}
       }
 
-      for (unsigned i=0;i<nVertices;i++)
+      for (unsigned i=0;i<nPoints;i++)
 	vertices.push_back(Shape::Point(5. + radii[i]*cos(thetas[i]),
 				   5. + radii[i]*sin(thetas[i])));
     }
   else if (testType == RandomEvolve)
   {
     std::vector<Coord> verts;
-    RandomPolygon(nVertices,verts,bounds,
+    RandomPolygon(nPoints,verts,bounds,
 		  Misc::Random::GetInstance().Uniform(50));
-    for (unsigned i=0;i<nVertices;i++)
+    for (unsigned i=0;i<nPoints;i++)
       vertices.push_back(Shape::Point(verts[i].x,verts[i].y));
   }
 
-  // for (unsigned i=0;i<vertices.size();i++)
-  //   std::cout<<"vertices.push_back(Shape::Point("<<vertices[i].x<<","<<vertices[i].y<<"));"<<std::endl;
-  // std::cout<<""<<std::endl;
-
-  // create a triangle from these three verties
+  // create a polygon from the point vector
   Shape::Polygon polygon(vertices);
 
-  std::vector<Shape::Triangle*> triangles;
-  bool success = polygon.Triangulate(triangles);
-
-  if (!success)
-    std::cout<<"Failed to triangulate"<<std::endl;
-
-  for (unsigned i=0;i<triangles.size();i++)
-  {
-    canvas.Draw(*triangles[i],Clear,Visualization::Color(0,0,255,100));
-    canvas.Draw((triangles[i]->A + triangles[i]->B + triangles[i]->C)/3.,
-    		     Green);
-  }
+  Mesh::Mesh mesh;
+  Discretization::PolygonDiscretizer discretizer;
+  discretizer.Mesh(polygon, mesh);
 
   Color faintRed(255,0,0,128);
 
-  canvas.Draw(polygon,faintRed);
+  canvas.Draw(mesh.GetPerimeter(),Red,faintRed);
 
-  for (unsigned i=0;i<polygon.Vertices.size();i++)
-    canvas.Draw(vertices[i],
-  		Visualization::Color(i/(polygon.Vertices.size()-1.),
+  for (unsigned i=0;i<mesh.GetPerimeter().GetPoints().size();i++)
+    canvas.Draw(mesh.GetPerimeter().GetPoints()[i],
+  		Visualization::Color(i/(mesh.GetPerimeter()
+					.GetPoints().size()-1.),
   				     Visualization::Color::BlueToRed));
 
+  for (auto i = mesh.GetTriangles().begin(); i != mesh.GetTriangles().end(); i++)
+    canvas.Draw(*i, Visualization::Black);
+
   canvas.SetTimeDelay(0.);
-  if (!success)
-    canvas.SetTimeDelay(0.);
   canvas.Update();
 
   return 0;

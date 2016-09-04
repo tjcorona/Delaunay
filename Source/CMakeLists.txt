@@ -1,4 +1,4 @@
-#add_subdirectory(Discretization)
+add_subdirectory(Discretization)
 add_subdirectory(Mesh)
 add_subdirectory(Misc)
 add_subdirectory(Shape)

@@ -1,5 +1,4 @@
 set(Mesh_Source_Files
-#  Polygon.cc
   Triangle.cc
 )
 

@@ -4,22 +4,23 @@
 
 namespace
 {
-typedef Delaunay::Shape::LineSegmentVector LineSegmentVector;
+typedef Delaunay::Shape::PointVector PointVector;
 
-LineSegmentVector Sort(const LineSegmentVector& lineSegments)
+template <class Container>
+PointVector Sort(const Container& points)
 {
-  LineSegmentVector lines;
+  PointVector sortedPoints;
 
   unsigned positionOfSmallest =
-    std::distance(lineSegments.begin(), std::min_element(lineSegments.begin(),
-							 lineSegments.end()));
-  unsigned size = lineSegments.size();
+    std::distance(points.begin(), std::min_element(points.begin(),
+						   points.end()));
+  unsigned size = points.size();
   for (unsigned i=0;i<size;i++)
   {
-    lines.push_back(std::cref(lineSegments[(i+positionOfSmallest)%size]));
+    sortedPoints.push_back(std::cref(points[(i+positionOfSmallest)%size]));
   }
 
-  return lines;
+  return sortedPoints;
 }
 }
 
@@ -28,26 +29,14 @@ namespace Delaunay
 namespace Shape
 {
 
-Polygon::Polygon(const LineSegmentVector& lineSegments) :
-  LineSegments(Sort(lineSegments))
+Polygon::Polygon(const std::vector<Point>& points) :
+  Points(Sort(points))
 {
-  if (this->LineSegments[0].get().A == this->LineSegments[1].get().A ||
-      this->LineSegments[0].get().A == this->LineSegments[1].get().B)
-  {
-    this->Points.push_back(std::cref(this->LineSegments[0].get().A));
-  }
-  else
-  {
-    this->Points.push_back(std::cref(this->LineSegments[0].get().B));
-  }
+}
 
-  for (unsigned i=1;i<this->LineSegments.size();i++)
-  {
-    if (this->LineSegments[i].get().A == this->Points[i-1])
-      this->Points.push_back(std::cref(this->LineSegments[i].get().B));
-    else
-      this->Points.push_back(std::cref(this->LineSegments[i].get().A));
-  }
+Polygon::Polygon(const PointVector& points) :
+  Points(Sort(points))
+{
 }
 
 bool Polygon::Contains(const Point& p) const

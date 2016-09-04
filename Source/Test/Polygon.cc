@@ -276,25 +276,16 @@ int main(int argc,char** argv)
       vertices.push_back(Shape::Point(verts[i].x,verts[i].y));
   }
 
-  std::vector<Shape::LineSegment> lines;
-  for (unsigned i=0;i<nPoints;i++)
-  {
-    lines.push_back(Shape::LineSegment(vertices[i],vertices[(i+1)%nPoints]));
-  }
-
-  // create a LineSegmentVector from the above-defined vertices
-  Shape::LineSegmentVector lineSegments(lines.begin(),lines.end());
-
   // create a polygon from the point vector
-  Shape::Polygon polygon(lineSegments);
+  Shape::Polygon polygon(vertices);
 
   Color faintRed(255,0,0,128);
 
   canvas.Draw(polygon,Red,faintRed);
 
-  for (unsigned i=0;i<polygon.LineSegments.size();i++)
+  for (unsigned i=0;i<polygon.GetPoints().size();i++)
     canvas.Draw(vertices[i],
-  		Visualization::Color(i/(polygon.LineSegments.size()-1.),
+  		Visualization::Color(i/(polygon.GetPoints().size()-1.),
   				     Visualization::Color::BlueToRed));
 
   canvas.SetTimeDelay(0.);

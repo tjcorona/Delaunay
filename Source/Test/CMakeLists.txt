@@ -25,4 +25,9 @@ add_executable( Polygon Polygon.cc )
 target_link_libraries(Polygon LINK_PUBLIC
   DelaunayShape DelaunayVisualization)
 
+list (APPEND APPLICATIONS MeshedPolygon)
+add_executable( MeshedPolygon MeshedPolygon.cc )
+target_link_libraries(MeshedPolygon LINK_PUBLIC
+  DelaunayShape DelaunayMesh DelaunayDiscretization DelaunayVisualization)
+
 install (TARGETS ${APPLICATIONS} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
