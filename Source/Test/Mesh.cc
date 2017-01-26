@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 
-#include "Discretization/DelaunayMesh.hh"
+#include "Discretization/DelaunayDiscretizer.hh"
 
 #include "Misc/Random.hh"
 
@@ -14,9 +14,9 @@
 using namespace Delaunay;
 using namespace Delaunay::Visualization;
 
-void Draw(const Discretization::Mesh& mesh,
-	      std::set<const Shape::Triangle*> illegalTriangles,
-	      Visualization::CVCanvas& canvas);
+void Draw(const Mesh::Mesh& mesh,
+	  Mesh::TriangleSet& illegalTriangles,
+	  Visualization::CVCanvas& canvas);
 
 int main(int /*argc*/,char** /*argv*/)
 {
@@ -37,38 +37,39 @@ int main(int /*argc*/,char** /*argv*/)
 
   unsigned nPerimeterEdge = 1;
 
-  Discretization::DelaunayMesh mesh;
-  // mesh.AddPerimeterPoint(p0);
-  // mesh.AddPerimeterPoint(p1);
-  // mesh.AddPerimeterPoint(p2);
-  // mesh.AddPerimeterPoint(p3);
+  Mesh::Mesh mesh;
+  Discretization::DelaunayDiscretizer discretizer;
+  discretizer.AddPerimeterPoint(p0,mesh);
+  discretizer.AddPerimeterPoint(p1,mesh);
+  discretizer.AddPerimeterPoint(p2,mesh);
+  discretizer.AddPerimeterPoint(p3,mesh);
 
-/*
-  mesh.AddPerimeterPoint(p0);
-  for (unsigned i=0;i<nPerimeterEdge;i++)
-    mesh.AddPerimeterPoint(Shape::Point(x_min,y_min + (y_max - y_min)*i));
-  mesh.AddPerimeterPoint(p1);
-  for (unsigned i=0;i<nPerimeterEdge;i++)
-    mesh.AddPerimeterPoint(Shape::Point(x_min + (x_max - x_min)*i,y_max));
-  mesh.AddPerimeterPoint(p2);
-  for (unsigned i=0;i<nPerimeterEdge;i++)
-    mesh.AddPerimeterPoint(Shape::Point(x_min,y_min + (y_max - y_min)*(nPerimeterEdge - 1 - i)));
-  mesh.AddPerimeterPoint(p3);
-  for (unsigned i=0;i<nPerimeterEdge;i++)
-    mesh.AddPerimeterPoint(Shape::Point(x_min + (x_max - x_min)*(nPerimeterEdge - 1 - i),y_min));
-*/
+  // discretizer.AddPerimeterPoint(p0,mesh);
+  // for (unsigned i=0;i<nPerimeterEdge;i++)
+  //   discretizer.AddPerimeterPoint(Shape::Point(x_min,y_min + (y_max - y_min)*i),mesh);
+  // discretizer.AddPerimeterPoint(p1,mesh);
+  // for (unsigned i=0;i<nPerimeterEdge;i++)
+  //   discretizer.AddPerimeterPoint(Shape::Point(x_min + (x_max - x_min)*i,y_max),mesh);
+  // discretizer.AddPerimeterPoint(p2,mesh);
+  // for (unsigned i=0;i<nPerimeterEdge;i++)
+  //   discretizer.AddPerimeterPoint(Shape::Point(x_min,y_min + (y_max - y_min)*(nPerimeterEdge - 1 - i)),mesh);
+  // discretizer.AddPerimeterPoint(p3,mesh);
+  // for (unsigned i=0;i<nPerimeterEdge;i++)
+  //   discretizer.AddPerimeterPoint(Shape::Point(x_min + (x_max - x_min)*(nPerimeterEdge - 1 - i),y_min),mesh);
 
   unsigned nPoly = 20;
 
   for (unsigned i=0;i<nPoly;i++)
   {
-    // mesh.AddInteriorPoint(Shape::Point(5.+4.9*cos(2.*M_PI*i/nPoly),
-    // 				  5.+4.9*sin(2.*M_PI*i/nPoly)));
-    mesh.AddPerimeterPoint(Shape::Point(5.+4.9*cos(2.*M_PI*i/nPoly),
-    				   5.+4.9*sin(2.*M_PI*i/nPoly)));
+    discretizer.AddInteriorPoint(Shape::Point(5.+4.9*cos(2.*M_PI*i/nPoly),
+					      5.+4.9*sin(2.*M_PI*i/nPoly)),
+				 mesh);
+    // discretizer.AddPerimeterPoint(Shape::Point(5.+4.9*cos(2.*M_PI*i/nPoly),
+    // 					       5.+4.9*sin(2.*M_PI*i/nPoly)),
+    // 				  mesh);
 
-    std::set<const Shape::Triangle*> illegalTriangles;
-    if (!mesh.TestDelaunayCondition(illegalTriangles))
+    Mesh::TriangleSet illegalTriangles;
+    if (!discretizer.TestDelaunayCondition(illegalTriangles, mesh))
       std::cout<<"Failed"<<std::endl;
     Draw(mesh,illegalTriangles,canvas);
   }
@@ -111,66 +112,70 @@ int main(int /*argc*/,char** /*argv*/)
 
     Shape::Point p(5. + r*cos(theta), 5. + r*sin(theta));
 
-    mesh.AddInteriorPoint(p);
+    discretizer.AddInteriorPoint(p,mesh);
 
-    std::set<const Shape::Triangle*> illegalTriangles;
-    if (!mesh.TestDelaunayCondition(illegalTriangles))
+    // Shape::Point p2(Misc::Random::GetInstance().Uniform(1000)/1000.*10,
+    // 		    Misc::Random::GetInstance().Uniform(1000)/1000.*10);
+    // discretizer.AddInteriorPoint(p2,mesh);
+
+    Mesh::TriangleSet illegalTriangles;
+    if (!discretizer.TestDelaunayCondition(illegalTriangles, mesh))
       std::cout<<"Failed"<<std::endl;
     Draw(mesh,illegalTriangles,canvas);
   }
 
-  // std::vector<Shape::Point> points;
-  // std::vector<int> pointIndex;
-  // unsigned counter = 0;
+  std::vector<Shape::Point> points;
+  std::vector<int> pointIndex;
+  unsigned counter = 0;
 
-  // unsigned nGridPoints = 10;
+  unsigned nGridPoints = 10;
 
-  // for (unsigned i=0;i<nGridPoints;i++)
-  // {
-  //   for (unsigned j=0;j<nGridPoints;j++)
-  //   {
-  //     points.push_back(Shape::Point(x_min + ((i+.5)/nGridPoints)*(x_max-x_min),
-  // 			       y_min + ((j+.5)/nGridPoints)*(y_max-y_min)));
+  for (unsigned i=0;i<nGridPoints;i++)
+  {
+    for (unsigned j=0;j<nGridPoints;j++)
+    {
+      points.push_back(Shape::Point(x_min + ((i+.5)/nGridPoints)*(x_max-x_min),
+  			       y_min + ((j+.5)/nGridPoints)*(y_max-y_min)));
 
-  //     pointIndex.push_back(counter++);
-  //   }
-  // }
+      pointIndex.push_back(counter++);
+    }
+  }
 
-  // Misc::Random::GetInstance().Shuffle(pointIndex);
+  Misc::Random::GetInstance().Shuffle(pointIndex);
 
-  // for (std::vector<int>::iterator it=pointIndex.begin();it!=pointIndex.end();++it)
-  // {
-  //   mesh.AddInteriorPoint(points[*it]);
-  //   std::set<const Shape::Triangle*> illegalTriangles;
-  //   if (!mesh.TestDelaunayCondition(illegalTriangles))
-  //     std::cout<<"Failed"<<std::endl;
-  //   Draw(mesh,illegalTriangles,canvas);
-  // }
+  for (std::vector<int>::iterator it=pointIndex.begin();it!=pointIndex.end();++it)
+  {
+    discretizer.AddInteriorPoint(points[*it],mesh);
+    Mesh::TriangleSet illegalTriangles;
+    if (!discretizer.TestDelaunayCondition(illegalTriangles, mesh))
+      std::cout<<"Failed"<<std::endl;
+    Draw(mesh,illegalTriangles,canvas);
+  }
 
   return 0;
 }
 
-void Draw(const Discretization::Mesh& mesh,
-	      std::set<const Shape::Triangle*> illegalTriangles,
-	      Visualization::CVCanvas& canvas)
+void Draw(const Mesh::Mesh& mesh,
+	  Mesh::TriangleSet& illegalTriangles,
+	  Visualization::CVCanvas& canvas)
 {
-  const Discretization::Mesh::TriangleSet& triangles = mesh.GetTriangles();
-  const Discretization::Mesh::VertexSet& vertices = mesh.GetVertices();
+  const Mesh::Mesh::TriangleSet& triangles = mesh.GetTriangles();
+  const Mesh::Mesh::VertexSet& vertices = mesh.GetVertices();
 
-  for (Discretization::Mesh::TriangleSet::const_iterator it=triangles.begin();it!=triangles.end();++it)
+  for (auto it=triangles.begin();it!=triangles.end();++it)
   {
     // canvas.Draw((*it)->circumcenter,(*it)->circumradius,Red);
-    canvas.Draw(*(*it),Black);
+    canvas.Draw(*it,Black);
   }
 
-  for (std::set<const Shape::Triangle*>::const_iterator it=illegalTriangles.begin();it!=illegalTriangles.end();++it)
+  for (auto it=illegalTriangles.begin();it!=illegalTriangles.end();++it)
   {
     canvas.Draw(*(*it),Red);
   }
 
-  for (Discretization::Mesh::VertexSet::const_iterator it=vertices.begin();it!=vertices.end();++it)
+  for (auto it=vertices.begin();it!=vertices.end();++it)
   {
-    canvas.Draw(*(*it),Black);
+    canvas.Draw(*it,Black);
   }
 
   canvas.Update();

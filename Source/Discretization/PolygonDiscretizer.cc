@@ -22,9 +22,8 @@ void PolygonDiscretizer::Mesh(const Delaunay::Shape::Polygon& polygon,
   for (Shape::PointVector::const_iterator it=polygon.GetPoints().begin();
        it!= polygon.GetPoints().end();++it)
   {
-    Mesh::Vertex vtx(*it);
-    const Mesh::Vertex& vtxIt = *(this->GetVertices(mesh).insert(vtx)).first;
-    vec.push_back(std::cref(static_cast<const Shape::Point&>(vtxIt)));
+    const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(*it)).first;
+    vec.push_back(std::cref(static_cast<const Shape::Point&>(vtx)));
   }
 
   this->GetPerimeter(mesh).SetPoints(vec);
@@ -218,10 +217,10 @@ void PolygonDiscretizer::AddTriangleToMesh(Mesh::Mesh& mesh,
 					   const Mesh::Vertex* b,
 					   const Mesh::Vertex* c)
 {
-  const Mesh::Edge& ab =*(this->GetEdges(mesh).insert(Mesh::Edge(*a,*b))).first;
-  const Mesh::Edge& bc =*(this->GetEdges(mesh).insert(Mesh::Edge(*b,*c))).first;
-  const Mesh::Edge& ac =*(this->GetEdges(mesh).insert(Mesh::Edge(*a,*c))).first;
-  this->GetTriangles(mesh).insert(Mesh::Triangle(ab,bc,ac));
+  const Mesh::Edge& ab =*(this->GetEdges(mesh).emplace(*a,*b)).first;
+  const Mesh::Edge& bc =*(this->GetEdges(mesh).emplace(*b,*c)).first;
+  const Mesh::Edge& ac =*(this->GetEdges(mesh).emplace(*a,*c)).first;
+  this->GetTriangles(mesh).emplace(ab,bc,ac);
 }
 
 }

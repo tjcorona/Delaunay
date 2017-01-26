@@ -1,4 +1,5 @@
 set(Discretization_Source_Files
+  DelaunayDiscretizer.cc
   PolygonDiscretizer.cc)
 
 add_library (DelaunayDiscretization SHARED ${Discretization_Source_Files})

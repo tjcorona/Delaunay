@@ -18,6 +18,7 @@ class Vertex : public Shape::Point
 public:
   Vertex(const Shape::Point& p) : Point(p) {}
   Vertex(double x,double y) : Point(x,y) {}
+  virtual ~Vertex() {}
 
   mutable TriangleSet triangles;
   mutable EdgeSet edges;

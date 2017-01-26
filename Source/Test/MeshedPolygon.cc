@@ -176,26 +176,6 @@ void RandomPolygon(int nPoints,
   }
 }
 
-void Draw(const Mesh::Mesh& mesh,
-	  Visualization::CVCanvas& canvas)
-{
-  const Mesh::Mesh::TriangleSet& triangles = mesh.GetTriangles();
-  const Mesh::Mesh::VertexSet& vertices = mesh.GetVertices();
-
-  for (Mesh::Mesh::TriangleSet::const_iterator it=triangles.begin();it!=triangles.end();++it)
-  {
-    // canvas.Draw((*it)->circumcenter,(*it)->circumradius,Red);
-    canvas.Draw((*it),Black);
-  }
-
-  for (Mesh::Mesh::VertexSet::const_iterator it=vertices.begin();it!=vertices.end();++it)
-  {
-    canvas.Draw((*it),Black);
-  }
-
-  canvas.Update();
-}
-
 enum PolygonType
 {
   Regular,
@@ -295,7 +275,7 @@ int main(int argc,char** argv)
   {
     std::vector<Coord> verts;
     RandomPolygon(nPoints,verts,bounds,
-		  Misc::Random::GetInstance().Uniform(50));
+		  Misc::Random::GetInstance().Uniform(30));
     for (unsigned i=0;i<nPoints;i++)
       vertices.push_back(Shape::Point(verts[i].x,verts[i].y));
   }
@@ -320,7 +300,7 @@ int main(int argc,char** argv)
   for (auto i = mesh.GetTriangles().begin(); i != mesh.GetTriangles().end(); i++)
     canvas.Draw(*i, Visualization::Black);
 
-  canvas.SetTimeDelay(0.);
+  canvas.SetTimeDelay(2.);
   canvas.Update();
 
   return 0;
