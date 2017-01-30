@@ -6,7 +6,7 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/PolygonDiscretizer.hh"
+#include "Discretization/DelaunayDiscretizer.hh"
 
 #include "Misc/Random.hh"
 
@@ -194,11 +194,11 @@ int main(int argc,char** argv)
 
   if (testType < 0 || testType > 3)
   {
-    std::cout<<"MeshedPolygon: possible options:"<<std::endl;
-    std::cout<<"               0: Regular"<<std::endl;
-    std::cout<<"               1: Star Convex"<<std::endl;
-    std::cout<<"               2: Random Evolve"<<std::endl;
-    std::cout<<"               3: Random (default)"<<std::endl;
+    std::cout<<"RandomRefinedPolygon: possible options:"<<std::endl;
+    std::cout<<"                      0: Regular"<<std::endl;
+    std::cout<<"                      1: Star Convex"<<std::endl;
+    std::cout<<"                      2: Random Evolve"<<std::endl;
+    std::cout<<"                      3: Random (default)"<<std::endl;
     return 1;
   }
 
@@ -284,8 +284,20 @@ int main(int argc,char** argv)
   Shape::Polygon polygon(vertices);
 
   Mesh::Mesh mesh;
-  Discretization::PolygonDiscretizer discretizer;
+  Discretization::DelaunayDiscretizer discretizer;
   discretizer.Mesh(polygon, mesh);
+
+  for (unsigned i=0;i<1000;i++)
+  {
+    double r = 5.5*pow(Misc::Random::GetInstance().Uniform(1000)/1000.,.5);
+    double theta = 2.*M_PI*Misc::Random::GetInstance().Uniform(1000)/1000.;
+    Shape::Point p(5. + r*cos(theta), 5. + r*sin(theta));
+    discretizer.AddInteriorPoint(p,mesh);
+
+    // Mesh::TriangleSet illegalTriangles;
+    // if (!discretizer.TestDelaunayCondition(illegalTriangles, mesh))
+    //   std::cout<<"Failed"<<std::endl;
+  }
 
   Color faintRed(255,0,0,128);
 
@@ -300,7 +312,7 @@ int main(int argc,char** argv)
   for (auto i = mesh.GetTriangles().begin(); i != mesh.GetTriangles().end(); i++)
     canvas.Draw(*i, Visualization::Black);
 
-  canvas.SetTimeDelay(2.);
+  canvas.SetTimeDelay(0.);
   canvas.Update();
 
   return 0;

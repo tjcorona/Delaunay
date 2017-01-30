@@ -194,7 +194,6 @@ void PolygonDiscretizer::EarCuttingMethod(Delaunay::Mesh::Mesh& mesh)
 
 	this->AddTriangleToMesh(mesh,*v1,*v2,*v3);
 
-	// TODO: cut out v2
 	r.erase(v2);
 
 	v2 = v3;

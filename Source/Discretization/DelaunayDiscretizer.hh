@@ -29,7 +29,7 @@ public:
 			     const Delaunay::Mesh::Mesh&) const;
 
 private:
-  void ConstructInitialMeshFromPerimeter(Delaunay::Mesh::Mesh&);
+  void ConstructInitialMeshFromBoundaries(Delaunay::Mesh::Mesh&);
   const Mesh::Triangle* FindContainingTriangle(const Point& p,
 					 Delaunay::Mesh::Mesh&) const;
   void SplitTriangle(const Mesh::Triangle*, const Mesh::Vertex*,

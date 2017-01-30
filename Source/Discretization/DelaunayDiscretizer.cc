@@ -8,32 +8,6 @@
 #include <exception>
 #include <limits>
 
-namespace
-{
-  typedef Delaunay::Shape::Point Vector;
-  typedef Delaunay::Mesh::Vertex Vertex;
-
-  const double EPS = 1.e-6;
-
-  int ConvexityOfStep(const Vertex* vtx0,const Vertex* vtx1,const Vertex* vtx2)
-  {
-    // -1: the step breaks convexity
-    // 0:  the step is linear
-    // 1:  the step maintains convexity
-
-    Vector v1 = (*vtx1) - (*vtx0);
-    Vector v2 = (*vtx2) - (*vtx1);
-
-    double unnormalizedSin = v1.x*v2.y - v2.x*v1.y;
-    if (fabs(unnormalizedSin) < EPS)
-      return 0;
-    else if (unnormalizedSin > 0.)
-      return 1;
-    else
-      return -1;
-  }
-}
-
 namespace Delaunay
 {
 namespace Discretization
@@ -51,6 +25,7 @@ void DelaunayDiscretizer::Mesh(const Delaunay::Shape::Polygon& polygon,
   }
 
   this->GetPerimeter(mesh).SetPoints(vec);
+  this->ConstructInitialMeshFromBoundaries(mesh);
 }
 
 void DelaunayDiscretizer::AddPerimeterPoint(const Point& p,
@@ -83,7 +58,7 @@ void DelaunayDiscretizer::AddPerimeterPoint(const Point& p,
   ExtendMesh(&vtx, mesh);
 }
 
-void DelaunayDiscretizer::ConstructInitialMeshFromPerimeter(
+void DelaunayDiscretizer::ConstructInitialMeshFromBoundaries(
   Delaunay::Mesh::Mesh& mesh)
 {
   if (GetTriangles(mesh).size() != 0)
@@ -94,20 +69,22 @@ void DelaunayDiscretizer::ConstructInitialMeshFromPerimeter(
 
   PolygonDiscretizer polygonDiscretizer;
   polygonDiscretizer.Mesh(this->GetPerimeter(mesh), mesh);
+
+  if (GetTriangles(mesh).size() == 0)
+    throw(std::domain_error("Polygon mesher failed"));
 }
 
 void DelaunayDiscretizer::AddInteriorPoint(const Point& p,
 					   Delaunay::Mesh::Mesh& mesh)
 {
   if (this->GetTriangles(mesh).size() == 0)
-    ConstructInitialMeshFromPerimeter(mesh);
+    ConstructInitialMeshFromBoundaries(mesh);
 
-  const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(p)).first;
-
-  const Mesh::Triangle* containingTriangle = FindContainingTriangle(vtx,mesh);
+  const Mesh::Triangle* containingTriangle = FindContainingTriangle(p,mesh);
 
   if (containingTriangle)
   {
+    const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(p)).first;
     SplitTriangle(containingTriangle, &vtx, mesh);
   }
 }
@@ -156,7 +133,7 @@ void DelaunayDiscretizer::SplitTriangle(const Mesh::Triangle* t,
   LegalizeEdges(v, edges, mesh);
 }
 
-void DelaunayDiscretizer::ExtendMesh(const Vertex* v,
+void DelaunayDiscretizer::ExtendMesh(const Mesh::Vertex* v,
 				     Delaunay::Mesh::Mesh& mesh)
 {
   // append vertex v, which is exterior to the extant mesh, to the mesh
@@ -164,15 +141,15 @@ void DelaunayDiscretizer::ExtendMesh(const Vertex* v,
   double minPerimeterToArea = std::numeric_limits<double>::max();
   const Mesh::Edge* minEdge = nullptr;
 
-  const Vertex* vlast = nullptr;
-  const Vertex* vi = &(*(this->GetVertices(mesh).begin()));
+  const Mesh::Vertex* vlast = nullptr;
+  const Mesh::Vertex* vi = &(*(this->GetVertices(mesh).begin()));
 
   if (vi == v)
     vi = &(*(++this->GetVertices(mesh).begin()));
 
   unsigned vtx_counter = 0;
 
-  const Vertex* vfirst = vi;
+  const Mesh::Vertex* vfirst = vi;
 
   do
   {
@@ -186,9 +163,9 @@ void DelaunayDiscretizer::ExtendMesh(const Vertex* v,
     bool legal = false;
     {
       // check if a new triangle with this edge and vertex is legal
-      const Vertex* va = &((*edge)->A());
-      const Vertex* vb = &((*edge)->B());
-      const Vertex* vopp;
+      const Mesh::Vertex* va = &((*edge)->A());
+      const Mesh::Vertex* vb = &((*edge)->B());
+      const Mesh::Vertex* vopp;
       const Mesh::Triangle* t = *((*edge)->triangles.begin());
       vopp = &(t->A());
       if (vopp == &((*edge)->A()) || vopp == &((*edge)->B()))
@@ -203,9 +180,9 @@ void DelaunayDiscretizer::ExtendMesh(const Vertex* v,
 
     if (legal)
     {
-      const Vertex& A = (*edge)->A();
-      const Vertex& B = (*edge)->B();
-      const Vertex& C = *v;
+      const Mesh::Vertex& A = (*edge)->A();
+      const Mesh::Vertex& B = (*edge)->B();
+      const Mesh::Vertex& C = *v;
       double perimeter = Distance(A,B) + Distance(A,C) + Distance(B,C);
       double area = fabs(A.x*(B.y-C.y) + B.x*(C.y-A.y) + C.x*(A.y-B.y))*.5;
       double perimeterToArea = perimeter/area;
@@ -228,9 +205,9 @@ void DelaunayDiscretizer::ExtendMesh(const Vertex* v,
   this->GetVertices(mesh).insert(*v);
 
   {
-    const Vertex& A = t.A();
-    const Vertex& B = t.B();
-    const Vertex& C = t.C();
+    const Mesh::Vertex& A = t.A();
+    const Mesh::Vertex& B = t.B();
+    const Mesh::Vertex& C = t.C();
 
     std::set<const Mesh::Edge*> edges;
     for (Mesh::EdgeSet::iterator edge=A.edges.begin();edge!=A.edges.end();++edge)
@@ -246,7 +223,7 @@ void DelaunayDiscretizer::ExtendMesh(const Vertex* v,
   return;
 }
 
-void DelaunayDiscretizer::LegalizeEdges(const Vertex* v,
+void DelaunayDiscretizer::LegalizeEdges(const Mesh::Vertex* v,
 					std::set<const Mesh::Edge*>& edges,
 					Delaunay::Mesh::Mesh& mesh)
 {
@@ -269,14 +246,14 @@ void DelaunayDiscretizer::LegalizeEdges(const Vertex* v,
   const Mesh::Triangle* t1 = *(edge->triangles.begin());
   const Mesh::Triangle* t2 = *(++(edge->triangles.begin()));
 
-  const Vertex* I = &(edge->A());
-  const Vertex* J = &(edge->B());
-  const Vertex* K = &(t1->A());
+  const Mesh::Vertex* I = &(edge->A());
+  const Mesh::Vertex* J = &(edge->B());
+  const Mesh::Vertex* K = &(t1->A());
   if (K == I || K == J)
     K = &(t1->B());
   if (K == I || K == J)
     K = &(t1->C());
-  const Vertex* L = &(t2->A());
+  const Mesh::Vertex* L = &(t2->A());
   if (L == I || L == J)
     L = &(t2->B());
   if (L == I || L == J)
@@ -363,14 +340,14 @@ bool DelaunayDiscretizer::TestDelaunayCondition(Mesh::TriangleSet& illegalTriang
     const Mesh::Triangle* t1 = *((*edge).triangles.begin());
     const Mesh::Triangle* t2 = *(++((*edge).triangles.begin()));
 
-    const Vertex* I = &((*edge).A());
-    const Vertex* J = &((*edge).B());
-    const Vertex* K = &(t1->A());
+    const Mesh::Vertex* I = &((*edge).A());
+    const Mesh::Vertex* J = &((*edge).B());
+    const Mesh::Vertex* K = &(t1->A());
     if (K == I || K == J)
       K = &(t1->B());
     if (K == I || K == J)
       K = &(t1->C());
-    const Vertex* L = &(t2->A());
+    const Mesh::Vertex* L = &(t2->A());
     if (L == I || L == J)
       L = &(t2->B());
     if (L == I || L == J)
@@ -399,8 +376,6 @@ bool DelaunayDiscretizer::TestDelaunayCondition(Mesh::TriangleSet& illegalTriang
       illegalTriangles.insert(t2);
     }
   }
-  // if (!illegalTriangles.empty())
-  //   throw(std::domain_error("Illegal triangles"));
   return illegalTriangles.empty();
 }
 

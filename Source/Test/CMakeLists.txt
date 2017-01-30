@@ -30,4 +30,9 @@ add_executable( MeshedPolygon MeshedPolygon.cc )
 target_link_libraries(MeshedPolygon LINK_PUBLIC
   DelaunayShape DelaunayMesh DelaunayDiscretization DelaunayVisualization)
 
+list (APPEND APPLICATIONS RandomRefinedPolygon)
+add_executable( RandomRefinedPolygon RandomRefinedPolygon.cc )
+target_link_libraries(RandomRefinedPolygon LINK_PUBLIC
+  DelaunayShape DelaunayMesh DelaunayDiscretization DelaunayVisualization)
+
 install (TARGETS ${APPLICATIONS} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
