@@ -84,8 +84,12 @@ void DelaunayDiscretizer::AddInteriorPoint(const Point& p,
 
   if (containingTriangle)
   {
-    const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(p)).first;
-    SplitTriangle(containingTriangle, &vtx, mesh);
+    auto result = this->GetVertices(mesh).emplace(p);
+    const Mesh::Vertex& vtx = *result.first;
+    if (result.second)
+    {
+      SplitTriangle(containingTriangle, &vtx, mesh);
+    }
   }
 }
 
