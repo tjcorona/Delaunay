@@ -1,3 +1,19 @@
+/******************************************************************************
+
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
 #include "Shape/Point.hh"
 #include "Shape/BezierCurve.hh"
 
@@ -16,29 +32,23 @@ int main(int /*argc*/,char** /*argv*/)
   // create a canvas with x span from -5 to 5, and y span from -5 to 5
   Visualization::CVCanvas canvas(0.,10.,0.,10.);
 
-  // create a curve
-  Shape::BezierCurve c;
-  c.Closed(true);
-
   const unsigned nPoints = 5;
 
-  // double radius = 4.;
-
-  // for (unsigned i=0;i<nPoints;i++)
-  // {
-  //   double theta = 2.*M_PI*((double)i)/nPoints;
-  //   DTPoint p(5.+radius*cos(theta),5.+radius*sin(theta));
-  //   canvas.Draw(p,Black);
-  //   c.AddPoint(p);
-  // }
+  std::vector<Shape::Point> bPoints;
 
   for (unsigned i=0;i<nPoints;i++)
   {
     Shape::Point p(Misc::Random::GetInstance().Uniform(1000)/100.,
 		   Misc::Random::GetInstance().Uniform(1000)/100.);
     canvas.Draw(p,Black);
-    c.AddPoint(p);
+    bPoints.push_back(p);
   }
+
+  // create a point vector from the above-defined Bezier points
+  Shape::PointVector points(bPoints.begin(),bPoints.end());
+
+  // create a closed Bezier curve from the point vector
+  Shape::BezierCurve c(points,false);
 
   // draw the curve
   canvas.Draw(c,Red);

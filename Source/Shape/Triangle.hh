@@ -1,3 +1,19 @@
+/******************************************************************************
+
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
 #ifndef DELAUNAY_SHAPE_TRIANGLE_HH
 #define DELAUNAY_SHAPE_TRIANGLE_HH
 
@@ -14,49 +30,12 @@ namespace Shape
 class Triangle
 {
 public:
-  bool Contains(const Point& p) const;
-
-  class Edge;
-  typedef std::set<const Triangle*> TriangleSet;
-  typedef std::set<const Edge*> EdgeSet;
-
-  class Vertex : public Point
-  {
-  public:
-    Vertex(const Point& p) : Point(p) {}
-    Vertex(double x,double y) : Point(x,y) {}
-
-    mutable TriangleSet triangles;
-    mutable EdgeSet edges;
-  };
-
-  class Edge : public LineSegment
-  {
-  public:
-    Edge(const Vertex& p1, const Vertex& p2) : LineSegment(p2,p2),
-					       A(p1), B(p2)
-    {
-      A.edges.insert(this);
-      B.edges.insert(this);
-    }
-
-    ~Edge()
-    {
-      A.edges.erase(this);
-      B.edges.erase(this);
-    }
-
-    mutable TriangleSet triangles;
-    const Vertex& A;
-    const Vertex& B;
-  };
-
-  Triangle(const Vertex&,const Vertex&,const Vertex&);
-  ~Triangle();
+  Triangle(const LineSegment&,const LineSegment&,const LineSegment&);
+  ~Triangle() {}
 
   friend bool operator==(const Triangle& t1,const Triangle& t2)
   {
-    return (t1.A == t2.A && t1.B == t2.B && t1.C == t2.C);
+    return (t1.AB == t2.AB && t1.BC == t2.BC && t1.AC == t2.AC);
   }
 
   friend bool operator!=(const Triangle& t1,const Triangle& t2)
@@ -66,7 +45,8 @@ public:
 
   friend bool operator<(const Triangle& t1,const Triangle& t2)
   {
-    return (t1.A!=t2.A ? t1.A<t2.A : (t1.B!=t2.B ? t1.B<t2.B : t1.C<t2.C));
+    return (t1.AB!=t2.AB ? t1.AB<t2.AB :
+	    (t1.BC!=t2.BC ? t1.BC<t2.BC : t1.AC<t2.AC));
   }
 
   friend bool operator>=(const Triangle& t1,const Triangle& t2)
@@ -76,7 +56,8 @@ public:
 
   friend bool operator>(const Triangle& t1,const Triangle& t2)
   {
-    return (t1.A!=t2.A ? t1.A>t2.A : (t1.B!=t2.B ? t1.B>t2.B : t1.C>t2.C));
+    return (t1.AB!=t2.AB ? t1.AB>t2.AB :
+	    (t1.BC!=t2.BC ? t1.BC>t2.BC : t1.AC>t2.AC));
   }
 
   friend bool operator<=(const Triangle& t1,const Triangle& t2)
@@ -84,18 +65,19 @@ public:
     return !(t1>t2);
   }
 
-  const Vertex& A;
-  const Vertex& B;
-  const Vertex& C;
-  const Edge& AB;
-  const Edge& BC;
-  const Edge& AC;
+  friend std::ostream& operator<<(std::ostream& s,const Triangle& t)
+  {
+    s<<"("<< t.AB<<","<<t.AC<<","<<t.BC<<")";
+    return s;
+  }
+
+  const LineSegment& AB;
+  const LineSegment& AC;
+  const LineSegment& BC;
 
   Point circumcenter;
   double circumradius;
 
-private:
-  Point ComputeCircumcenter() const;
 };
 
 }

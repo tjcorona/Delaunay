@@ -1,153 +1,65 @@
-#include "Triangle.hh"
+/******************************************************************************
 
-namespace Delaunay
-{
-namespace Shape
-{
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
+#include "Shape/Triangle.hh"
+
+#include "Shape/PointUtilities.hh"
+
+#include <iostream>
 
 namespace
 {
-  const Triangle::Vertex* orderedVertices[3];
-  const Triangle::Edge* orderedEdges[3];
+  typedef Delaunay::Shape::Point Point;
+  typedef Delaunay::Shape::LineSegment LineSegment;
 
-  const Triangle::Vertex& OrderTriangleElements(const Triangle::Vertex& p1,
-						const Triangle::Vertex& p2,
-						const Triangle::Vertex& p3)
+  const LineSegment& First(const LineSegment& a,
+			   const LineSegment& b,
+			   const LineSegment& c)
   {
-    // First vertex: smallest, according to defined ordering
-    // Second, third vertices: counterclockwise ordering
-
-    if (p1 < p2 && p1 < p3)
-    {
-      orderedVertices[0] = &p1;
-      orderedVertices[1] = &p2;
-      orderedVertices[2] = &p3;
-    }
-    else if (p2 < p1 && p2 < p3)
-    {
-      orderedVertices[0] = &p2;
-      orderedVertices[1] = &p1;
-      orderedVertices[2] = &p3;
-    }
-    else
-    {
-      orderedVertices[0] = &p3;
-      orderedVertices[1] = &p1;
-      orderedVertices[2] = &p2;
-    }
-
-    Point v1 = *orderedVertices[1] - *orderedVertices[0];
-    Point v2 = *orderedVertices[2] - *orderedVertices[0];
-    if (v1.x*v2.y < v1.y*v2.x)
-    {
-      const Triangle::Vertex* tmp = orderedVertices[1];
-      orderedVertices[1] = orderedVertices[2];
-      orderedVertices[2] = tmp;
-    }
-
-    typedef Triangle::Edge Edge;
-    typedef Triangle::EdgeSet EdgeSet;
-
-    // Set AB
-    {
-      orderedEdges[0] = NULL;
-      EdgeSet& edges = orderedVertices[0]->edges;
-
-      for (EdgeSet::iterator it=edges.begin();it!=edges.end();++it)
-	if (&((*it)->A) == orderedVertices[1] ||
-	    &((*it)->B) == orderedVertices[1])
-	  orderedEdges[0] = *it;
-
-      if (!orderedEdges[0])
-	orderedEdges[0] = new Edge(*orderedVertices[0],*orderedVertices[1]);
-    }
-
-    // Set BC
-    {
-      orderedEdges[1] = NULL;
-      EdgeSet& edges = orderedVertices[1]->edges;
-
-      for (EdgeSet::iterator it=edges.begin();it!=edges.end();++it)
-	if (&((*it)->A) == orderedVertices[2] ||
-	    &((*it)->B) == orderedVertices[2])
-	  orderedEdges[1] = *it;
-
-      if (!orderedEdges[1])
-	orderedEdges[1] = new Edge(*orderedVertices[1],*orderedVertices[2]);
-    }
-
-    // Set AC
-    {
-      orderedEdges[2] = NULL;
-      EdgeSet& edges = orderedVertices[0]->edges;
-
-      for (EdgeSet::iterator it=edges.begin();it!=edges.end();++it)
-	if (&((*it)->A) == orderedVertices[2] ||
-	    &((*it)->B) == orderedVertices[2])
-	  orderedEdges[2] = *it;
-
-      if (!orderedEdges[2])
-	orderedEdges[2] = new Edge(*orderedVertices[0],*orderedVertices[2]);
-    }
-
-    return *(orderedVertices[0]);
+    if (a < b) return (a < c ? a : c);
+    return (b < c ? b : c);
   }
-}
 
-Triangle::Triangle(const Triangle::Vertex& p1,
-		   const Triangle::Vertex& p2,
-		   const Triangle::Vertex& p3) :
-  A(OrderTriangleElements(p1,p2,p3)),
-  B(*(orderedVertices[1])),
-  C(*(orderedVertices[2])),
-  AB(*(orderedEdges[0])),
-  BC(*(orderedEdges[1])),
-  AC(*(orderedEdges[2])),
-  circumcenter(ComputeCircumcenter()),
-  circumradius(circumcenter.Distance(A))
+  const LineSegment& Second(const LineSegment& a,
+			    const LineSegment& b,
+			    const LineSegment& c)
+  {
+    if (a > b)
+    {
+      if (c > a) return a;
+      return (b > c ? b : c);
+    }
+
+    if (a > c) return a;
+    return (b > c ? c : b);
+  }
+
+  const LineSegment& Third(const LineSegment& a,
+			   const LineSegment& b,
+			   const LineSegment& c)
+  {
+    if (a > b) return (a > c ? a : c);
+    return (b > c ? b : c);
+  }
+
+Point ComputeCircumcenter(const LineSegment& ls1, const LineSegment& ls2)
 {
-  A.triangles.insert(this);
-  B.triangles.insert(this);
-  C.triangles.insert(this);
-  AB.triangles.insert(this);
-  BC.triangles.insert(this);
-  AC.triangles.insert(this);
-}
-
-Triangle::~Triangle()
-{
-  A.triangles.erase(this);
-  B.triangles.erase(this);
-  C.triangles.erase(this);
-  AB.triangles.erase(this);
-  if (AB.triangles.empty()) delete &AB;
-  BC.triangles.erase(this);
-  if (BC.triangles.empty()) delete &BC;
-  AC.triangles.erase(this);
-  if (AC.triangles.empty()) delete &AC;
-}
-
-bool Triangle::Contains(const Point& p) const
-{
-  double abx = B.x - A.x;
-  double aby = B.y - A.y;
-  double acx = C.x - A.x;
-  double acy = C.y - A.y;
-  double apx = p.x - A.x;
-  double apy = p.y - A.y;
-
-  double a = abx/aby;
-  double b = acx - a*acy;
-  double c = apx - a*apy;
-
-  double t = c/b;
-  double s = apy/aby - (acy/aby)*t;
-
-  return (s >= 0.&& t >= 0. && (s + t) <= 1.);
-}
-
-Point Triangle::ComputeCircumcenter() const
-{
+  const Point& A = ls1.A;
+  const Point& B = ls1.B;
+  const Point& C = (ls2.A == A || ls2.A == B ? ls2.B : ls2.A);
   double D = 2.*(A.x*(B.y - C.y) + B.x*(C.y - A.y) + C.x*(A.y - B.y));
 
   Point U(((A.x*A.x + A.y*A.y)*(B.y-C.y) +
@@ -157,6 +69,21 @@ Point Triangle::ComputeCircumcenter() const
 	   (B.x*B.x + B.y*B.y)*(A.x-C.x) +
 	   (C.x*C.x + C.y*C.y)*(B.x-A.x))/D);
   return U;
+}
+}
+
+namespace Delaunay
+{
+namespace Shape
+{
+
+Triangle::Triangle(const LineSegment& ab,
+		   const LineSegment& ac,
+		   const LineSegment& bc) :
+  AB(First(ab,bc,ac)), AC(Second(ab,bc,ac)), BC(Third(ab,bc,ac)),
+  circumcenter(ComputeCircumcenter(ab,ac))
+{
+  this->circumradius = Distance(this->circumcenter,AB.A);
 }
 
 }

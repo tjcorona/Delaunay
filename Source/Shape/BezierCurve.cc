@@ -1,3 +1,19 @@
+/******************************************************************************
+
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
 #include "BezierCurve.hh"
 
 #include "Point.hh"
@@ -7,11 +23,17 @@ namespace Delaunay
 namespace Shape
 {
 
+BezierCurve::BezierCurve(const PointVector& pts, bool closed) :
+  ParametricCurve(closed), Points(pts)
+{
+
+}
+
 const Point BezierCurve::operator() (double t) const
 {
-  std::vector<Point> v1 = points;
-  if (Closed())
-    v1.push_back(Point(points.front()));
+  std::vector<Point> v1(this->Points.begin(),this->Points.end());
+  if (this->Closed)
+    v1.push_back(Point(this->Points.front()));
   std::vector<Point> v2;
 
   return RecursiveBezier(t,v1,v2);
@@ -30,10 +52,10 @@ const Point BezierCurve::RecursiveBezier(double t,std::vector<Point>& v1,std::ve
     return v2[0];
 }
 
-std::vector<Point> BezierCurve::C1Continuity() const
-{
+// std::vector<Point> BezierCurve::C1Continuity() const
+// {
 
-}
+// }
 
 }
 }

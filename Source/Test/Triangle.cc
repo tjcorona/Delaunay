@@ -1,9 +1,26 @@
+/******************************************************************************
+
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
 #include <opencv2/opencv.hpp>
 
 #include "Misc/Random.hh"
 
 #include "Shape/Circle.hh"
 #include "Shape/Triangle.hh"
+#include "Shape/TriangleUtilities.hh"
 
 #include "Visualization/Color.hh"
 #include "Visualization/CVCanvas.hh"
@@ -18,25 +35,26 @@ int main(int /*argc*/,char** /*argv*/)
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
   Visualization::CVCanvas canvas(0.,10.,0.,10.);
 
-  // create three vertices
-  Shape::Triangle::Vertex A(Misc::Random::GetInstance().Uniform(1000)/100.,
-			    Misc::Random::GetInstance().Uniform(1000)/100.);
-  Shape::Triangle::Vertex B(Misc::Random::GetInstance().Uniform(1000)/100.,
-			    Misc::Random::GetInstance().Uniform(1000)/100.);
-  Shape::Triangle::Vertex C(Misc::Random::GetInstance().Uniform(1000)/100.,
-			    Misc::Random::GetInstance().Uniform(1000)/100.);
+  // create three points
+  Shape::Point A(Misc::Random::GetInstance().Uniform(1000)/100.,
+		 Misc::Random::GetInstance().Uniform(1000)/100.);
+  Shape::Point B(Misc::Random::GetInstance().Uniform(1000)/100.,
+		 Misc::Random::GetInstance().Uniform(1000)/100.);
+  Shape::Point C(Misc::Random::GetInstance().Uniform(1000)/100.,
+		 Misc::Random::GetInstance().Uniform(1000)/100.);
 
-  // Shape::Triangle::Vertex A(1.,1.);
-  // Shape::Triangle::Vertex B(1.,9.);
-  // Shape::Triangle::Vertex C(9.,1.);
+  // create three line segments from these three points
+  Shape::LineSegment AB(A,B);
+  Shape::LineSegment BC(B,C);
+  Shape::LineSegment AC(A,C);
 
-  // create a triangle from these three verties
-  Shape::Triangle triangle(A,B,C);
+  // create a triangle from these three line segments
+  Shape::Triangle triangle(AB,BC,AC);
 
-  // print the triangle's vertices
-  std::cout<<"vertex A: "<<triangle.A<<std::endl;
-  std::cout<<"vertex B: "<<triangle.B<<std::endl;
-  std::cout<<"vertex C: "<<triangle.C<<std::endl;
+  // print the triangle's line segments
+  std::cout<<"line segment AB: "<<triangle.AB<<std::endl;
+  std::cout<<"line segment BC: "<<triangle.BC<<std::endl;
+  std::cout<<"line segment AC: "<<triangle.AC<<std::endl;
 
   // draw the three points onto the canvas
   canvas.Draw(A,Green);
@@ -58,7 +76,7 @@ int main(int /*argc*/,char** /*argv*/)
     Shape::Point p(Misc::Random::GetInstance().Uniform(1000)/100.,
 		   Misc::Random::GetInstance().Uniform(1000)/100.);
 
-    if (triangle.Contains(p))
+    if (Contains(triangle,p))
       canvas.Draw(p,Green);
     else
       canvas.Draw(p,Black);

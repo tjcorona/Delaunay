@@ -1,3 +1,19 @@
+/******************************************************************************
+
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
 #ifndef DELAUNAY_SHAPE_POINT_HH
 #define DELAUNAY_SHAPE_POINT_HH
 
@@ -5,7 +21,9 @@
 // #define GRIDRES 8
 
 #include <cmath>
+#include <functional>
 #include <ostream>
+#include <vector>
 
 namespace Delaunay
 {
@@ -26,14 +44,9 @@ public:
 
   Point(double xx,double yy) : x(ToGrid(xx)), y(ToGrid(yy)) {}
 
-  double Distance(const Point& p) const { return sqrt((x-p.x)*(x-p.x) + (y-p.y)*(y-p.y)); }
-
-  const double x;
-  const double y;
-
   friend bool operator==(const Point& p1,const Point& p2)
   {
-    return (fabs(p1.x - p2.x) < EPSILON && fabs(p1.y - p2.y) < EPSILON);
+    return (std::abs(p1.x - p2.x) < EPSILON && std::abs(p1.y - p2.y) < EPSILON);
   }
 
   friend bool operator!=(const Point& p1,const Point& p2)
@@ -86,17 +99,17 @@ public:
     return Point(p1.x - p2.x,p1.y - p2.y);
   }
 
-  friend double Dot(const Point& p1,const Point& p2)
-  {
-    return p1.x*p2.x + p1.y*p2.y;
-  }
-
   friend std::ostream& operator<<(std::ostream& s,const Point& p)
   {
     s<<"("<< p.x<<","<<p.y<<")";
     return s;
   }
+
+  const double x;
+  const double y;
 };
+
+typedef std::vector<std::reference_wrapper<const Point> > PointVector;
 
 }
 }

@@ -1,9 +1,27 @@
+/******************************************************************************
+
+  This source file is part of the Delaunay project.
+
+  Copyright T.J. Corona
+
+  This source code is released under the New BSD License, (the "License").
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+******************************************************************************/
+
 #include "CVCanvas.hh"
 
 #include "Misc/Function.hh"
 
 #include "Shape/Circle.hh"
+#include "Shape/LineSegment.hh"
 #include "Shape/Point.hh"
+#include "Shape/PointUtilities.hh"
 #include "Shape/Triangle.hh"
 #include "Shape/Polygon.hh"
 #include "Shape/ParametricCurve.hh"
@@ -70,7 +88,7 @@ void CVCanvas::Draw(const Function& function, double* domain,
   cvp.x = (dim_x[0] + x)*conversionRatio;
   cvp.y = (dim_y[1] - y)*conversionRatio;
 
-  cv::vector<cv::Point> cvPointVec;
+  std::vector<cv::Point> cvPointVec;
 
   while (x <= dmn[1])
   {
@@ -121,18 +139,38 @@ void CVCanvas::Draw(const Point& point,const Color& color)
   PostDraw();
 }
 
+void CVCanvas::Draw(const LineSegment& lineSegment,const Color& color)
+{
+  SetAlpha(color.alpha);
+  cv::Mat* im = PreDraw();
+
+  const cv::Point points[2] = {PointToCVPoint(lineSegment.A),
+			       PointToCVPoint(lineSegment.B)};
+  if (points[0] == points[1])
+    return;
+
+  cv::line(*im,points[0],points[1],ColorToCVScalar(color),1,8);
+
+  PostDraw();
+}
+
 void CVCanvas::Draw(const Triangle& triangle,const Color& lineColor,
 		    const Color& fillColor)
 {
   if (!lineColor.alpha && !fillColor.alpha)
     return;
 
-  const cv::Point points[3] = {PointToCVPoint(triangle.A),
-			       PointToCVPoint(triangle.B),
-			       PointToCVPoint(triangle.C)};
+  const cv::Point points[3] = {PointToCVPoint(triangle.AB.A),
+			       PointToCVPoint(triangle.AB.B),
+			       PointToCVPoint(triangle.BC.B)};
+
+  if (points[0] == points[1] && points[0] == points[2])
+    return;
+
   cv::Mat* im;
 
-  if (fillColor.alpha)
+  if (fillColor.alpha && points[0] != points[1] &&
+      points[0] != points[2] && points[1] != points[2])
   {
     SetAlpha(fillColor.alpha);
     im = PreDraw();
@@ -151,9 +189,16 @@ void CVCanvas::Draw(const Triangle& triangle,const Color& lineColor,
 
   if (lineColor.alpha)
   {
-    cv::line(*im,points[0],points[1],ColorToCVScalar(lineColor),1,8);
-    cv::line(*im,points[1],points[2],ColorToCVScalar(lineColor),1,8);
-    cv::line(*im,points[2],points[0],ColorToCVScalar(lineColor),1,8);
+    if (points[0] == points[1])
+      cv::line(*im,points[0],points[2],ColorToCVScalar(lineColor),1,8);
+    else if (points[0] == points[2] || points[1] == points[2])
+      cv::line(*im,points[0],points[1],ColorToCVScalar(lineColor),1,8);
+    else
+    {
+      cv::line(*im,points[0],points[1],ColorToCVScalar(lineColor),1,8);
+      cv::line(*im,points[1],points[2],ColorToCVScalar(lineColor),1,8);
+      cv::line(*im,points[2],points[0],ColorToCVScalar(lineColor),1,8);
+    }
   }
 
   PostDraw();
@@ -166,10 +211,10 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
     return;
 
   std::vector<cv::Point> points;
-  const unsigned size = polygon.Vertices.size();
+  const unsigned size = polygon.GetPoints().size();
   for (unsigned i=0;i<size;i++)
   {
-    points.push_back(PointToCVPoint(polygon.Vertices[i]));
+    points.push_back(PointToCVPoint(polygon.GetPoints()[i]));
   }
 
   cv::Mat* im;
@@ -214,8 +259,8 @@ void CVCanvas::Draw(const Circle& circle,const Color& lineColor,
   {
     SetAlpha(fillColor.alpha);
     im = PreDraw();
-    cv::circle(*im,PointToCVPoint(circle.Center()),
-	       circle.Radius()*conversionRatio,ColorToCVScalar(lineColor),-1,8);
+    cv::circle(*im,PointToCVPoint(circle.Center),
+	       circle.Radius*conversionRatio,ColorToCVScalar(lineColor),-1,8);
     PostDraw();
     return;
   }
@@ -224,8 +269,8 @@ void CVCanvas::Draw(const Circle& circle,const Color& lineColor,
   {
     SetAlpha(fillColor.alpha);
     im = PreDraw();
-    cv::circle(*im,PointToCVPoint(circle.Center()),
-	       circle.Radius()*conversionRatio,ColorToCVScalar(fillColor),-1,8);
+    cv::circle(*im,PointToCVPoint(circle.Center),
+	       circle.Radius*conversionRatio,ColorToCVScalar(fillColor),-1,8);
 
     if (lineColor.alpha != fillColor.alpha)
       PostDraw();
@@ -238,8 +283,8 @@ void CVCanvas::Draw(const Circle& circle,const Color& lineColor,
       SetAlpha(lineColor.alpha);
       im = PreDraw();
     }
-    cv::circle(*im,PointToCVPoint(circle.Center()),
-	       circle.Radius()*conversionRatio,ColorToCVScalar(lineColor),1,8);
+    cv::circle(*im,PointToCVPoint(circle.Center),
+	       circle.Radius*conversionRatio,ColorToCVScalar(lineColor),1,8);
     PostDraw();
   }
 }
@@ -266,7 +311,7 @@ void CVCanvas::Draw(const ParametricCurve& curve,const Color& color)
     while (step>min_step)
     {
       Point p = curve(t+step_t);
-      step = p.Distance(pointVec.back());
+      step = Distance(p,pointVec.back());
       step_t *= .5;
     }
     t += step_t;
@@ -275,7 +320,7 @@ void CVCanvas::Draw(const ParametricCurve& curve,const Color& color)
 
   pointVec.push_back(Point(curve(1.)));
 
-  cv::vector<cv::Point> cvPointVec;
+  std::vector<cv::Point> cvPointVec;
   for (size_t i=0;i<pointVec.size();i++)
     cvPointVec.push_back(PointToCVPoint(pointVec.at(i)));
   const cv::Point *pts = (const cv::Point*) cv::Mat(cvPointVec).data;
