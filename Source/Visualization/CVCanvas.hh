@@ -18,6 +18,7 @@ class Function;
 namespace Shape
 {
 class Circle;
+class LineSegment;
 class ParametricCurve;
 class Point;
 class Polygon;
@@ -41,6 +42,7 @@ public:
   void Draw(const Misc::Function&,double* =NULL,const Color& color=Blue);
 
   void Draw(const Shape::Point&,const Color& color=Green);
+  void Draw(const Shape::LineSegment&,const Color& color=Orange);
   void Draw(const Shape::Triangle&,const Color& lineColor=Green,
 	    const Color& fillColor=Clear);
   void Draw(const Shape::Polygon&,const Color& lineColor=Red,

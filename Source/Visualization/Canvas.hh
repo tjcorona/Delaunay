@@ -12,6 +12,7 @@ class Function;
 namespace Shape
 {
 class Circle;
+class LineSegment;
 class ParametricCurve;
 class Point;
 class Polygon;
@@ -31,6 +32,7 @@ public:
   virtual void Draw(const Misc::Function&,double*,const Color&) = 0;
 
   virtual void Draw(const Shape::Point&,const Color&) = 0;
+  virtual void Draw(const Shape::LineSegment&,const Color&) = 0;
   virtual void Draw(const Shape::Triangle&,const Color&,const Color&) = 0;
   virtual void Draw(const Shape::Polygon&,const Color&,const Color&) = 0;
   virtual void Draw(const Shape::Circle&,const Color&,const Color&) = 0;
