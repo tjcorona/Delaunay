@@ -127,8 +127,9 @@ namespace
     do
     {
       if (p1!=v && p1!=w && p2!=v && p2!=w &&
-	  Delaunay::Shape::Intersect(Delaunay::Shape::LineSegment(**v,**w),
-				     Delaunay::Shape::LineSegment(**p1,**p2)))
+	  Delaunay::Shape::IntersectOrCoincident(
+	    Delaunay::Shape::LineSegment(**v,**w),
+	    Delaunay::Shape::LineSegment(**p1,**p2)))
     	return false;
       p1 = p2;
       p2 = r.next(p2);

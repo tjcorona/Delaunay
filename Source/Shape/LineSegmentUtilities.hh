@@ -38,6 +38,9 @@ bool Coincident(const LineSegment& l1,const LineSegment& l2);
 // Do the two line segments intersect?
 bool Intersect(const LineSegment& l1,const LineSegment& l2);
 
+// Do the two line segments intersect or touch?
+bool IntersectOrCoincident(const LineSegment& l1,const LineSegment& l2);
+
 // Return a closest point on the first line segment to the second line
 // segment.
 Point ClosestPoint(const LineSegment& l1,const LineSegment& l2);

@@ -105,6 +105,11 @@ bool Intersect(const LineSegment& l1, const LineSegment& l2)
   return Intersect_(l1,l2) == 1;
 }
 
+bool IntersectOrCoincident(const LineSegment& l1, const LineSegment& l2)
+{
+  return Intersect_(l1,l2) != 0;
+}
+
 Point ClosestPoint(const LineSegment& l1, const LineSegment& l2)
 {
   Point l2Bml2A = l2.B - l2.A;
