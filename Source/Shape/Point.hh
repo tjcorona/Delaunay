@@ -18,7 +18,7 @@
 #define DELAUNAY_SHAPE_POINT_HH
 
 #define EPSILON 1.e-12
-// #define GRIDRES 8
+// #define GRIDRES 14
 
 #include <cmath>
 #include <functional>

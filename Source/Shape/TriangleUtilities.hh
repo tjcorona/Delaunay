@@ -62,6 +62,17 @@ inline bool Intersect(const Triangle& t, const LineSegment& l)
   return Intersect(l,t);
 }
 
+// Do the two line segments intersect or touch?
+bool IntersectOrCoincident(const LineSegment& l, const Triangle& t);
+inline bool IntersectOrCoincident(const Triangle& t, const LineSegment& l)
+{
+  return IntersectOrCoincident(l,t);
+}
+
+// Do a line segment and a triangle intersect? If so, how many times and where?
+std::tuple<unsigned, Point, Point> Intersection(const LineSegment&, const Triangle&);
+std::tuple<unsigned, Point, Point> Intersection(const Triangle&, const LineSegment&);
+
 // Return the closest point on a triangle to a line segment.
 // NOPE: the parameter order should determine the shape on which the returned point lies
 Point ClosestPoint(const LineSegment& l,const Triangle& t);

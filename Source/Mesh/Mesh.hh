@@ -22,7 +22,7 @@
 #include "Mesh/Vertex.hh"
 #include "Mesh/Edge.hh"
 #include "Mesh/Triangle.hh"
-#include "Mesh/Polygon.hh"
+#include "Shape/Polygon.hh"
 
 namespace Delaunay
 {

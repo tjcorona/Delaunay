@@ -40,6 +40,19 @@ public:
   bool   Contains(const Point& p) const;
   double Distance(const Point& p) const;
 
+  friend bool operator<(const Polygon& p1,const Polygon& p2)
+  {
+    if (p1.Points.size() != p2.Points.size())
+      return p1.Points.size() < p2.Points.size();
+
+    for (unsigned i=0;i<p1.Points.size();i++)
+    {
+      if (p1.Points[i] != p2.Points[i])
+	return p1.Points[i] < p2.Points[i];
+    }
+    return false;
+  }
+
 protected:
   PointVector Points;
 };

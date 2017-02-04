@@ -81,9 +81,8 @@ Triangle::Triangle(const LineSegment& ab,
 		   const LineSegment& ac,
 		   const LineSegment& bc) :
   AB(First(ab,bc,ac)), AC(Second(ab,bc,ac)), BC(Third(ab,bc,ac)),
-  circumcenter(ComputeCircumcenter(ab,ac))
+  circumcircle(ComputeCircumcenter(ab,ac), ab.A)
 {
-  this->circumradius = Distance(this->circumcenter,AB.A);
 }
 
 }

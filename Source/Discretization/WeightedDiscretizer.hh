@@ -14,31 +14,35 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_SHAPE_CIRCLE_HH
-#define DELAUNAY_SHAPE_CIRCLE_HH
+#ifndef DELAUNAY_DISCRETIZATION_WEIGHTEDDISCRETIZER_HH
+#define DELAUNAY_DISCRETIZATION_WEIGHTEDDISCRETIZER_HH
 
-#include "Point.hh"
-#include "PointUtilities.hh"
+#include <functional>
+
+#include "Shape/Point.hh"
+#include "Shape/Polygon.hh"
+#include "Mesh/Mesh.hh"
+#include "Mesh/Mesher.hh"
 
 namespace Delaunay
 {
-namespace Shape
+namespace Discretization
 {
 
-class Circle
+typedef std::function<double(const Shape::Point&)> WeightFunction;
+
+class WeightedDiscretizer : public Mesh::Mesher
 {
 public:
-  Circle(const Point& c, double r) : Center(c), Radius(r) {}
-  Circle(const Point& c, const Point& p) : Center(c), Radius(Distance(c,p)) {}
+  WeightedDiscretizer();
+  WeightedDiscretizer(const WeightFunction&);
 
-  friend std::ostream& operator<<(std::ostream& s,const Circle& c)
-  {
-    s<<c.Center<<", "<<c.Radius;
-    return s;
-  }
+  void SetWeightFunction(const WeightFunction& w) { this->W = w; }
 
-  const Point Center;
-  const double Radius;
+  void Mesh(const Delaunay::Shape::Polygon&, Delaunay::Mesh::Mesh&);
+
+protected:
+  WeightFunction W;
 };
 
 }

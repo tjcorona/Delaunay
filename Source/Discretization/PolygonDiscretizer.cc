@@ -35,13 +35,20 @@ void PolygonDiscretizer::Mesh(const Delaunay::Shape::Polygon& polygon,
 			      Delaunay::Mesh::Mesh& mesh)
 {
   Shape::PointVector vec;
+  const Mesh::Vertex* firstVtx = nullptr;
+  const Mesh::Vertex* previousVtx = nullptr;
   for (Shape::PointVector::const_iterator it=polygon.GetPoints().begin();
        it!= polygon.GetPoints().end();++it)
   {
     const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(*it)).first;
+    if (!firstVtx)
+      firstVtx = &vtx;
+    if (previousVtx)
+      this->GetEdges(mesh).emplace(*previousVtx, vtx, true);
     vec.push_back(std::cref(static_cast<const Shape::Point&>(vtx)));
+    previousVtx = &vtx;
   }
-
+  this->GetEdges(mesh).emplace(*previousVtx, *firstVtx, true);
   this->GetPerimeter(mesh).SetPoints(vec);
 
   return this->EarCuttingMethod(mesh);

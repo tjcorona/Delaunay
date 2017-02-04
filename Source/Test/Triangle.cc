@@ -65,9 +65,10 @@ int main(int /*argc*/,char** /*argv*/)
   canvas.Draw(triangle,Green);
 
   // draw the circumcenter and circumcircle onto the canvas
-  canvas.Draw(triangle.circumcenter,Red);
+  canvas.Draw(triangle.circumcircle.Center,Red);
   Color faintRed(255,0,0,128);
-  canvas.Draw(Shape::Circle(triangle.circumcenter,triangle.circumradius),Red,faintRed);
+  // canvas.Draw(Shape::Circle(triangle.circumcircle.Center,triangle.circumcircle.Radius),Red,faintRed);
+  canvas.Draw(triangle.circumcircle,Red,faintRed);
 
   // canvas.Update();
 
