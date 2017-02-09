@@ -21,6 +21,7 @@
 
 #include "Point.hh"
 #include "LineSegment.hh"
+#include "Circle.hh"
 
 namespace Delaunay
 {
@@ -75,9 +76,7 @@ public:
   const LineSegment& AC;
   const LineSegment& BC;
 
-  Point circumcenter;
-  double circumradius;
-
+  const Circle circumcircle;
 };
 
 }

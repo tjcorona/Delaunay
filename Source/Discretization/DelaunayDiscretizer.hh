@@ -17,8 +17,6 @@
 #ifndef DELAUNAY_DISCRETIZATION_DELAUNAYDISCRETIZER_HH
 #define DELAUNAY_DISCRETIZATION_DELAUNAYDISCRETIZER_HH
 
-#include <deque>
-
 #include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
 #include "Mesh/TriangleSet.hh"
@@ -39,12 +37,16 @@ public:
   void Mesh(const Delaunay::Shape::Polygon&, Delaunay::Mesh::Mesh&);
 
   void AddPerimeterPoint(const Point&, Delaunay::Mesh::Mesh&);
-  void AddInteriorPoint(const Point&, Delaunay::Mesh::Mesh&);
+  const Mesh::Vertex* AddInteriorPoint(const Point&, Delaunay::Mesh::Mesh&);
 
   bool TestDelaunayCondition(Mesh::TriangleSet& illegalTriangles,
 			     const Delaunay::Mesh::Mesh&) const;
 
 private:
+  void AddPerimeter(const Delaunay::Shape::Polygon&,
+		    Delaunay::Mesh::Mesh&);
+  std::vector<const Mesh::Edge*> AddEdge(const Point&, const Point&,
+                                         Delaunay::Mesh::Mesh&);
   void ConstructInitialMeshFromBoundaries(Delaunay::Mesh::Mesh&);
   const Mesh::Triangle* FindContainingTriangle(const Point& p,
 					 Delaunay::Mesh::Mesh&) const;

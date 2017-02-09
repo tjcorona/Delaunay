@@ -14,31 +14,28 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_SHAPE_CIRCLE_HH
-#define DELAUNAY_SHAPE_CIRCLE_HH
+#ifndef DELAUNAY_DISCRETIZATION_POLYGONEXCISER_HH
+#define DELAUNAY_DISCRETIZATION_POLYGONEXCISER_HH
 
-#include "Point.hh"
-#include "PointUtilities.hh"
+#include "Shape/Point.hh"
+#include "Mesh/Mesher.hh"
+#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
-namespace Shape
+namespace Discretization
 {
 
-class Circle
+class PolygonExciser : public Mesh::Mesher
 {
 public:
-  Circle(const Point& c, double r) : Center(c), Radius(r) {}
-  Circle(const Point& c, const Point& p) : Center(c), Radius(Distance(c,p)) {}
+  typedef Shape::Point Point;
+  typedef Shape::Triangle Triangle;
 
-  friend std::ostream& operator<<(std::ostream& s,const Circle& c)
-  {
-    s<<c.Center<<", "<<c.Radius;
-    return s;
-  }
+  PolygonExciser() {}
 
-  const Point Center;
-  const double Radius;
+  std::set<const Mesh::Edge*> ExcisePolygon(const Delaunay::Shape::Polygon&,
+                                            Delaunay::Mesh::Mesh&);
 };
 
 }

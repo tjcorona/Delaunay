@@ -20,6 +20,8 @@
 #include "Shape/Point.hh"
 #include "Shape/PointUtilities.hh"
 
+#include <limits>
+
 namespace Delaunay
 {
 namespace Shape
@@ -35,7 +37,7 @@ bool Contains(const LineSegment& l, const Point& p)
     return false;
 
   double t = dot/len;
-  return (t >= 0. && t <= len);
+  return (t >= -EPSILON && t <= len + EPSILON);
 }
 
 double LengthSquared(const LineSegment& l)
@@ -68,7 +70,7 @@ bool OnLineSegment(const LineSegment& l, const Point& p)
 {
   if (l.A == p || l.B == p)
     return true;
-  else if (fabs(l.A.x - p.x) > EPSILON)
+  else if (std::abs(l.A.x - p.x) > EPSILON)
     return (l.A.x < p.x && l.B.x > p.x) || (l.B.x < p.x && l.A.x > p.x);
   else
     return (l.A.y < p.y && l.B.y > p.y) || (l.B.y < p.y && l.A.y > p.y);
@@ -126,6 +128,31 @@ bool IntersectOrCoincident(const LineSegment& l1, const LineSegment& l2)
   return Intersect_(l1,l2) != 0;
 }
 
+Point Intersection(const LineSegment& l1, const LineSegment& l2)
+{
+  double a1 = l1.B.y - l1.A.y;
+  double b1 = l1.A.x - l1.B.x;
+  double c1 = a1*l1.A.x + b1*l1.A.y;
+
+  double a2 = l2.B.y - l2.A.y;
+  double b2 = l2.A.x - l2.B.x;
+  double c2 = a2*l2.A.x + b2*l2.A.y;
+
+  double denom = a1*b2 - a2*b1;
+  if (std::abs(denom) < EPSILON)
+    return Point(std::numeric_limits<double>::quiet_NaN(),
+                 std::numeric_limits<double>::quiet_NaN());
+  else
+  {
+    Point p((b2*c1 - b1*c2)/denom, (a1*c2 - a2*c1)/denom);
+    if (!Contains(l1,p) || !Contains(l2,p))
+      return Point(std::numeric_limits<double>::quiet_NaN(),
+                   std::numeric_limits<double>::quiet_NaN());
+    else
+      return p;
+  }
+}
+
 Point ClosestPoint(const LineSegment& l1, const LineSegment& l2)
 {
   Point l2Bml2A = l2.B - l2.A;
@@ -149,8 +176,8 @@ Point ClosestPoint(const LineSegment& l1, const LineSegment& l2)
   }
   else
   {
-  double s = (l2Bml2A.x*l2Aml1A.y - l2Aml1A.x*l2Bml2A.y)/denom;
-  return l1.A + std::max(0.,std::min(1.,s))*l1.B;
+    double s = (l2Bml2A.x*l2Aml1A.y - l2Aml1A.x*l2Bml2A.y)/denom;
+    return l1.A + std::max(0.,std::min(1.,s))*l1.B;
   }
 }
 

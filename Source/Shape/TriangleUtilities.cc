@@ -32,13 +32,11 @@ namespace Shape
 namespace
 {
 // return the parametric coordinates of a point wrt a triangle
-std::pair<double,double> ParametricCoordinates(const Triangle& tri,
+std::pair<double,double> ParametricCoordinates(const Point& A,
+					       const Point& B,
+					       const Point& C,
 					       const Point& p)
 {
-  const Point& A = tri.AB.A;
-  const Point& B = tri.AB.B;
-  const Point& C = tri.AC.B;
-
   Point BmA = B - A;
   Point CmA = C - A;
   Point pmA = p - A;
@@ -50,6 +48,15 @@ std::pair<double,double> ParametricCoordinates(const Triangle& tri,
   double t = c/b;
   double s = pmA.y/BmA.y - (CmA.y/BmA.y)*t;
   return std::make_pair(s,t);
+}
+
+std::pair<double,double> ParametricCoordinates(const Triangle& tri,
+					       const Point& p)
+{
+  // Avoid a divide-by-zero in the above function
+  return tri.AB.A.y != tri.AB.B.y ?
+    ParametricCoordinates(tri.AB.A,tri.AB.B,tri.AC.B,p) :
+    ParametricCoordinates(tri.AC.B,tri.AB.A,tri.AB.B,p);
 }
 }
 
@@ -118,6 +125,65 @@ bool Intersect(const LineSegment& l, const Triangle& t)
   return (Intersect(l,t.AB) ? true :
   	  Intersect(l,t.BC) ? true :
   	  Intersect(l,t.AC));
+}
+
+bool IntersectOrCoincident(const LineSegment& l, const Triangle& t)
+{
+  return (IntersectOrCoincident(l,t.AB) ? true :
+  	  IntersectOrCoincident(l,t.BC) ? true :
+  	  IntersectOrCoincident(l,t.AC));
+}
+
+std::tuple<unsigned, Point, Point> Intersection(const Triangle& t,
+                                                const LineSegment& l)
+{
+  return Intersection(l,t);
+}
+
+std::tuple<unsigned, Point, Point> Intersection(const LineSegment& l,
+                                                const Triangle& t)
+{
+  Point p[3] = {Intersection(l, t.AB),
+                Intersection(l, t.BC),
+                Intersection(l, t.AC)};
+
+  if (!std::isnan(p[0].x))
+  {
+    if (!std::isnan(p[1].x))
+      if (!std::isnan(p[2].x))
+        {
+          // one of the points must be a vertex
+          if (p[0] != p[1])
+            return std::make_tuple(2, p[0], p[1]);
+          else // p[0] != p[2]
+            return std::make_tuple(2, p[0], p[2]);
+        }
+      else if (p[0] != p[1])
+        return std::make_tuple(2, p[0], p[1]);
+    else
+      return std::make_tuple(1, p[0], p[2]);
+    else if (!std::isnan(p[2].x))
+      if (p[0] != p[2])
+        return std::make_tuple(2, p[0], p[2]);
+      else
+        return std::make_tuple(1, p[0], p[1]);
+    else
+      return std::make_tuple(1, p[0], p[1]);
+  }
+  else if (!std::isnan(p[1].x))
+  {
+    if (!std::isnan(p[2].x))
+      if (p[1] != p[2])
+        return std::make_tuple(2, p[1], p[2]);
+      else
+        return std::make_tuple(1, p[1], p[0]);
+    else
+      return std::make_tuple(1, p[1], p[0]);
+  }
+  else if (!std::isnan(p[2].x))
+    return std::make_tuple(1, p[2], p[0]);
+  else
+    return std::make_tuple(0, p[0], p[1]);
 }
 
 Point ClosestPoint(const LineSegment& l, const Triangle& t)

@@ -1,6 +1,9 @@
 set(Discretization_Source_Files
   DelaunayDiscretizer.cc
-  PolygonDiscretizer.cc)
+  EdgeInserter.cc
+  PolygonDiscretizer.cc
+  PolygonExciser.cc
+  WeightedDiscretizer.cc)
 
 add_library (DelaunayDiscretization SHARED ${Discretization_Source_Files})
 target_link_libraries (DelaunayDiscretization DelaunayShape DelaunayMesh)

@@ -14,33 +14,25 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_SHAPE_CIRCLE_HH
-#define DELAUNAY_SHAPE_CIRCLE_HH
+#ifndef DELAUNAY_SHAPE_CIRCLEUTILITIES_HH
+#define DELAUNAY_SHAPE_CIRCLEUTILITIES_HH
 
-#include "Point.hh"
-#include "PointUtilities.hh"
+#include <tuple>
 
 namespace Delaunay
 {
 namespace Shape
 {
+class Circle;
+class LineSegment;
+class Point;
 
-class Circle
-{
-public:
-  Circle(const Point& c, double r) : Center(c), Radius(r) {}
-  Circle(const Point& c, const Point& p) : Center(c), Radius(Distance(c,p)) {}
+// Does the point lie within the circle?
+bool Contains(const Circle&, const Point&);
 
-  friend std::ostream& operator<<(std::ostream& s,const Circle& c)
-  {
-    s<<c.Center<<", "<<c.Radius;
-    return s;
-  }
-
-  const Point Center;
-  const double Radius;
-};
-
+// Do a line segment and a circle intersect? If so, how many times and where?
+std::tuple<unsigned, Point, Point> Intersection(const LineSegment&, const Circle&);
+std::tuple<unsigned, Point, Point> Intersection(const Circle&, const LineSegment&);
 }
 }
 

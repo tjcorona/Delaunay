@@ -33,7 +33,8 @@ typedef std::set<const Triangle*> TriangleSet;
 class Edge : public Shape::LineSegment
 {
 public:
-  Edge(const Vertex& a, const Vertex& b) : LineSegment(a,b)
+  Edge(const Vertex& a, const Vertex& b, bool bndry = false) : LineSegment(a,b),
+							       boundary(bndry)
   {
     this->A().edges.insert(this);
     this->B().edges.insert(this);
@@ -53,6 +54,8 @@ public:
   {
     return static_cast<const Vertex&>(this->Shape::LineSegment::B);
   }
+
+  bool boundary;
 
   mutable TriangleSet triangles;
 };
