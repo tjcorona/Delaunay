@@ -16,7 +16,7 @@
 
 #include "Discretization/DelaunayDiscretizer.hh"
 
-#include "Discretization/PolygonDiscretizer.hh"
+#include "Discretization/DiscretizePolygon.hh"
 #include "Shape/CircleUtilities.hh"
 #include "Shape/PointUtilities.hh"
 #include "Shape/TriangleUtilities.hh"
@@ -113,8 +113,8 @@ void DelaunayDiscretizer::ConstructInitialMeshFromBoundaries(
   if (this->GetPerimeter(mesh).GetPoints().size() < 3)
     throw(std::domain_error("Too few perimeter elements"));
 
-  PolygonDiscretizer polygonDiscretizer;
-  polygonDiscretizer.Mesh(this->GetPerimeter(mesh), mesh);
+  DiscretizePolygon discretizePolygon;
+  discretizePolygon(this->GetPerimeter(mesh), mesh);
 
   if (GetTriangles(mesh).size() == 0)
     throw(std::domain_error("Polygon mesher failed"));

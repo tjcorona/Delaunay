@@ -14,8 +14,6 @@
 
 ******************************************************************************/
 
-#include <opencv2/opencv.hpp>
-
 #include "Visualization/Color.hh"
 #include "Visualization/CVCanvas.hh"
 #include "Misc/QuadraticFunction.hh"

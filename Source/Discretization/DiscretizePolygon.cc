@@ -14,7 +14,7 @@
 
 ******************************************************************************/
 
-#include "PolygonDiscretizer.hh"
+#include "DiscretizePolygon.hh"
 
 #include "Shape/PointUtilities.hh"
 #include "Shape/LineSegmentUtilities.hh"
@@ -31,8 +31,8 @@ namespace Delaunay
 {
 namespace Discretization
 {
-void PolygonDiscretizer::Mesh(const Delaunay::Shape::Polygon& polygon,
-			      Delaunay::Mesh::Mesh& mesh)
+void DiscretizePolygon::operator()(const Delaunay::Shape::Polygon& polygon,
+				   Delaunay::Mesh::Mesh& mesh)
 {
   Shape::PointVector vec;
   const Mesh::Vertex* firstVtx = nullptr;
@@ -163,7 +163,7 @@ namespace
   }
 }
 
-void PolygonDiscretizer::EarCuttingMethod(Delaunay::Mesh::Mesh& mesh)
+void DiscretizePolygon::EarCuttingMethod(Delaunay::Mesh::Mesh& mesh)
 {
   if (mesh.GetPerimeter().GetPoints().size() < 3)
     throw(std::domain_error("Too few perimeter elements"));
@@ -235,7 +235,7 @@ void PolygonDiscretizer::EarCuttingMethod(Delaunay::Mesh::Mesh& mesh)
   }
 }
 
-void PolygonDiscretizer::AddTriangleToMesh(Mesh::Mesh& mesh,
+void DiscretizePolygon::AddTriangleToMesh(Mesh::Mesh& mesh,
 					   const Mesh::Vertex* a,
 					   const Mesh::Vertex* b,
 					   const Mesh::Vertex* c)

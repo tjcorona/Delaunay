@@ -14,8 +14,8 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_EDGEINSERTER_HH
-#define DELAUNAY_DISCRETIZATION_EDGEINSERTER_HH
+#ifndef DELAUNAY_DISCRETIZATION_INSERTEEDGE_HH
+#define DELAUNAY_DISCRETIZATION_INSERTEEDGE_HH
 
 #include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
@@ -25,17 +25,17 @@ namespace Delaunay
 namespace Discretization
 {
 
-class EdgeInserter : public Mesh::Mesher
+class InsertEdge : public Mesh::Mesher
 {
 public:
-  EdgeInserter() {}
+  InsertEdge() {}
 
-  std::set<const Mesh::Edge*> InsertEdge(const Shape::LineSegment&,Mesh::Mesh&);
+  std::set<const Mesh::Edge*> operator()(const Shape::LineSegment&,Mesh::Mesh&);
 
 private:
 
-const Mesh::Edge* InsertEdge(const Shape::LineSegment&,
-                             const Mesh::Triangle&, Mesh::Mesh&);
+  const Mesh::Edge* InsertEdgeInTriangle(const Shape::LineSegment&,
+					 const Mesh::Triangle&, Mesh::Mesh&);
 
   std::set<const Mesh::Triangle*> FindContainingTriangles(const Shape::LineSegment&, Delaunay::Mesh::Mesh&) const;
 

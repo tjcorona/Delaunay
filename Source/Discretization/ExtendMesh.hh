@@ -14,33 +14,30 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_POLYGONDISCRETIZER_HH
-#define DELAUNAY_DISCRETIZATION_POLYGONDISCRETIZER_HH
+#ifndef DELAUNAY_DISCRETIZATION_EXTENDMESH_HH
+#define DELAUNAY_DISCRETIZATION_EXTENDMESH_HH
 
-#include <deque>
-
-#include "Shape/Polygon.hh"
+#include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
+#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
 namespace Discretization
 {
 
-class PolygonDiscretizer : public Mesh::Mesher
+class ExtendMesh : public Mesh::Mesher
 {
 public:
-  PolygonDiscretizer() {}
+  typedef Shape::Point Point;
+  typedef Shape::Triangle Triangle;
 
-  void Mesh(const Delaunay::Shape::Polygon&, Delaunay::Mesh::Mesh&);
+  ExtendMesh() {}
+
+  void operator()(const Point&, Delaunay::Mesh::Mesh&);
 
 private:
-  void EarCuttingMethod(Delaunay::Mesh::Mesh&);
-
-  void AddTriangleToMesh(Mesh::Mesh& mesh,
-			 const Mesh::Vertex* a,
-			 const Mesh::Vertex* b,
-			 const Mesh::Vertex* c);
+  void Extend(const Mesh::Vertex*, Delaunay::Mesh::Mesh&);
 };
 
 }

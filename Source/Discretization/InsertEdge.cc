@@ -14,7 +14,7 @@
 
 ******************************************************************************/
 
-#include "EdgeInserter.hh"
+#include "InsertEdge.hh"
 
 #include "Shape/LineSegment.hh"
 #include "Shape/LineSegmentUtilities.hh"
@@ -28,7 +28,7 @@ namespace Delaunay
 namespace Discretization
 {
 
-std::set<const Mesh::Edge*> EdgeInserter::InsertEdge(
+std::set<const Mesh::Edge*> InsertEdge::operator()(
   const Shape::LineSegment& l, Mesh::Mesh& mesh)
 {
   const Mesh::Triangle* t1 = this->FindContainingTriangle(l.A, mesh);
@@ -43,7 +43,7 @@ std::set<const Mesh::Edge*> EdgeInserter::InsertEdge(
 
   for (auto triangle : intersected)
   {
-    const Mesh::Edge* edge = this->InsertEdge(l, *triangle, mesh);
+    const Mesh::Edge* edge = this->InsertEdgeInTriangle(l, *triangle, mesh);
     if (edge != nullptr)
       insertedEdges.insert(edge);
   }
@@ -68,7 +68,7 @@ bool NeedsToSplit(const Shape::LineSegment& l, const Shape::Triangle& t)
 }
 }
 
-std::set<const Mesh::Triangle*> EdgeInserter::FindContainingTriangles(
+std::set<const Mesh::Triangle*> InsertEdge::FindContainingTriangles(
   const Shape::LineSegment& l, Delaunay::Mesh::Mesh& mesh) const
 {
   const Mesh::Triangle* t1 = this->FindContainingTriangle(l.A, mesh);
@@ -143,9 +143,9 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 }
 }
 
-const Mesh::Edge* EdgeInserter::InsertEdge(const Shape::LineSegment& l,
-                                           const Mesh::Triangle& t,
-                                           Mesh::Mesh& mesh)
+const Mesh::Edge* InsertEdge::InsertEdgeInTriangle(const Shape::LineSegment& l,
+						   const Mesh::Triangle& t,
+						   Mesh::Mesh& mesh)
 {
   // possible scenarios:
   // 1.  the line segment is contained entirely within the triangle
@@ -423,7 +423,7 @@ const Mesh::Edge* EdgeInserter::InsertEdge(const Shape::LineSegment& l,
   return &e1;
 }
 
-const Mesh::Triangle* EdgeInserter::FindContainingTriangle(
+const Mesh::Triangle* InsertEdge::FindContainingTriangle(
   const Shape::Point& p, Delaunay::Mesh::Mesh& mesh) const
 {
   for (auto it = mesh.GetTriangles().begin();

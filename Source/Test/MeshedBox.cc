@@ -14,8 +14,6 @@
 
 ******************************************************************************/
 
-#include <opencv2/opencv.hpp>
-
 #include "Shape/LineSegment.hh"
 #include "Shape/Polygon.hh"
 #include "Shape/Point.hh"
@@ -23,8 +21,8 @@
 #include "Mesh/Mesh.hh"
 
 #include "Discretization/DelaunayDiscretizer.hh"
-#include "Discretization/PolygonDiscretizer.hh"
-#include "Discretization/PolygonExciser.hh"
+#include "Discretization/DiscretizePolygon.hh"
+#include "Discretization/ExcisePolygon.hh"
 
 #include "Misc/Random.hh"
 
@@ -135,12 +133,12 @@ int main(int argc,char** argv)
   }
 
   Mesh::Mesh mesh;
-  Discretization::PolygonDiscretizer polygonDiscretizer;
-  polygonDiscretizer.Mesh(polygon, mesh);
+  Discretization::DiscretizePolygon discretize;
+  discretize(polygon, mesh);
 
-  Discretization::PolygonExciser polygonExciser;
+  Discretization::ExcisePolygon excisePolygon;
   for (auto boundary : interiorBoundaries)
-    polygonExciser.ExcisePolygon(boundary, mesh);
+    excisePolygon(boundary, mesh);
 
   // for (unsigned i=0;i<100;i++)
   // {

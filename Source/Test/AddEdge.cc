@@ -20,8 +20,8 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/DelaunayDiscretizer.hh"
-#include "Discretization/EdgeInserter.hh"
+#include "Discretization/DiscretizePolygon.hh"
+#include "Discretization/InsertEdge.hh"
 
 #include "Misc/Random.hh"
 
@@ -73,48 +73,18 @@ int main(int argc,char** argv)
   Shape::Polygon polygon(vertices);
 
   Mesh::Mesh mesh;
-  Discretization::DelaunayDiscretizer discretizer;
-  discretizer.Mesh(polygon, mesh);
+  Discretization::DiscretizePolygon discretize;
+  discretize(polygon, mesh);
 
-  Discretization::EdgeInserter edgeInserter;
+  Discretization::InsertEdge insertEdge;
   std::set<const Mesh::Edge*> insertedEdges;
-
-  // {
-  //   Shape::Point p1(3.,3.);
-  //   Shape::Point p2(7.,3.);
-  //   Shape::LineSegment l(p1,p2);
-
-  //   std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
-
-  //   insertedEdges.insert(tmp.begin(), tmp.end());
-  // }
-
-  // {
-  //   Shape::Point p1(5.,7.);
-  //   Shape::Point p2(7.,3.);
-  //   Shape::LineSegment l(p1,p2);
-
-  //   std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
-
-  //   insertedEdges.insert(tmp.begin(), tmp.end());
-  // }
-
-  // {
-  //   Shape::Point p1(5.,7.);
-  //   Shape::Point p2(3.,3.);
-  //   Shape::LineSegment l(p1,p2);
-
-  //   std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
-
-  //   insertedEdges.insert(tmp.begin(), tmp.end());
-  // }
 
   {
     Shape::Point p1(9.5,5.);
     Shape::Point p2(5.,9.5);
     Shape::LineSegment l(p1,p2);
 
-    std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
+    std::set<const Mesh::Edge*> tmp(std::move(insertEdge(l,mesh)));
 
     insertedEdges.insert(tmp.begin(), tmp.end());
   }
@@ -124,7 +94,7 @@ int main(int argc,char** argv)
     Shape::Point p2(0.5,5.);
     Shape::LineSegment l(p1,p2);
 
-    std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
+    std::set<const Mesh::Edge*> tmp(std::move(insertEdge(l,mesh)));
 
     insertedEdges.insert(tmp.begin(), tmp.end());
   }
@@ -134,7 +104,7 @@ int main(int argc,char** argv)
     Shape::Point p2(5.,.5);
     Shape::LineSegment l(p1,p2);
 
-    std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
+    std::set<const Mesh::Edge*> tmp(std::move(insertEdge(l,mesh)));
 
     insertedEdges.insert(tmp.begin(), tmp.end());
   }
@@ -144,7 +114,7 @@ int main(int argc,char** argv)
     Shape::Point p2(9.5,5.);
     Shape::LineSegment l(p1,p2);
 
-    std::set<const Mesh::Edge*> tmp(std::move(edgeInserter.InsertEdge(l,mesh)));
+    std::set<const Mesh::Edge*> tmp(std::move(insertEdge(l,mesh)));
 
     insertedEdges.insert(tmp.begin(), tmp.end());
   }
