@@ -20,7 +20,7 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/PolygonDiscretizer.hh"
+#include "Discretization/DiscretizePolygon.hh"
 
 #include "Misc/Random.hh"
 
@@ -85,8 +85,8 @@ int main(int argc,char** argv)
   Shape::Polygon polygon(vertices);
 
   Mesh::Mesh mesh;
-  Discretization::PolygonDiscretizer discretizer;
-  discretizer.Mesh(polygon, mesh);
+  Discretization::DiscretizePolygon discretize;
+  discretize(polygon, mesh);
 
   Color faintRed(255,0,0,128);
 

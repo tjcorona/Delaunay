@@ -14,8 +14,6 @@
 
 ******************************************************************************/
 
-#include <opencv2/opencv.hpp>
-
 #include "Misc/Random.hh"
 
 #include "Shape/Circle.hh"

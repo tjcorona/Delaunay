@@ -20,7 +20,8 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/DelaunayDiscretizer.hh"
+#include "Discretization/DiscretizePolygon.hh"
+#include "Discretization/AddInteriorPoint.hh"
 
 #include "Misc/Random.hh"
 
@@ -85,19 +86,17 @@ int main(int argc,char** argv)
   Shape::Polygon polygon(vertices);
 
   Mesh::Mesh mesh;
-  Discretization::DelaunayDiscretizer discretizer;
-  discretizer.Mesh(polygon, mesh);
+  Discretization::DiscretizePolygon discretize;
+  discretize(polygon, mesh);
+
+  Discretization::AddInteriorPoint addInteriorPoint;
 
   for (unsigned i=0;i<1000;i++)
   {
     double r = 5.5*pow(Misc::Random::GetInstance().Uniform(1000)/1000.,.5);
     double theta = 2.*M_PI*Misc::Random::GetInstance().Uniform(1000)/1000.;
     Shape::Point p(5. + r*cos(theta), 5. + r*sin(theta));
-    discretizer.AddInteriorPoint(p,mesh);
-
-    // Mesh::TriangleSet illegalTriangles;
-    // if (!discretizer.TestDelaunayCondition(illegalTriangles, mesh))
-    //   std::cout<<"Failed"<<std::endl;
+    addInteriorPoint(p,mesh);
   }
 
   Color faintRed(255,0,0,128);

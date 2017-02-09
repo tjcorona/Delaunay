@@ -14,8 +14,8 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_POLYGONEXCISER_HH
-#define DELAUNAY_DISCRETIZATION_POLYGONEXCISER_HH
+#ifndef DELAUNAY_DISCRETIZATION_ADDINTERIORPOINT_HH
+#define DELAUNAY_DISCRETIZATION_ADDINTERIORPOINT_HH
 
 #include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
@@ -26,16 +26,21 @@ namespace Delaunay
 namespace Discretization
 {
 
-class PolygonExciser : public Mesh::Mesher
+class AddInteriorPoint : public Mesh::Mesher
 {
 public:
   typedef Shape::Point Point;
   typedef Shape::Triangle Triangle;
 
-  PolygonExciser() {}
+  AddInteriorPoint() {}
 
-  std::set<const Mesh::Edge*> ExcisePolygon(const Delaunay::Shape::Polygon&,
-                                            Delaunay::Mesh::Mesh&);
+  const Mesh::Vertex* operator()(const Point&, Delaunay::Mesh::Mesh&);
+
+private:
+  const Mesh::Triangle* FindContainingTriangle(const Point& p,
+					 Delaunay::Mesh::Mesh&) const;
+  void SplitTriangle(const Mesh::Triangle*, const Mesh::Vertex*,
+		     Delaunay::Mesh::Mesh&);
 };
 
 }

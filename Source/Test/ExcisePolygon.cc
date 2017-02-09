@@ -20,9 +20,9 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/PolygonDiscretizer.hh"
-#include "Discretization/PolygonExciser.hh"
-#include "Discretization/EdgeInserter.hh"
+#include "Discretization/DiscretizePolygon.hh"
+#include "Discretization/ExcisePolygon.hh"
+#include "Discretization/InsertEdge.hh"
 
 #include "Misc/Random.hh"
 
@@ -232,12 +232,11 @@ int main(int argc,char** argv)
   Shape::Polygon innerPolygon(innerVertices);
 
   Mesh::Mesh mesh;
-  Discretization::PolygonDiscretizer discretizer;
-  discretizer.Mesh(polygon, mesh);
+  Discretization::DiscretizePolygon discretize;
+  discretize(polygon, mesh);
 
-  Discretization::PolygonExciser exciser;
-  std::set<const Mesh::Edge*> insertedEdges =
-    exciser.ExcisePolygon(innerPolygon, mesh);
+  Discretization::ExcisePolygon excise;
+  std::set<const Mesh::Edge*> insertedEdges = excise(innerPolygon, mesh);
 
   Color faintRed(255,0,0,128);
 

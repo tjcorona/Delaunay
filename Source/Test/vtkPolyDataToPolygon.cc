@@ -23,7 +23,7 @@
 #include "Shape/Polygon.hh"
 #include "Shape/Point.hh"
 
-#include "Discretization/PolygonDiscretizer.hh"
+#include "Discretization/DiscretizePolygon.hh"
 
 #include "Visualization/Color.hh"
 #include "Visualization/CVCanvas.hh"
@@ -83,8 +83,8 @@ int main(int argc,char** argv)
     }
 
     Mesh::Mesh mesh;
-    Discretization::PolygonDiscretizer discretizer;
-    discretizer.Mesh(polygon, mesh);
+    Discretization::DiscretizePolygon discretize;
+    discretize(polygon, mesh);
 
     for (auto i = mesh.GetTriangles().begin();i!=mesh.GetTriangles().end();i++)
       canvas.Draw(*i, Visualization::Black, faintBlue);

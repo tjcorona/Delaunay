@@ -14,9 +14,9 @@
 
 ******************************************************************************/
 
-#include "Discretization/PolygonExciser.hh"
+#include "Discretization/ExcisePolygon.hh"
 
-#include "Discretization/EdgeInserter.hh"
+#include "Discretization/InsertEdge.hh"
 #include "Mesh/Edge.hh"
 #include "Mesh/Vertex.hh"
 #include "Shape/LineSegmentUtilities.hh"
@@ -28,10 +28,10 @@ namespace Delaunay
 namespace Discretization
 {
 
-std::set<const Mesh::Edge*> PolygonExciser::ExcisePolygon(
+std::set<const Mesh::Edge*> ExcisePolygon::operator()(
   const Delaunay::Shape::Polygon& polygon, Delaunay::Mesh::Mesh& mesh)
 {
-  EdgeInserter edgeInserter;
+  InsertEdge insertEdge;
 
   // keep track of edges and their orientation w.r.t. their counterclockwise
   // ordering in the polygon
@@ -41,8 +41,7 @@ std::set<const Mesh::Edge*> PolygonExciser::ExcisePolygon(
   {
     unsigned ipp = (i+1)%polygon.GetPoints().size();
     Shape::LineSegment l(polygon.GetPoints()[i], polygon.GetPoints()[ipp]);
-    std::set<const Mesh::Edge*> edges(
-      std::move(edgeInserter.InsertEdge(l, mesh)));
+    std::set<const Mesh::Edge*> edges(std::move(insertEdge(l, mesh)));
     for (auto& edge : edges)
     {
       const_cast<Mesh::Edge*>(edge)->boundary = true;
