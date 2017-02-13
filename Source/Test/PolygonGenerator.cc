@@ -126,7 +126,7 @@ void RandomPolygon(int nPoints,
     vertices.push_back(Coord(bounds[0] +dx*.5 + dx*.25*cos(i*2.*M_PI/nPoints),
 			     bounds[2] +dy*.5 + dx*.25*sin(i*2.*M_PI/nPoints)));
     direction.push_back((Misc::Random::GetInstance().Uniform(1000)/1000.)*(2.*M_PI));
-    velocity.push_back((Misc::Random::GetInstance().Uniform(1000)/1000.)*.25);
+    velocity.push_back((Misc::Random::GetInstance().Uniform(1000)/1000.)*.2);
   }
 
   for (unsigned step=0;step<nSteps;step++)
@@ -256,7 +256,7 @@ std::vector<Shape::Point> GeneratePolygonPoints(PolygonType polygonType,
   {
     std::vector<Coord> verts;
     RandomPolygon(nPoints,verts,bounds,
-		  Misc::Random::GetInstance().Uniform(20));
+		  Misc::Random::GetInstance().Uniform(10));
     for (unsigned i=0;i<nPoints;i++)
     {
       Shape::Point p(verts[i].x,verts[i].y);

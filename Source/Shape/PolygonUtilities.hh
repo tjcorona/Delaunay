@@ -14,31 +14,18 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_MESH_MESHER_HH
-#define DELAUNAY_MESH_MESHER_HH
+#ifndef DELAUNAY_SHAPE_POLYGONUTILITIES_HH
+#define DELAUNAY_SHAPE_POLYGONUTILITIES_HH
 
-#include <vector>
-
-#include "Mesh/Mesh.hh"
+#include <array>
 
 namespace Delaunay
 {
-namespace Mesh
+namespace Shape
 {
-class Mesher
-{
-public:
+class Polygon;
 
-  virtual ~Mesher() {}
-
-  Mesh::Polygon&       GetPerimeter(Mesh& mesh) const { return mesh.Perimeter; }
-  Mesh::InteriorBoundarySet& GetInteriorBoundaries(Mesh& mesh) const
-    { return mesh.InteriorBoundaries; }
-  Mesh::VertexSet&     GetVertices(Mesh& mesh)  const { return mesh.Vertices;  }
-  Mesh::EdgeSet&       GetEdges(Mesh& mesh)     const { return mesh.Edges;     }
-  Mesh::TriangleSet&   GetTriangles(Mesh& mesh) const { return mesh.Triangles; }
-};
-
+std::array<double, 4> Bounds(const Polygon&);
 }
 }
 

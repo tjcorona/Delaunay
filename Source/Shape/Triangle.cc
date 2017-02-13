@@ -18,7 +18,7 @@
 
 #include "Shape/PointUtilities.hh"
 
-#include <iostream>
+#include <cassert>
 
 namespace
 {
@@ -83,6 +83,9 @@ Triangle::Triangle(const LineSegment& ab,
   AB(First(ab,bc,ac)), AC(Second(ab,bc,ac)), BC(Third(ab,bc,ac)),
   circumcircle(ComputeCircumcenter(ab,ac), ab.A)
 {
+  assert(ab != bc);
+  assert(ab != ac);
+  assert(ac != bc);
 }
 
 }

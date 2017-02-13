@@ -77,7 +77,7 @@ bool Contains(const Triangle& tri, const Point& p)
   const double& s = st.first;
   const double& t = st.second;
 
-  return (s >= 0.&& t >= 0. && (s + t) <= 1. ? 1. : 0);
+  return (s >= -EPSILON && t >= -EPSILON && (s + t) <= 1. ? true : false);
 }
 
 double Area(const Triangle& t)
@@ -150,33 +150,39 @@ std::tuple<unsigned, Point, Point> Intersection(const LineSegment& l,
   if (!std::isnan(p[0].x))
   {
     if (!std::isnan(p[1].x))
+    {
       if (!std::isnan(p[2].x))
-        {
-          // one of the points must be a vertex
-          if (p[0] != p[1])
-            return std::make_tuple(2, p[0], p[1]);
-          else // p[0] != p[2]
-            return std::make_tuple(2, p[0], p[2]);
-        }
+      {
+	// one of the points must be a vertex
+	if (p[0] != p[1])
+	  return std::make_tuple(2, p[0], p[1]);
+	else // p[0] != p[2]
+	  return std::make_tuple(2, p[0], p[2]);
+      }
       else if (p[0] != p[1])
         return std::make_tuple(2, p[0], p[1]);
-    else
+      else
       return std::make_tuple(1, p[0], p[2]);
+    }
     else if (!std::isnan(p[2].x))
+    {
       if (p[0] != p[2])
         return std::make_tuple(2, p[0], p[2]);
       else
         return std::make_tuple(1, p[0], p[1]);
+    }
     else
       return std::make_tuple(1, p[0], p[1]);
   }
   else if (!std::isnan(p[1].x))
   {
     if (!std::isnan(p[2].x))
+    {
       if (p[1] != p[2])
         return std::make_tuple(2, p[1], p[2]);
       else
         return std::make_tuple(1, p[1], p[0]);
+    }
     else
       return std::make_tuple(1, p[1], p[0]);
   }

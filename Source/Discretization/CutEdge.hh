@@ -14,8 +14,8 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_INSERTEDGE_HH
-#define DELAUNAY_DISCRETIZATION_INSERTEDGE_HH
+#ifndef DELAUNAY_DISCRETIZATION_CUTEDGE_HH
+#define DELAUNAY_DISCRETIZATION_CUTEDGE_HH
 
 #include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
@@ -25,24 +25,25 @@ namespace Delaunay
 namespace Discretization
 {
 
-class InsertEdge : public Mesh::Mesher
+class CutEdge : public Mesh::Mesher
 {
 public:
-  InsertEdge() {}
+  CutEdge() {}
 
-  const Mesh::Edge* operator()(const Shape::LineSegment&,Mesh::Mesh&);
+  std::set<const Mesh::Edge*> operator()(const Shape::LineSegment&,Mesh::Mesh&);
 
 private:
-  Shape::Polygon PolygonFromTriangleSet(const Mesh::TriangleSet& triangleSet) const;
+
+  const Mesh::Edge* CutEdgeInTriangle(const Shape::LineSegment&,
+				      const Mesh::Triangle&, Mesh::Mesh&);
 
   std::set<const Mesh::Triangle*> FindContainingTriangles(const Shape::LineSegment&, Delaunay::Mesh::Mesh&) const;
-  std::set<const Mesh::Triangle*> FindGrazingTriangles(const Shape::LineSegment&, Delaunay::Mesh::Mesh&) const;
 
   const Mesh::Triangle* FindContainingTriangle(const Shape::Point& p,
                                                Delaunay::Mesh::Mesh&) const;
 
-  std::pair<Shape::Polygon,Shape::Polygon> BisectPolygon(
-    const Shape::Polygon&, const Mesh::Vertex&, const Mesh::Vertex&) const;
+  std::set<const Mesh::Edge*> edgesToRemove;
+  std::set<const Mesh::Triangle*> trianglesToRemove;
 };
 
 }

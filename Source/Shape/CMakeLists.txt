@@ -2,6 +2,7 @@ set(Shape_Source_Files
   BezierCurve.cc
   CircleUtilities.cc
   Polygon.cc
+  PolygonUtilities.cc
   PointUtilities.cc
   LineSegment.cc
   LineSegmentUtilities.cc

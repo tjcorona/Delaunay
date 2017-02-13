@@ -20,6 +20,7 @@
 
 #include "Mesh/Mesh.hh"
 
+#include "Discretization/AddInteriorPoint.hh"
 #include "Discretization/DiscretizePolygon.hh"
 #include "Discretization/ExcisePolygon.hh"
 #include "Discretization/InsertEdge.hh"
@@ -56,12 +57,10 @@
 #include <vtkPolyLine.h>
 #include <vtkTriangle.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkCommand.h>
+#include <vtkCallbackCommand.h>
 
-// For compatibility with new VTK generic data arrays
-// #ifdef vtkGenericDataArray_h
-// #define InsertNextTupleValue InsertNextTypedTuple
-// #endif
-#endif
 
 template <typename Point, typename PointContainer>
 std::size_t IndexOf(Point& point, const PointContainer& points)
@@ -69,6 +68,38 @@ std::size_t IndexOf(Point& point, const PointContainer& points)
   return std::distance(points.begin(),
 		       std::find(points.begin(), points.end(), point));
 }
+
+class vtkTimerCallback : public vtkCommand
+{
+public:
+  static vtkTimerCallback *New()
+    {
+      vtkTimerCallback *cb = new vtkTimerCallback;
+      cb->TimerCount = 0;
+      return cb;
+    }
+
+  virtual void Execute(vtkObject *caller, unsigned long eventId,
+		       void *vtkNotUsed(callData))
+    {
+      if (vtkCommand::TimerEvent == eventId)
+      {
+        ++this->TimerCount;
+      }
+
+      vtkRenderWindowInteractor *iren =
+	static_cast<vtkRenderWindowInteractor*>(caller);
+      // Close the window
+      iren->GetRenderWindow()->Finalize();
+
+      // Stop the interactor
+      iren->TerminateApp();
+    }
+
+private:
+  int TimerCount;
+};
+#endif
 
 void VisualizeWithVTK(const Mesh::Mesh& mesh)
 {
@@ -118,11 +149,16 @@ void VisualizeWithVTK(const Mesh::Mesh& mesh)
     }
   }
 
-  vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+  vtkNew<vtkPolyData> polyData;
   polyData->SetPoints(points.GetPointer());
   polyData->SetLines(lines.GetPointer());
   polyData->SetPolys(triangles.GetPointer());
   polyData->GetCellData()->SetScalars(colors.GetPointer());
+
+  vtkNew<vtkXMLPolyDataWriter> writer;
+  writer->SetInputData(polyData.GetPointer());
+  writer->SetFileName("ExcisePolygon.vtp");
+  writer->Write();
 
   // Setup the visualization pipeline
   vtkSmartPointer<vtkPolyDataMapper> mapper =
@@ -153,10 +189,20 @@ void VisualizeWithVTK(const Mesh::Mesh& mesh)
   renderer->SetBackground(1,1,1);
   renderer->ResetCamera();
 
+  vtkSmartPointer<vtkRenderWindowInteractor> interactor =
+    vtkSmartPointer<vtkRenderWindowInteractor>::New();
+  interactor->SetRenderWindow(window);
+
+  // Sign up to receive TimerEvent
+  vtkSmartPointer<vtkTimerCallback> cb =
+    vtkSmartPointer<vtkTimerCallback>::New();
+  interactor->AddObserver(vtkCommand::TimerEvent, cb);
+  int timerId = interactor->CreateOneShotTimer(2000);
+
   window->Render();
   renderWindowInteractor->Start();
 #else
-(void)mesh; (void)name;
+(void)mesh;
 #endif
 }
 
@@ -175,21 +221,20 @@ int main(int argc,char** argv)
 
   PolygonType testType = Random;
 
-  if (argc > 1)
-    testType = static_cast<PolygonType>(atoi(argv[1]));
+  // if (argc > 1)
+  //   testType = static_cast<PolygonType>(atoi(argv[1]));
 
-  if (testType < 0 || testType > 3)
-  {
-    std::cout<<"Polygon: possible options:"<<std::endl;
-    std::cout<<"         0: Regular (default)"<<std::endl;
-    std::cout<<"         1: Star Convex"<<std::endl;
-    std::cout<<"         2: Random Evolve"<<std::endl;
-    std::cout<<"         3: Random"<<std::endl;
-    return 1;
-  }
+  // if (testType < 0 || testType > 3)
+  // {
+  //   std::cout<<"Polygon: possible options:"<<std::endl;
+  //   std::cout<<"         0: Regular (default)"<<std::endl;
+  //   std::cout<<"         1: Star Convex"<<std::endl;
+  //   std::cout<<"         2: Random Evolve"<<std::endl;
+  //   std::cout<<"         3: Random"<<std::endl;
+  //   return 1;
+  // }
 
   unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(20);
-  std::cout<<"Polygon has "<<nPoints<<" points"<<std::endl;
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
   double bounds[4] = {0.,20.,0.,20.};
@@ -235,6 +280,19 @@ int main(int argc,char** argv)
   Discretization::DiscretizePolygon discretize;
   discretize(polygon, mesh);
 
+  // Discretization::AddInteriorPoint addInteriorPoint;
+
+  // for (unsigned i=0;i<nPerPts;i++)
+  // {
+  //   double s = Misc::Random::GetInstance().Uniform(1000)/1000.;
+  //   double t = Misc::Random::GetInstance().Uniform(1000)/1000.;
+
+  //   Shape::Point p(bounds[0]*s + bounds[1]*(1.-s),
+  // 		   bounds[2]*t + bounds[3]*(1.-t));
+
+  //   addInteriorPoint(p,mesh);
+  // }
+
   Discretization::ExcisePolygon excise;
   std::set<const Mesh::Edge*> insertedEdges = excise(innerPolygon, mesh);
 
@@ -262,14 +320,13 @@ int main(int argc,char** argv)
       i = 0;
   }
 
-  for (auto vtx : mesh.GetVertices())
-    canvas.Draw(vtx, Black);
+  // for (auto vtx : mesh.GetVertices())
+  //   canvas.Draw(vtx, Black);
 
+  // for (auto edge : insertedEdges)
+  //   canvas.Draw(*edge, White);
 
-  for (auto edge : insertedEdges)
-    canvas.Draw(*edge, White);
-
-  canvas.SetTimeDelay(0.);
+  canvas.SetTimeDelay(2.);
   canvas.Update();
 #endif
 

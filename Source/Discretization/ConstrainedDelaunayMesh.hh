@@ -14,29 +14,25 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_MESH_MESHER_HH
-#define DELAUNAY_MESH_MESHER_HH
+#ifndef DELAUNAY_DISCRETIZATION_CONSTRAINEDDELAUNAYMESH_HH
+#define DELAUNAY_DISCRETIZATION_CONSTRAINEDDELAUNAYMESH_HH
 
-#include <vector>
+#include <deque>
 
-#include "Mesh/Mesh.hh"
+#include "Shape/Polygon.hh"
+#include "Mesh/Mesher.hh"
 
 namespace Delaunay
 {
-namespace Mesh
+namespace Discretization
 {
-class Mesher
+
+class ConstrainedDelaunayMesh : public Mesh::Mesher
 {
 public:
+  ConstrainedDelaunayMesh() {}
 
-  virtual ~Mesher() {}
-
-  Mesh::Polygon&       GetPerimeter(Mesh& mesh) const { return mesh.Perimeter; }
-  Mesh::InteriorBoundarySet& GetInteriorBoundaries(Mesh& mesh) const
-    { return mesh.InteriorBoundaries; }
-  Mesh::VertexSet&     GetVertices(Mesh& mesh)  const { return mesh.Vertices;  }
-  Mesh::EdgeSet&       GetEdges(Mesh& mesh)     const { return mesh.Edges;     }
-  Mesh::TriangleSet&   GetTriangles(Mesh& mesh) const { return mesh.Triangles; }
+  void operator()(const Delaunay::Shape::Polygon&, Delaunay::Mesh::Mesh&);
 };
 
 }

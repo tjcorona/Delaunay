@@ -1,10 +1,15 @@
 set(Discretization_Source_Files
   AddInteriorPoint.cc
+  ConstrainedDelaunayMesh.cc
+  CutEdge.cc
   DiscretizePolygon.cc
+  EnforceMinimumAngle.cc
   ExcisePolygon.cc
   ExtendMesh.cc
   InsertEdge.cc
   LegalizeEdges.cc
+  RemoveBoundedRegion.cc
+  SplitEdge.cc
   TestDelaunayCondition.cc)
 
 add_library (DelaunayDiscretization SHARED ${Discretization_Source_Files})

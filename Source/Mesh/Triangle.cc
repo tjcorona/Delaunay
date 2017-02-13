@@ -16,6 +16,8 @@
 
 #include "Mesh/Triangle.hh"
 
+#include <cassert>
+
 namespace Delaunay
 {
 namespace Mesh
@@ -28,8 +30,11 @@ Triangle::Triangle(const Edge& ab,const Edge& bc,const Edge& ac) :
     this->B().triangles.insert(this);
     this->C().triangles.insert(this);
     this->AB().triangles.insert(this);
+    // assert(this->AB().triangles.size() <= 2);
     this->BC().triangles.insert(this);
+    // assert(this->BC().triangles.size() <= 2);
     this->AC().triangles.insert(this);
+    // assert(this->AC().triangles.size() <= 2);
   }
 
 Triangle::~Triangle()

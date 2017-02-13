@@ -14,29 +14,28 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_MESH_MESHER_HH
-#define DELAUNAY_MESH_MESHER_HH
+#ifndef DELAUNAY_DISCRETIZATION_SPLITEDGE_HH
+#define DELAUNAY_DISCRETIZATION_SPLITEDGE_HH
 
-#include <vector>
-
-#include "Mesh/Mesh.hh"
+#include "Mesh/Edge.hh"
+#include "Mesh/Mesher.hh"
+#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
-namespace Mesh
+namespace Discretization
 {
-class Mesher
+
+class SplitEdge : public Mesh::Mesher
 {
 public:
+  SplitEdge() {}
 
-  virtual ~Mesher() {}
+  std::pair<const Mesh::Edge*, const Mesh::Edge*>
+  operator()(const Mesh::Edge&, Delaunay::Mesh::Mesh&) const;
 
-  Mesh::Polygon&       GetPerimeter(Mesh& mesh) const { return mesh.Perimeter; }
-  Mesh::InteriorBoundarySet& GetInteriorBoundaries(Mesh& mesh) const
-    { return mesh.InteriorBoundaries; }
-  Mesh::VertexSet&     GetVertices(Mesh& mesh)  const { return mesh.Vertices;  }
-  Mesh::EdgeSet&       GetEdges(Mesh& mesh)     const { return mesh.Edges;     }
-  Mesh::TriangleSet&   GetTriangles(Mesh& mesh) const { return mesh.Triangles; }
+  std::pair<const Mesh::Edge*, const Mesh::Edge*>
+  operator()(const Mesh::Edge&, double, Delaunay::Mesh::Mesh&) const;
 };
 
 }

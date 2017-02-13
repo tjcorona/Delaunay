@@ -26,9 +26,22 @@ namespace Shape
 class Circle;
 class LineSegment;
 class Point;
+class Triangle;
 
 // Does the point lie within the circle?
 bool Contains(const Circle&, const Point&);
+
+// Does the circle intersect with the line segment?
+bool Intersect(const Circle&, const LineSegment&);
+
+// Does the line segment intersect with the circle?
+bool Intersect(const LineSegment&, const Circle&);
+
+// Does the circle intersect with the triangle?
+bool Intersect(const Circle&, const Triangle&);
+
+// Does the triangle intersect with the circle?
+bool Intersect(const Triangle&, const Circle&);
 
 // Do a line segment and a circle intersect? If so, how many times and where?
 std::tuple<unsigned, Point, Point> Intersection(const LineSegment&, const Circle&);
