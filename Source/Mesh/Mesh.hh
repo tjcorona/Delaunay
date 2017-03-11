@@ -51,6 +51,8 @@ public:
   const EdgeSet&     GetEdges()     const { return this->Edges;     }
   const TriangleSet& GetTriangles() const { return this->Triangles; }
 
+  virtual const Triangle* FindContainingTriangle(const Shape::Point& p) const;
+
 protected:
   Polygon             Perimeter;
   InteriorBoundarySet InteriorBoundaries;

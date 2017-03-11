@@ -14,11 +14,16 @@
 
 ******************************************************************************/
 
-#include "InsertEdge.hh"
+#include "InsertLineSegment.hh"
+
+// #define USE_CDM 1
 
 #include "Discretization/AddInteriorPoint.hh"
+#if USE_CDM
 #include "Discretization/ConstrainedDelaunayMesh.hh"
-// #include "Discretization/DiscretizePolygon.hh"
+#else
+#include "Discretization/DiscretizePolygon.hh"
+#endif
 #include "Discretization/RemoveBoundedRegion.hh"
 #include "Shape/LineSegment.hh"
 #include "Shape/LineSegmentUtilities.hh"
@@ -48,26 +53,30 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 }
 }
 
-const Mesh::Edge* InsertEdge::operator()(const Shape::LineSegment& l,
+const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
                                          Mesh::Mesh& mesh)
 {
 // TODO: deal with the case where l lies on preexisting edges (Touches() returns// false, so 0 triangles are described as between the two points in this case)
 
+  // First, add the two points of the line segment
   AddInteriorPoint addInteriorPoint;
   const Mesh::Vertex* v1 = addInteriorPoint(l.A, mesh);
   const Mesh::Vertex* v2 = addInteriorPoint(l.B, mesh);
 
+  // If there is already present, mark it as a boundary and return
   if (const Mesh::Edge* edge = GetEdge(v1,v2))
   {
     const_cast<Mesh::Edge*>(edge)->boundary = true;
     return edge;
   }
 
-  std::set<const Mesh::Edge*> insertedEdges;
-
+  // Collect all of the triangles that contain the line
   std::set<const Mesh::Triangle*> intersected(
     std::move(this->FindContainingTriangles(l, mesh)));
 
+  // Construct the containing polygon as the union of the containing triangles,
+  // and mark the polygon edges as boundary edges
+  std::set<Mesh::Edge*> temporaryBoundaries;
   Shape::Polygon poly(std::move(this->PolygonFromTriangleSet(intersected)));
   for (std::size_t i=0;i<poly.GetPoints().size();i++)
   {
@@ -75,30 +84,48 @@ const Mesh::Edge* InsertEdge::operator()(const Shape::LineSegment& l,
     const Mesh::Edge* edge =
       GetEdge(static_cast<const Mesh::Vertex*>(&poly.GetPoints()[i].get()),
               static_cast<const Mesh::Vertex*>(&poly.GetPoints()[ipp].get()));
-    const_cast<Mesh::Edge*>(edge)->boundary = true;
+    if (!edge->boundary)
+    {
+      Mesh::Edge* e = const_cast<Mesh::Edge*>(edge);
+      e->boundary = true;
+      temporaryBoundaries.insert(e);
+    }
   }
 
+  // Split the containing polygon along the edge we wish to insert
   std::pair<Shape::Polygon,Shape::Polygon> polys(
     std::move(BisectPolygon(poly, *v1, *v2)));
 
+  // Identify the polygon's orientation
   const Mesh::Edge* edge =
     GetEdge(static_cast<const Mesh::Vertex*>(&poly.GetPoints()[0].get()),
             static_cast<const Mesh::Vertex*>(&poly.GetPoints()[1].get()));
   bool isCCW =
     Shape::Dot(edge->B() - edge->A(),
                poly.GetPoints()[1] - poly.GetPoints()[0]) > 0.;
+
+  // Remove the containing polygon from the mesh
   RemoveBoundedRegion removeBoundedRegion;
   removeBoundedRegion(*edge, isCCW, mesh);
 
-  // DiscretizePolygon discretizePolygon;
+  // Insert the bisected polygons into the mesh
+#if USE_CDM
   ConstrainedDelaunayMesh discretizePolygon;
+#else
+  DiscretizePolygon discretizePolygon;
+#endif
   discretizePolygon(polys.first, mesh);
   discretizePolygon(polys.second, mesh);
+
+  for (auto& edge : temporaryBoundaries)
+  {
+    edge->boundary = false;
+  }
 
   return GetEdge(v1,v2);
 }
 
-Shape::Polygon InsertEdge::PolygonFromTriangleSet(
+Shape::Polygon InsertLineSegment::PolygonFromTriangleSet(
   const Mesh::TriangleSet& triangleSet) const
 {
   typedef std::pair<const Mesh::Vertex*, const Mesh::Vertex*> OrderedEdge;
@@ -184,11 +211,11 @@ bool Touches(const Shape::LineSegment& l, const Shape::Triangle& t)
 }
 }
 
-std::set<const Mesh::Triangle*> InsertEdge::FindContainingTriangles(
+std::set<const Mesh::Triangle*> InsertLineSegment::FindContainingTriangles(
   const Shape::LineSegment& l, Delaunay::Mesh::Mesh& mesh) const
 {
-  const Mesh::Triangle* t1 = this->FindContainingTriangle(l.A, mesh);
-  const Mesh::Triangle* t2 = this->FindContainingTriangle(l.B, mesh);
+  const Mesh::Triangle* t1 = mesh.FindContainingTriangle(l.A);
+  const Mesh::Triangle* t2 = mesh.FindContainingTriangle(l.B);
 
   std::set<const Mesh::Triangle*> intersected;
 
@@ -247,18 +274,7 @@ std::set<const Mesh::Triangle*> InsertEdge::FindContainingTriangles(
   return intersected;
 }
 
-const Mesh::Triangle* InsertEdge::FindContainingTriangle(
-  const Shape::Point& p, Delaunay::Mesh::Mesh& mesh) const
-{
-  for (auto it = mesh.GetTriangles().begin();
-       it != mesh.GetTriangles().end(); ++it)
-    if (Contains(*it, p))
-      return &(*it);
-
-  return nullptr;
-}
-
-std::pair<Shape::Polygon,Shape::Polygon> InsertEdge::BisectPolygon(
+std::pair<Shape::Polygon,Shape::Polygon> InsertLineSegment::BisectPolygon(
   const Shape::Polygon& p, const Mesh::Vertex& v1, const Mesh::Vertex& v2) const
 {
   typedef std::reverse_iterator<Shape::PointVector::const_iterator> RIter;

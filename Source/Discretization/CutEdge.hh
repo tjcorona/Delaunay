@@ -39,9 +39,6 @@ private:
 
   std::set<const Mesh::Triangle*> FindContainingTriangles(const Shape::LineSegment&, Delaunay::Mesh::Mesh&) const;
 
-  const Mesh::Triangle* FindContainingTriangle(const Shape::Point& p,
-                                               Delaunay::Mesh::Mesh&) const;
-
   std::set<const Mesh::Edge*> edgesToRemove;
   std::set<const Mesh::Triangle*> trianglesToRemove;
 };

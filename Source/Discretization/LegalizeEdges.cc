@@ -31,7 +31,7 @@ namespace Discretization
 
 void LegalizeEdges::operator()(const Mesh::Vertex* v,
 			       std::set<const Mesh::Edge*>& edges,
-			       Delaunay::Mesh::Mesh& mesh)
+			       Delaunay::Mesh::Mesh& mesh) const
 {
   if (edges.empty())
     return;

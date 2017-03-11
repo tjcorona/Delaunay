@@ -23,7 +23,7 @@
 #include "Discretization/AddInteriorPoint.hh"
 #include "Discretization/DiscretizePolygon.hh"
 #include "Discretization/ExcisePolygon.hh"
-#include "Discretization/InsertEdge.hh"
+#include "Discretization/InsertLineSegment.hh"
 
 #include "Misc/Random.hh"
 

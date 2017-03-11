@@ -89,6 +89,15 @@ double Area(const Triangle& t)
   return .5*std::abs(Cross(B-A,C-A));
 }
 
+Point Centroid(const Triangle& t)
+{
+  const Point& A = t.AB.A;
+  const Point& B = t.AB.B;
+  const Point& C = t.AC.B;
+
+  return (A + B + C)/3.;;
+}
+
 Point ClosestPoint(const Point& p, const Triangle& t)
 {
    if (Contains(t,p))

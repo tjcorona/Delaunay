@@ -22,6 +22,7 @@
 
 #include "Visualization/Color.hh"
 #include "Visualization/CVCanvas.hh"
+// #include "Visualization/VTKCanvas.hh"
 
 #include <iostream>
 
@@ -30,7 +31,10 @@ using namespace Delaunay::Visualization;
 
 int main(int /*argc*/,char** /*argv*/)
 {
+  Misc::Random::GetInstance().Seed(1);
+
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
+  // Visualization::VTKCanvas canvas(0.,10.,0.,10.);
   Visualization::CVCanvas canvas(0.,10.,0.,10.);
 
   // create three points
@@ -64,8 +68,8 @@ int main(int /*argc*/,char** /*argv*/)
 
   // draw the circumcenter and circumcircle onto the canvas
   canvas.Draw(triangle.circumcircle.Center,Red);
-  Color faintRed(255,0,0,128);
-  // canvas.Draw(Shape::Circle(triangle.circumcircle.Center,triangle.circumcircle.Radius),Red,faintRed);
+  Color faintRed(255,0,0,64);
+  canvas.Draw(Shape::Circle(triangle.circumcircle.Center,triangle.circumcircle.Radius),Red,faintRed);
   canvas.Draw(triangle.circumcircle,Red,faintRed);
 
   // canvas.Update();
@@ -73,7 +77,7 @@ int main(int /*argc*/,char** /*argv*/)
   for (unsigned i=0;i<100;i++)
   {
     Shape::Point p(Misc::Random::GetInstance().Uniform(1000)/100.,
-		   Misc::Random::GetInstance().Uniform(1000)/100.);
+        	   Misc::Random::GetInstance().Uniform(1000)/100.);
 
     if (Contains(triangle,p))
       canvas.Draw(p,Green);

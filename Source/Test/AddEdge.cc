@@ -22,7 +22,7 @@
 
 #include "Discretization/DiscretizePolygon.hh"
 #include "Discretization/CutEdge.hh"
-#include "Discretization/InsertEdge.hh"
+#include "Discretization/InsertLineSegment.hh"
 
 #include "Misc/Random.hh"
 
@@ -78,7 +78,7 @@ int main(int argc,char** argv)
   discretize(polygon, mesh);
 
   #ifdef INSERT
-  Discretization::InsertEdge addEdge;
+  Discretization::InsertLineSegment addEdge;
   #else
   Discretization::CutEdge addEdge;
   #endif

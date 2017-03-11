@@ -39,7 +39,7 @@ using namespace Delaunay::Visualization;
 
 int main(int argc,char** argv)
 {
-  PolygonType testType = StarConvex;
+  PolygonType testType = Regular;
 
   if (argc > 1)
     testType = static_cast<PolygonType>(atoi(argv[1]));

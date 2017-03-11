@@ -60,5 +60,15 @@ double Distance(const Point& p1, const Point& p2)
   return std::sqrt(DistanceSquared(p1,p2));
 }
 
+double Angle(const Point& p1, const Point& p2, const Point& p3)
+{
+  double a = Distance(p1,p2);
+  double b = Distance(p2,p3);
+  double c2 = DistanceSquared(p1,p3);
+
+  return (acos((a*a + b*b - c2)/(2.*a*b)) +
+          M_PI*(Orientation(p1,p2,p3) == 1));
+}
+
 }
 }

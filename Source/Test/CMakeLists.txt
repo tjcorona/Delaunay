@@ -33,7 +33,8 @@ target_link_libraries(Polygon LINK_PUBLIC
 list (APPEND APPLICATIONS MeshedPolygon)
 add_executable( MeshedPolygon MeshedPolygon.cc )
 target_link_libraries(MeshedPolygon LINK_PUBLIC
-  DelaunayShape DelaunayMesh DelaunayDiscretization DelaunayVisualization)
+  DelaunayShape DelaunayMesh DelaunayDiscretization DelaunayValidation
+  DelaunayVisualization)
 
 list (APPEND APPLICATIONS MeshedBox)
 add_executable( MeshedBox MeshedBox.cc )

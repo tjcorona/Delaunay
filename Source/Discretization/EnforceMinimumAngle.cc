@@ -24,7 +24,6 @@
 #include <array>
 #include <cassert>
 #include <cmath>
-#include <iostream>
 
 namespace Delaunay
 {
@@ -66,7 +65,6 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 
     for (auto& triangle : mesh.GetTriangles())
     {
-      std::cout<<"minimum angle: "<<MinimumAngle(triangle)*180./M_PI<<std::endl;
       if (MinimumAngle(triangle) < angle*M_PI/180.)
       {
 	allLegal = false;

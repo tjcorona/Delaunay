@@ -37,6 +37,15 @@ public:
   Mesh::VertexSet&     GetVertices(Mesh& mesh)  const { return mesh.Vertices;  }
   Mesh::EdgeSet&       GetEdges(Mesh& mesh)     const { return mesh.Edges;     }
   Mesh::TriangleSet&   GetTriangles(Mesh& mesh) const { return mesh.Triangles; }
+
+  std::pair<Mesh::VertexSet::const_iterator,bool>
+  InsertVertex(const Shape::Point&, Mesh&);
+
+  std::pair<Mesh::EdgeSet::const_iterator,bool>
+  InsertEdge(const Vertex&, const Vertex&, Mesh&);
+
+  std::pair<Mesh::TriangleSet::const_iterator,bool>
+  InsertTriangle(const Edge&, const Edge&, const Edge&, Mesh&);
 };
 
 }

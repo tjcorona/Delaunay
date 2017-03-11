@@ -16,7 +16,7 @@
 
 #include "Discretization/ExcisePolygon.hh"
 
-#include "Discretization/InsertEdge.hh"
+#include "Discretization/InsertLineSegment.hh"
 #include "Discretization/RemoveBoundedRegion.hh"
 #include "Mesh/Edge.hh"
 
@@ -31,14 +31,14 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
   const Delaunay::Shape::Polygon& polygon, Delaunay::Mesh::Mesh& mesh)
 {
   std::set<const Mesh::Edge*> innerEdges;
-  InsertEdge insertEdge;
+  InsertLineSegment insertLineSegment;
 
   std::pair<const Mesh::Edge*, bool> firstEdge;
   for (unsigned i = 0; i < polygon.GetPoints().size(); ++i)
   {
     unsigned ipp = (i+1)%polygon.GetPoints().size();
     Shape::LineSegment l(polygon.GetPoints()[i], polygon.GetPoints()[ipp]);
-    const Mesh::Edge* edge = insertEdge(l, mesh);
+    const Mesh::Edge* edge = insertLineSegment(l, mesh);
     innerEdges.insert(edge);
     if (i == 0)
     {

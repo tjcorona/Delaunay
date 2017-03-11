@@ -16,7 +16,7 @@
 
 #include "ConstrainedDelaunayMesh.hh"
 
-#include "Discretization/InsertEdge.hh"
+#include "Discretization/InsertLineSegment.hh"
 #include "Discretization/RemoveBoundedRegion.hh"
 #include "Shape/PolygonUtilities.hh"
 
@@ -32,10 +32,10 @@ void ConstrainedDelaunayMesh::operator()(
   std::array<double, 4> bounds(std::move(Shape::Bounds(polygon)));
   double xLen = bounds[1] - bounds[0];
   double yLen = bounds[3] - bounds[2];
-  bounds[0] -= .1*xLen;
-  bounds[1] += .1*xLen;
-  bounds[2] -= .1*yLen;
-  bounds[3] += .1*yLen;
+  bounds[0] -= .2*xLen;
+  bounds[1] += .2*xLen;
+  bounds[2] -= .2*yLen;
+  bounds[3] += .2*yLen;
 
   bool inSitu = mesh.GetVertices().empty();
 
@@ -46,25 +46,29 @@ void ConstrainedDelaunayMesh::operator()(
   else
     augmentedMesh = &mesh_;
 
-  const Mesh::Vertex& v0 = *(this->GetVertices(*augmentedMesh).emplace(
-			       Shape::Point(bounds[0],bounds[2]))).first;
-  const Mesh::Vertex& v1 = *(this->GetVertices(*augmentedMesh).emplace(
-			       Shape::Point(bounds[1],bounds[2]))).first;
-  const Mesh::Vertex& v2 = *(this->GetVertices(*augmentedMesh).emplace(
-			       Shape::Point(bounds[0],bounds[3]))).first;
-  const Mesh::Vertex& v3 = *(this->GetVertices(*augmentedMesh).emplace(
-			       Shape::Point(bounds[1],bounds[3]))).first;
+  const Mesh::Vertex& v0 = *(this->InsertVertex(
+                               Shape::Point(bounds[0],bounds[2]),
+                               *augmentedMesh)).first;
+  const Mesh::Vertex& v1 = *(this->InsertVertex(
+                               Shape::Point(bounds[1],bounds[2]),
+                               *augmentedMesh)).first;
+  const Mesh::Vertex& v2 = *(this->InsertVertex(
+                               Shape::Point(bounds[0],bounds[3]),
+                               *augmentedMesh)).first;
+  const Mesh::Vertex& v3 = *(this->InsertVertex(
+                               Shape::Point(bounds[1],bounds[3]),
+                               *augmentedMesh)).first;
 
-  const Mesh::Edge& e01 =*(this->GetEdges(*augmentedMesh).emplace(v0,v1)).first;
-  const Mesh::Edge& e02 =*(this->GetEdges(*augmentedMesh).emplace(v0,v2)).first;
-  const Mesh::Edge& e12 =*(this->GetEdges(*augmentedMesh).emplace(v1,v2)).first;
-  const Mesh::Edge& e13 =*(this->GetEdges(*augmentedMesh).emplace(v1,v3)).first;
-  const Mesh::Edge& e23 =*(this->GetEdges(*augmentedMesh).emplace(v2,v3)).first;
+  const Mesh::Edge& e01 =*(this->InsertEdge(v0,v1,*augmentedMesh)).first;
+  const Mesh::Edge& e02 =*(this->InsertEdge(v0,v2,*augmentedMesh)).first;
+  const Mesh::Edge& e12 =*(this->InsertEdge(v1,v2,*augmentedMesh)).first;
+  const Mesh::Edge& e13 =*(this->InsertEdge(v1,v3,*augmentedMesh)).first;
+  const Mesh::Edge& e23 =*(this->InsertEdge(v2,v3,*augmentedMesh)).first;
 
   this->GetTriangles(*augmentedMesh).emplace(e01,e02,e12);
   this->GetTriangles(*augmentedMesh).emplace(e13,e23,e12);
 
-  InsertEdge insertEdge;
+  InsertLineSegment insertLineSegment;
 
   Shape::PointVector vec;
   std::pair<const Mesh::Edge*, bool> firstEdge;
@@ -72,7 +76,7 @@ void ConstrainedDelaunayMesh::operator()(
   {
     unsigned ipp = (i+1)%polygon.GetPoints().size();
     Shape::LineSegment l(polygon.GetPoints()[i], polygon.GetPoints()[ipp]);
-    const Mesh::Edge* edge = insertEdge(l, mesh);
+    const Mesh::Edge* edge = insertLineSegment(l, mesh);
     vec.push_back(std::cref(static_cast<const Shape::Point&>(
 			      edge->A() == polygon.GetPoints()[i] ? edge->A() :
 			      edge->B())));
@@ -96,16 +100,16 @@ void ConstrainedDelaunayMesh::operator()(
   {
     for (auto& triangle : mesh_.GetTriangles())
     {
-      const Mesh::Vertex& a =
-	*(this->GetVertices(mesh).emplace(triangle.AB().A())).first;
-      const Mesh::Vertex& b =
-	*(this->GetVertices(mesh).emplace(triangle.AB().B())).first;
-      const Mesh::Vertex& c =
-	*(this->GetVertices(mesh).emplace(triangle.AC().B())).first;
-      const Mesh::Edge& ab = *(this->GetEdges(mesh).emplace(a,b)).first;
-      const Mesh::Edge& bc = *(this->GetEdges(mesh).emplace(b,c)).first;
-      const Mesh::Edge& ac = *(this->GetEdges(mesh).emplace(a,c)).first;
-      this->GetTriangles(mesh).emplace(ab,bc,ac);
+      const Mesh::Vertex& a = *(this->InsertVertex(
+                                  triangle.AB().A(),mesh)).first;
+      const Mesh::Vertex& b = *(this->InsertVertex(
+                                  triangle.AB().B(),mesh)).first;
+      const Mesh::Vertex& c = *(this->InsertVertex(
+                                  triangle.AC().B(),mesh)).first;
+      const Mesh::Edge& ab = *(this->InsertEdge(a,b,mesh)).first;
+      const Mesh::Edge& bc = *(this->InsertEdge(b,c,mesh)).first;
+      const Mesh::Edge& ac = *(this->InsertEdge(a,c,mesh)).first;
+      this->InsertTriangle(ab,bc,ac,mesh);
     }
   }
 }
