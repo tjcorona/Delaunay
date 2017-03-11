@@ -42,6 +42,9 @@ double DistanceSquared(const Point& p1, const Point& p2);
 
 // Return the distance between two points.
 double Distance(const Point& p1, const Point& p2);
+
+// Returns the angle in radians formed by the three points
+double Angle(const Point& p1, const Point& p2, const Point& p3);
 }
 }
 

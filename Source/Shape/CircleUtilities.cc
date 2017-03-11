@@ -24,6 +24,7 @@
 #include "Shape/LineSegmentUtilities.hh"
 #include "Shape/Point.hh"
 #include "Shape/PointUtilities.hh"
+#include "Shape/Triangle.hh"
 
 namespace Delaunay
 {
@@ -32,6 +33,29 @@ namespace Shape
 bool Contains(const Circle& c, const Point& p)
 {
   return Distance(c.Center,p) < c.Radius;
+}
+
+bool Intersect(const Circle& c, const LineSegment& l)
+{
+  double D = Cross(l.A - c.Center, l.B - c.Center);
+  double dr2 = LengthSquared(l);
+
+  return c.Radius*c.Radius*dr2 > D*D;
+}
+
+bool Intersect(const LineSegment& l, const Circle& c)
+{
+  return Intersect(c,l);
+}
+
+bool Intersect(const Circle& c, const Triangle& t)
+{
+  return Intersect(c,t.AB) || Intersect(c,t.BC) || Intersect(c,t.AC);
+}
+
+bool Intersect(const Triangle& t, const Circle& c)
+{
+  return Intersect(c, t);
 }
 
 namespace
@@ -56,7 +80,7 @@ std::tuple<unsigned, Point, Point> Intersection(const LineSegment& l,
 
   double Delta = c.Radius*c.Radius*dr2 - D*D;
 
-  if (Delta < -EPSILON)
+  if (Delta < -EPSILON/2.)
     return std::make_tuple(0,
                            Point(std::numeric_limits<double>::quiet_NaN(),
                                  std::numeric_limits<double>::quiet_NaN()),

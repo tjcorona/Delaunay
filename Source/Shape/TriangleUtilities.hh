@@ -35,6 +35,9 @@ bool Contains(const Triangle& t, const Point& p);
 // Return the area of the triangle.
 double Area(const Triangle& t);
 
+// Return the centroid of the triangle;
+Point Centroid(const Triangle& t);
+
 // Return the closest point on a triangle to a point.
 Point ClosestPoint(const Point& p,const Triangle& t);
 inline Point ClosestPoint(const Triangle& t,const Point& p)

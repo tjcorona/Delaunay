@@ -14,27 +14,33 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-
-#include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
+
+#include "Mesh/Mesh.hh"
 
 namespace Delaunay
 {
-namespace Discretization
+namespace Mesh
 {
 
-class LegalizeEdges : public Mesh::Mesher
+std::pair<Mesh::VertexSet::const_iterator,bool>
+Mesher::InsertVertex(const Shape::Point& p, Mesh::Mesh& mesh)
 {
-public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
-};
+  return this->GetVertices(mesh).emplace(p);
+}
+
+std::pair<Mesh::EdgeSet::const_iterator,bool>
+Mesher::InsertEdge(const Vertex& a, const Vertex& b, Mesh& mesh)
+{
+  return this->GetEdges(mesh).emplace(a,b);
+}
+
+std::pair<Mesh::TriangleSet::const_iterator,bool>
+Mesher::InsertTriangle(const Edge& ab, const Edge& bc, const Edge& ac,
+                       Mesh& mesh)
+{
+  return this->GetTriangles(mesh).emplace(ab,bc,ac);
+}
 
 }
 }
-
-#endif

@@ -14,7 +14,7 @@
 
 ******************************************************************************/
 
-#include "InsertEdge.hh"
+#include "CutEdge.hh"
 
 #include "Shape/LineSegment.hh"
 #include "Shape/LineSegmentUtilities.hh"
@@ -28,11 +28,16 @@ namespace Delaunay
 namespace Discretization
 {
 
-std::set<const Mesh::Edge*> InsertEdge::operator()(
+std::set<const Mesh::Edge*> CutEdge::operator()(
   const Shape::LineSegment& l, Mesh::Mesh& mesh)
 {
-  const Mesh::Triangle* t1 = this->FindContainingTriangle(l.A, mesh);
-  const Mesh::Triangle* t2 = this->FindContainingTriangle(l.B, mesh);
+  const Mesh::Triangle* t1 = mesh.FindContainingTriangle(l.A);
+  const Mesh::Triangle* t2 = mesh.FindContainingTriangle(l.B);
+
+  if (!t1 || !t2)
+  {
+    return std::set<const Mesh::Edge*>();
+  }
 
   assert(t1 && t2);
 
@@ -43,7 +48,8 @@ std::set<const Mesh::Edge*> InsertEdge::operator()(
 
   for (auto triangle : intersected)
   {
-    const Mesh::Edge* edge = this->InsertEdgeInTriangle(l, *triangle, mesh);
+    const Mesh::Edge* edge = this->CutEdgeInTriangle(l, *triangle, mesh);
+
     if (edge != nullptr)
       insertedEdges.insert(edge);
   }
@@ -68,11 +74,11 @@ bool NeedsToSplit(const Shape::LineSegment& l, const Shape::Triangle& t)
 }
 }
 
-std::set<const Mesh::Triangle*> InsertEdge::FindContainingTriangles(
+std::set<const Mesh::Triangle*> CutEdge::FindContainingTriangles(
   const Shape::LineSegment& l, Delaunay::Mesh::Mesh& mesh) const
 {
-  const Mesh::Triangle* t1 = this->FindContainingTriangle(l.A, mesh);
-  const Mesh::Triangle* t2 = this->FindContainingTriangle(l.B, mesh);
+  const Mesh::Triangle* t1 = mesh.FindContainingTriangle(l.A);
+  const Mesh::Triangle* t2 = mesh.FindContainingTriangle(l.B);
 
   std::set<const Mesh::Triangle*> intersected;
 
@@ -143,7 +149,7 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 }
 }
 
-const Mesh::Edge* InsertEdge::InsertEdgeInTriangle(const Shape::LineSegment& l,
+const Mesh::Edge* CutEdge::CutEdgeInTriangle(const Shape::LineSegment& l,
 						   const Mesh::Triangle& t,
 						   Mesh::Mesh& mesh)
 {
@@ -242,6 +248,7 @@ const Mesh::Edge* InsertEdge::InsertEdgeInTriangle(const Shape::LineSegment& l,
       this->GetTriangles(mesh).emplace(*GetEdge(opposing, opposing2), e2, e3);
 
       this->trianglesToRemove.insert(&t);
+
       return &e1;
     }
 
@@ -326,6 +333,9 @@ const Mesh::Edge* InsertEdge::InsertEdgeInTriangle(const Shape::LineSegment& l,
   const Shape::Point& pt1 = std::get<1>(intersections);
   const Shape::Point& pt2 = std::get<2>(intersections);
   const Mesh::Edge* toSplit[2];
+  const Mesh::Edge* triEdges[4] = {&t.AB(), &t.BC(), &t.AC(), nullptr};
+
+
   toSplit[0] = (Shape::Contains(t.AB(), pt1) ? &t.AB() :
                 Shape::Contains(t.BC(), pt1) ? &t.BC() :
                 Shape::Contains(t.AC(), pt1) ? &t.AC() : nullptr);
@@ -421,17 +431,6 @@ const Mesh::Edge* InsertEdge::InsertEdgeInTriangle(const Shape::LineSegment& l,
   this->edgesToRemove.insert(toSplit[1]);
 
   return &e1;
-}
-
-const Mesh::Triangle* InsertEdge::FindContainingTriangle(
-  const Shape::Point& p, Delaunay::Mesh::Mesh& mesh) const
-{
-  for (auto it = mesh.GetTriangles().begin();
-       it != mesh.GetTriangles().end(); ++it)
-    if (Contains(*it, p))
-      return &(*it);
-
-  return nullptr;
 }
 
 }

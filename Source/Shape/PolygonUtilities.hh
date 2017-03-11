@@ -14,26 +14,18 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_SHAPE_POLYGONUTILITIES_HH
+#define DELAUNAY_SHAPE_POLYGONUTILITIES_HH
 
-#include "Shape/Point.hh"
-#include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
+#include <array>
 
 namespace Delaunay
 {
-namespace Discretization
+namespace Shape
 {
+class Polygon;
 
-class LegalizeEdges : public Mesh::Mesher
-{
-public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
-};
-
+std::array<double, 4> Bounds(const Polygon&);
 }
 }
 

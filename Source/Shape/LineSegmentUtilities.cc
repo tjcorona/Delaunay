@@ -33,7 +33,7 @@ bool Contains(const LineSegment& l, const Point& p)
     return (p == l.A);
 
   double dot = Dot(p-l.B,l.A - l.B);
-  if (std::abs(dot - len*Distance(p,l.B)) > EPSILON)
+  if (std::abs(dot - len*Distance(p,l.B)) > len*EPSILON)
     return false;
 
   double t = dot/len;

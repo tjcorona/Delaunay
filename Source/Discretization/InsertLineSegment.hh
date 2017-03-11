@@ -14,24 +14,31 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_DISCRETIZATION_INSERTLINESEGMENT_HH
+#define DELAUNAY_DISCRETIZATION_INSERTLINESEGMENT_HH
 
-#include "Shape/Point.hh"
+#include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
 namespace Discretization
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class InsertLineSegment : public Mesh::Mesher
 {
 public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
+  InsertLineSegment() {}
+
+  const Mesh::Edge* operator()(const Shape::LineSegment&,Mesh::Mesh&);
+
+private:
+  Shape::Polygon PolygonFromTriangleSet(const Mesh::TriangleSet& triangleSet) const;
+
+  std::set<const Mesh::Triangle*> FindContainingTriangles(const Shape::LineSegment&, Delaunay::Mesh::Mesh&) const;
+
+  std::pair<Shape::Polygon,Shape::Polygon> BisectPolygon(
+    const Shape::Polygon&, const Mesh::Vertex&, const Mesh::Vertex&) const;
 };
 
 }

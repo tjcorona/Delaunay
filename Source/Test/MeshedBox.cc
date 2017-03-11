@@ -48,28 +48,34 @@ int main(int argc,char** argv)
 
   std::vector<Shape::Point> vertices;
 
-  for (std::size_t i=0;i<1;i++)
+  unsigned nPerPts = 10;
+
+  for (std::size_t i=0;i<nPerPts;i++)
   {
-    vertices.push_back(Shape::Point((bounds[1]*i + bounds[0]*(10.-i))/10.,
-				    bounds[2]));
+    vertices.push_back(Shape::Point(
+			 (bounds[1]*i + bounds[0]*(nPerPts-i))/nPerPts,
+			 bounds[2]));
   }
 
-  for (std::size_t i=0;i<1;i++)
+  for (std::size_t i=0;i<nPerPts;i++)
   {
-    vertices.push_back(Shape::Point(bounds[1],
-				    (bounds[3]*i + bounds[2]*(10.-i))/10.));
+    vertices.push_back(Shape::Point(
+			 bounds[1],
+			 (bounds[3]*i + bounds[2]*(nPerPts-i))/nPerPts));
   }
 
-  for (std::size_t i=0;i<1;i++)
+  for (std::size_t i=0;i<nPerPts;i++)
   {
-    vertices.push_back(Shape::Point((bounds[0]*i + bounds[1]*(10.-i))/10.,
-				    bounds[3]));
+    vertices.push_back(Shape::Point(
+			 (bounds[0]*i + bounds[1]*(nPerPts-i))/nPerPts,
+			 bounds[3]));
   }
 
-  for (std::size_t i=0;i<1;i++)
+  for (std::size_t i=0;i<nPerPts;i++)
   {
-    vertices.push_back(Shape::Point(bounds[0],
-				    (bounds[2]*i + bounds[3]*(10.-i))/10.));
+    vertices.push_back(Shape::Point(
+			 bounds[0],
+			 (bounds[2]*i + bounds[3]*(nPerPts-i))/nPerPts));
   }
 
   // create a polygon from the point vector
@@ -80,10 +86,8 @@ int main(int argc,char** argv)
 
   {
     // Step 1: cut a hole in the box
-    unsigned nx = 2*(1 + Misc::Random::GetInstance().Uniform(5));
-    unsigned ny = 2*(1 + Misc::Random::GetInstance().Uniform(5));
-
-    nx = ny = 2;
+    unsigned nx = 2*(6 + Misc::Random::GetInstance().Uniform(6));
+    unsigned ny = 2*(6 + Misc::Random::GetInstance().Uniform(6));
 
     std::deque<double> x(1,0.);
     for (unsigned i=0; i<nx+1; i++)
@@ -93,8 +97,6 @@ int main(int argc,char** argv)
       x[i] /= x.back();
     x.pop_back();
 
-    nx /= 2;
-
     std::deque<double> y(1,0);
     for (unsigned i=0; i<ny+1; i++)
       y.push_back(y.back() + 10. + Misc::Random::GetInstance().Uniform(10));
@@ -103,31 +105,22 @@ int main(int argc,char** argv)
       y[i] /= y.back();
     y.pop_back();
 
-    ny /= 2;
-
-    for (unsigned i=0; i<nx; i++)
+    for (unsigned i=0; i<nx; i+=2)
     {
-      for (unsigned j=0; j<ny; j++)
+      for (unsigned j=0; j<ny; j+=2)
       {
 	double subBounds[4] = {bounds[0] + (bounds[1] - bounds[0])*x[i],
 			       bounds[0] + (bounds[1] - bounds[0])*x[i+1],
 			       bounds[2] + (bounds[3] - bounds[2])*y[j],
 			       bounds[2] + (bounds[3] - bounds[2])*y[j+1]};
-	// const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(50);
-        const unsigned nPoints = 3;
-	// PolygonType polyType = static_cast<PolygonType>(
-	//   Misc::Random::GetInstance().Uniform(3));
-	PolygonType polyType = static_cast<PolygonType>(0);
-
-	std::cout<<"PolyType: "<<polyType<<std::endl;
+	const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(10);
+	PolygonType polyType = Regular;
 
 	interiorPoints.push_back(
 	  std::move(std::move(GeneratePolygonPoints(polyType,
 						    nPoints,
 						    subBounds))));
 	interiorBoundaries.insert(Shape::Polygon(interiorPoints.back()));
-        for (auto i : interiorPoints.back())
-          std::cout<<i<<std::endl;
       }
     }
   }

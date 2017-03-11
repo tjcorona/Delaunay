@@ -31,7 +31,7 @@ namespace Discretization
 
 void LegalizeEdges::operator()(const Mesh::Vertex* v,
 			       std::set<const Mesh::Edge*>& edges,
-			       Delaunay::Mesh::Mesh& mesh)
+			       Delaunay::Mesh::Mesh& mesh) const
 {
   if (edges.empty())
     return;
@@ -44,7 +44,7 @@ void LegalizeEdges::operator()(const Mesh::Vertex* v,
 
   // Now that boundaries are excluded from legalization, this check is probably
   // not needed.
-  if (edge->triangles.size() == 1)
+  if (edge->triangles.size() == 1 || edge->boundary)
   {
     return this->operator()(v,edges,mesh);
   }
@@ -122,7 +122,7 @@ void LegalizeEdges::operator()(const Mesh::Vertex* v,
     }
   }
 
-  if (!isLegal && !edge->boundary)
+  if (!isLegal)
   {
     const Mesh::Edge* kl = &(*(this->GetEdges(mesh).emplace(*K, *L)).first);
 

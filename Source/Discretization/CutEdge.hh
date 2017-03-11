@@ -14,24 +14,33 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_DISCRETIZATION_CUTEDGE_HH
+#define DELAUNAY_DISCRETIZATION_CUTEDGE_HH
 
-#include "Shape/Point.hh"
+#include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
 namespace Discretization
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class CutEdge : public Mesh::Mesher
 {
 public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
+  CutEdge() {}
+
+  std::set<const Mesh::Edge*> operator()(const Shape::LineSegment&,Mesh::Mesh&);
+
+private:
+
+  const Mesh::Edge* CutEdgeInTriangle(const Shape::LineSegment&,
+				      const Mesh::Triangle&, Mesh::Mesh&);
+
+  std::set<const Mesh::Triangle*> FindContainingTriangles(const Shape::LineSegment&, Delaunay::Mesh::Mesh&) const;
+
+  std::set<const Mesh::Edge*> edgesToRemove;
+  std::set<const Mesh::Triangle*> trianglesToRemove;
 };
 
 }

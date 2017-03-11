@@ -22,15 +22,12 @@
 
 #include "Discretization/ConstrainedDelaunayMesh.hh"
 #include "Discretization/DiscretizePolygon.hh"
-// #include "Discretization/RuppertsAlgorithm.hh"
+#include "Discretization/EnforceMinimumAngle.hh"
 
 #include "Misc/Random.hh"
 
-#include "Validation/IsValidPolygon.hh"
-
 #include "Visualization/Color.hh"
 #include "Visualization/CVCanvas.hh"
-// #include "Visualization/VTKCanvas.hh"
 
 #include <algorithm>
 #include <iostream>
@@ -42,17 +39,10 @@ using namespace Delaunay::Visualization;
 
 int main(int argc,char** argv)
 {
+  PolygonType testType = Regular;
+
   if (argc > 1)
-  {
-    int seed = atoi(argv[1]);
-    std::cout<<"Random seed: "<<seed<<std::endl;
-    Misc::Random::GetInstance().Seed(seed);
-  }
-
-  PolygonType testType = Random;
-
-  // if (argc > 1)
-  //   testType = static_cast<PolygonType>(atoi(argv[1]));
+    testType = static_cast<PolygonType>(atoi(argv[1]));
 
   if (testType < 0 || testType > 3)
   {
@@ -86,9 +76,8 @@ int main(int argc,char** argv)
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
   double bounds[4] = {0.,10.,0.,10.};
   Visualization::CVCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
-  // Visualization::VTKCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
 
-  const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(100);
+  const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(20);
 
   std::vector<Shape::Point> vertices(std::move(GeneratePolygonPoints(testType,
 								     nPoints,
@@ -97,38 +86,36 @@ int main(int argc,char** argv)
   // create a polygon from the point vector
   Shape::Polygon polygon(vertices);
 
-  Validation::IsValidPolygon isValidPolygon;
-  if (!isValidPolygon(polygon))
-  {
-    std::cout<<"Invalid polygon was formed"<<std::endl;
-    return 0;
-  }
-
   Mesh::Mesh mesh;
   // Discretization::DiscretizePolygon discretize;
   Discretization::ConstrainedDelaunayMesh discretize;
-  // Discretization::RuppertsAlgorithm discretize;
   discretize(polygon, mesh);
+
+  Discretization::EnforceMinimumAngle enforceMinimumAngle;
+  enforceMinimumAngle(20.7, mesh);
+
+  std::cout<<"there are "<<mesh.GetTriangles().size()<<" triangles, "<<mesh.GetEdges().size()<<" edges and "<<mesh.GetVertices().size()<<" vertices."<<std::endl;
 
   Color faintRed(255,0,0,128);
 
-  canvas.Draw(polygon,Red,faintRed);
-  // canvas.Draw(mesh.GetPerimeter(),Red,faintRed);
+  canvas.Draw(mesh.GetPerimeter(),Red,faintRed);
 
   for (auto triangle : mesh.GetTriangles())
     canvas.Draw(triangle, Visualization::Black);
 
   for (auto edge : mesh.GetEdges())
-    if (edge.boundary)
-      canvas.Draw(edge, Delaunay::Visualization::Green);
+    // if (edge.boundary)
+    //   canvas.Draw(edge, Delaunay::Visualization::Green);
+    if (enforceMinimumAngle.IsEncroached(edge))
+      canvas.Draw(edge, Delaunay::Visualization::Yellow);
 
   // for (unsigned i=0;i<mesh.GetPerimeter().GetPoints().size();i++)
   //   canvas.Draw(mesh.GetPerimeter().GetPoints()[i],
   // 		Visualization::Color(i/(mesh.GetPerimeter()
-  //       				.GetPoints().size()-1.),
+  // 					.GetPoints().size()-1.),
   // 				     Visualization::Color::BlueToRed));
 
-  canvas.SetTimeDelay(1);
+  canvas.SetTimeDelay(0.);
   canvas.Update();
 
   return 0;

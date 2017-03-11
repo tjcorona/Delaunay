@@ -22,7 +22,6 @@
 
 #include <cassert>
 #include <exception>
-#include <iostream>
 #include <limits>
 #include <list>
 #include <map>

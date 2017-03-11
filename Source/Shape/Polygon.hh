@@ -19,8 +19,6 @@
 
 #include "Shape/Point.hh"
 
-#include <iostream>
-
 namespace Delaunay
 {
 namespace Shape
@@ -51,6 +49,16 @@ public:
 	return p1.Points[i] < p2.Points[i];
     }
     return false;
+  }
+
+  friend std::ostream& operator<<(std::ostream& s,const Polygon& p)
+  {
+    s<<"(";
+    for (std::size_t i=0;i<p.Points.size();i++)
+      s<<p.Points[i] << (i < p.Points.size()-1 ? "," : "");
+    s<<")";
+
+    return s;
   }
 
 protected:

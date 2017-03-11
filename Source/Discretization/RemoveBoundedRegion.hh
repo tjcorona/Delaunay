@@ -14,24 +14,24 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_DISCRETIZATION_REMOVEBOUNDEDREGION_HH
+#define DELAUNAY_DISCRETIZATION_REMOVEBOUNDEDREGION_HH
 
-#include "Shape/Point.hh"
+#include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
 namespace Discretization
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class RemoveBoundedRegion : public Mesh::Mesher
 {
 public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
+  RemoveBoundedRegion() {}
+
+  void operator()(const Mesh::Edge&, bool, Mesh::Mesh&);
+  void operator()(const Mesh::Triangle&, Mesh::Mesh&);
 };
 
 }

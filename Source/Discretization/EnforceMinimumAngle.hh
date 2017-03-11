@@ -14,24 +14,30 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_DISCRETIZATION_ENFORCEMINIMUMANGLE_HH
+#define DELAUNAY_DISCRETIZATION_ENFORCEMINIMUMANGLE_HH
 
-#include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
 
 namespace Delaunay
 {
 namespace Discretization
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class EnforceMinimumAngle : public Mesh::Mesher
 {
 public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
+  EnforceMinimumAngle() {}
+
+  void operator()(double angle, Delaunay::Mesh::Mesh&) const;
+
+  bool IsEncroached(const Mesh::Edge&) const;
+
+protected:
+  double MinimumAngle(const Mesh::Triangle&) const;
+  std::set<const Mesh::Edge*> Encroaches(
+    const Shape::Point& p, const Delaunay::Mesh::Mesh& mesh) const;
+  void RecursivelySplitEdge(const Mesh::Edge&, Delaunay::Mesh::Mesh&) const;
 };
 
 }

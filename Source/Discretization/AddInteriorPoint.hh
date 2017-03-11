@@ -35,12 +35,6 @@ public:
   AddInteriorPoint() {}
 
   const Mesh::Vertex* operator()(const Point&, Delaunay::Mesh::Mesh&);
-
-private:
-  const Mesh::Triangle* FindContainingTriangle(const Point& p,
-					 Delaunay::Mesh::Mesh&) const;
-  void SplitTriangle(const Mesh::Triangle*, const Mesh::Vertex*,
-		     Delaunay::Mesh::Mesh&);
 };
 
 }

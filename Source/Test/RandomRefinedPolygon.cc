@@ -20,7 +20,8 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/DiscretizePolygon.hh"
+// #include "Discretization/DiscretizePolygon.hh"
+#include "Discretization/ConstrainedDelaunayMesh.hh"
 #include "Discretization/AddInteriorPoint.hh"
 
 #include "Misc/Random.hh"
@@ -86,7 +87,8 @@ int main(int argc,char** argv)
   Shape::Polygon polygon(vertices);
 
   Mesh::Mesh mesh;
-  Discretization::DiscretizePolygon discretize;
+  // Discretization::DiscretizePolygon discretize;
+  Discretization::ConstrainedDelaunayMesh discretize;
   discretize(polygon, mesh);
 
   Discretization::AddInteriorPoint addInteriorPoint;

@@ -14,10 +14,10 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_DISCRETIZATION_SPLITEDGE_HH
+#define DELAUNAY_DISCRETIZATION_SPLITEDGE_HH
 
-#include "Shape/Point.hh"
+#include "Mesh/Edge.hh"
 #include "Mesh/Mesher.hh"
 #include "Mesh/TriangleSet.hh"
 
@@ -26,12 +26,16 @@ namespace Delaunay
 namespace Discretization
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class SplitEdge : public Mesh::Mesher
 {
 public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
+  SplitEdge() {}
+
+  std::pair<const Mesh::Edge*, const Mesh::Edge*>
+  operator()(const Mesh::Edge&, Delaunay::Mesh::Mesh&) const;
+
+  std::pair<const Mesh::Edge*, const Mesh::Edge*>
+  operator()(const Mesh::Edge&, double, Delaunay::Mesh::Mesh&) const;
 };
 
 }

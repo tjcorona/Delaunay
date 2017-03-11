@@ -14,24 +14,22 @@
 
 ******************************************************************************/
 
-#ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
-#define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
+#ifndef DELAUNAY_VALIDATION_ISVALIDPOLYGON_HH
+#define DELAUNAY_VALIDATION_ISVALIDPOLYGON_HH
 
-#include "Shape/Point.hh"
-#include "Mesh/Mesher.hh"
-#include "Mesh/TriangleSet.hh"
+#include "Shape/Polygon.hh"
 
 namespace Delaunay
 {
-namespace Discretization
+namespace Validation
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class IsValidPolygon
 {
 public:
-  LegalizeEdges() {}
-  void operator()(const Mesh::Vertex*, std::set<const Mesh::Edge*>&,
-		  Delaunay::Mesh::Mesh&) const;
+  IsValidPolygon() {}
+
+  bool operator()(const Delaunay::Shape::Polygon&) const;
 };
 
 }
