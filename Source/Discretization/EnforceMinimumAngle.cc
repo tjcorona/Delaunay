@@ -78,7 +78,6 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 	  {
 	    if (encroachedByTriangle.find(&edge) != encroachedByTriangle.end())
 	    {
-
 	      splitEdge(edge, mesh);
 	      break;
 	    }

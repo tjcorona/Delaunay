@@ -46,11 +46,11 @@ int main(int argc,char** argv)
 
   if (testType < 0 || testType > 3)
   {
-    std::cout<<"MeshedPolygon: possible options:"<<std::endl;
-    std::cout<<"               0: Regular"<<std::endl;
-    std::cout<<"               1: Star Convex"<<std::endl;
-    std::cout<<"               2: Random Evolve"<<std::endl;
-    std::cout<<"               3: Random (default)"<<std::endl;
+    std::cout<<"EnforceMinimumAngle: possible options:"<<std::endl;
+    std::cout<<"                     0: Regular"<<std::endl;
+    std::cout<<"                     1: Star Convex"<<std::endl;
+    std::cout<<"                     2: Random Evolve"<<std::endl;
+    std::cout<<"                     3: Random (default)"<<std::endl;
     return 1;
   }
 
@@ -71,6 +71,12 @@ int main(int argc,char** argv)
       break;
     default:
       assert(false);
+  }
+
+  if (testType != Regular)
+  {
+    std::cout<<"Currently, only regular polygons are supported."<<std::endl;
+    return 1;
   }
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
@@ -103,11 +109,9 @@ int main(int argc,char** argv)
   for (auto triangle : mesh.GetTriangles())
     canvas.Draw(triangle, Visualization::Black);
 
-  for (auto edge : mesh.GetEdges())
-    // if (edge.boundary)
-    //   canvas.Draw(edge, Delaunay::Visualization::Green);
-    if (enforceMinimumAngle.IsEncroached(edge))
-      canvas.Draw(edge, Delaunay::Visualization::Yellow);
+  // for (auto edge : mesh.GetEdges())
+  //   if (enforceMinimumAngle.IsEncroached(edge))
+  //     canvas.Draw(edge, Delaunay::Visualization::Yellow);
 
   // for (unsigned i=0;i<mesh.GetPerimeter().GetPoints().size();i++)
   //   canvas.Draw(mesh.GetPerimeter().GetPoints()[i],
