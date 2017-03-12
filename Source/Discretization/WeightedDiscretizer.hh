@@ -31,6 +31,7 @@ namespace Discretization
 
 typedef std::function<double(const Shape::Point&)> WeightFunction;
 
+// WIP
 class WeightedDiscretizer : public Mesh::Mesher
 {
 public:
