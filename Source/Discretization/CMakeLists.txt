@@ -35,6 +35,11 @@ target_link_libraries (${PROJECT_NAME}Discretization
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Visualization)
 set_property (TARGET ${PROJECT_NAME}Discretization PROPERTY MACOSX_RPATH TRUE)
 
+target_include_directories(${PROJECT_NAME}Discretization
+  PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Source/>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 install(TARGETS
         ${PROJECT_NAME}Discretization
   EXPORT ${PROJECT_NAME}

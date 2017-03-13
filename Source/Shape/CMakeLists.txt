@@ -26,6 +26,11 @@ set(Shape_Source_Files
 add_library (${PROJECT_NAME}Shape SHARED ${Shape_Source_Files})
 set_property (TARGET ${PROJECT_NAME}Shape PROPERTY MACOSX_RPATH TRUE)
 
+target_include_directories(${PROJECT_NAME}Shape
+  PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Source/>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 install(TARGETS
         ${PROJECT_NAME}Shape
   EXPORT ${PROJECT_NAME}

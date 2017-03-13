@@ -9,6 +9,11 @@ target_link_libraries (${PROJECT_NAME}Validation
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Visualization)
 set_property (TARGET ${PROJECT_NAME}Validation PROPERTY MACOSX_RPATH TRUE)
 
+target_include_directories(${PROJECT_NAME}Validation
+  PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Source/>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 install(TARGETS
         ${PROJECT_NAME}Validation
   EXPORT ${PROJECT_NAME}

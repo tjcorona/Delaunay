@@ -29,6 +29,11 @@ target_include_directories (${PROJECT_NAME}Visualization PUBLIC
   ${OpenCV_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
 set_property (TARGET ${PROJECT_NAME}Visualization PROPERTY MACOSX_RPATH TRUE)
 
+target_include_directories(${PROJECT_NAME}Visualization
+  PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Source/>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 install(TARGETS
         ${PROJECT_NAME}Visualization
   EXPORT ${PROJECT_NAME}
