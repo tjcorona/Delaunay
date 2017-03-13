@@ -1,8 +1,12 @@
-find_package( OpenCV REQUIRED )
-
 set(Visualization_Source_Files
-  CVCanvas.cc
   Color.cc)
+
+if (DELAUNAY_USE_OPENCV)
+  find_package( OpenCV REQUIRED )
+
+  list (APPEND Visualization_Source_Files
+    CVCanvas.cc)
+endif()
 
 if (DELAUNAY_USE_VTK)
   find_package(VTK REQUIRED)

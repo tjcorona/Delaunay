@@ -33,5 +33,8 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 
 enable_testing()
 
+option (DELAUNAY_USE_OPENCV "Enables the use of OpenCV" OFF)
+option (DELAUNAY_USE_VTK "Enables the use of VTK" OFF)
+
 include_directories (Source)
 add_subdirectory (Source)

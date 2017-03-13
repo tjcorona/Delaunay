@@ -25,9 +25,7 @@
 #include "Shape/PolygonUtilities.hh"
 #include "Shape/TriangleUtilities.hh"
 
-#include "Visualization/CVCanvas.hh"
-
-#include <iostream>
+#include <cassert>
 
 namespace Delaunay
 {
