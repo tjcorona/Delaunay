@@ -1,3 +1,17 @@
+set(Shape_Header_Files
+  BezierCurve.hh
+  Circle.hh
+  CircleUtilities.hh
+  LineSegment.hh
+  LineSegmentUtilities.hh
+  ParametricCurve.hh
+  Point.hh
+  PointUtilities.hh
+  Polygon.hh
+  PolygonUtilities.hh
+  Triangle.hh
+  TriangleUtilities.hh)
+
 set(Shape_Source_Files
   BezierCurve.cc
   CircleUtilities.cc
@@ -9,11 +23,20 @@ set(Shape_Source_Files
   Triangle.cc
   TriangleUtilities.cc)
 
-add_library (DelaunayShape SHARED ${Shape_Source_Files})
-#target_include_directories (DelaunayShape PUBLIC
-#  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..)
-set_property (TARGET DelaunayShape PROPERTY MACOSX_RPATH TRUE)
+add_library (${PROJECT_NAME}Shape SHARED ${Shape_Source_Files})
+set_property (TARGET ${PROJECT_NAME}Shape PROPERTY MACOSX_RPATH TRUE)
 
-install (TARGETS DelaunayShape DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS
+        ${PROJECT_NAME}Shape
+  EXPORT ${PROJECT_NAME}
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  )
+
+install(FILES
+  ${Shape_Header_Files}
+  DESTINATION include/${PROJECT_NAME}/Shape
+  )
 
 add_subdirectory(Tests)
