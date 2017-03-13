@@ -18,6 +18,8 @@
 
 #include "Shape/LineSegment.hh"
 
+#include <algorithm>
+
 namespace
 {
 typedef Delaunay::Shape::PointVector PointVector;
