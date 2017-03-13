@@ -106,7 +106,7 @@ int main(int argc,char** argv)
   // std::vector<Shape::Point> vertices;
   std::vector< std::vector<Shape::Point> > vertices;
 
-  std::string chesapeakeFile = std::string(DELAUNAY_DATA_DIR) +
+  std::string chesapeakeFile = std::string(DATA_DIR) +
     std::string("/chesapeake-0.001-100.vtp");
   // There are multiple polylines in the file; the one we are interested in is
   // the fourth

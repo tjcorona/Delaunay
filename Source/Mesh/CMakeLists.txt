@@ -1,11 +1,33 @@
+set(Mesh_Header_Files
+  Edge.hh
+  EdgeSet.hh
+  Mesh.hh
+  Mesher.hh
+  Polygon.hh
+  Triangle.hh
+  TriangleSet.hh
+  Vertex.hh)
+
 set(Mesh_Source_Files
   Mesh.cc
   Mesher.cc
   Triangle.cc
 )
 
-add_library (DelaunayMesh SHARED ${Mesh_Source_Files})
-target_link_libraries (DelaunayMesh DelaunayShape DelaunayMisc)
-set_property (TARGET DelaunayMesh PROPERTY MACOSX_RPATH TRUE)
+add_library (${PROJECT_NAME}Mesh SHARED ${Mesh_Source_Files})
+target_link_libraries (${PROJECT_NAME}Mesh ${PROJECT_NAME}Shape
+  ${PROJECT_NAME}Misc)
+set_property (TARGET ${PROJECT_NAME}Mesh PROPERTY MACOSX_RPATH TRUE)
 
-install (TARGETS DelaunayMesh DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS
+        ${PROJECT_NAME}Mesh
+  EXPORT ${PROJECT_NAME}
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  )
+
+install(FILES
+  ${Mesh_Header_Files}
+  DESTINATION include/${PROJECT_NAME}/Mesh
+  )

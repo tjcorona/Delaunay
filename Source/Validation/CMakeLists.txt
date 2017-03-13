@@ -1,8 +1,23 @@
+set(Validation_Header_Files
+  IsValidPolygon.hh)
+
 set(Validation_Source_Files
   IsValidPolygon.cc)
 
-add_library (DelaunayValidation SHARED ${Validation_Source_Files})
-target_link_libraries (DelaunayValidation DelaunayShape DelaunayMesh DelaunayVisualization)
-set_property (TARGET DelaunayValidation PROPERTY MACOSX_RPATH TRUE)
+add_library (${PROJECT_NAME}Validation SHARED ${Validation_Source_Files})
+target_link_libraries (${PROJECT_NAME}Validation
+  ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Visualization)
+set_property (TARGET ${PROJECT_NAME}Validation PROPERTY MACOSX_RPATH TRUE)
 
-install (TARGETS DelaunayValidation DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS
+        ${PROJECT_NAME}Validation
+  EXPORT ${PROJECT_NAME}
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  )
+
+install(FILES
+  ${Validation_Header_Files}
+  DESTINATION include/${PROJECT_NAME}/Validation
+  )
