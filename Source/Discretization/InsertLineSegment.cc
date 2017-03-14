@@ -276,7 +276,6 @@ std::set<const Mesh::Triangle*> InsertLineSegment::FindContainingTriangles(
 std::pair<Shape::Polygon,Shape::Polygon> InsertLineSegment::BisectPolygon(
   const Shape::Polygon& p, const Mesh::Vertex& v1, const Mesh::Vertex& v2) const
 {
-  typedef std::reverse_iterator<Shape::PointVector::const_iterator> RIter;
   Shape::PointVector::const_iterator it1, it2;
   for (it1 = p.GetPoints().begin(); *it1 != v1; ++it1)
     assert(it1 != p.GetPoints().end());

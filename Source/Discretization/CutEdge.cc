@@ -208,7 +208,6 @@ const Mesh::Edge* CutEdge::CutEdgeInTriangle(const Shape::LineSegment& l,
     //     triangle, and the line segment crosses a vertex
 
     const Shape::Point* p1 = (triContainsA ? &l.A : &l.B);
-    const Shape::Point* p2 = (triContainsA ? &l.B : &l.A);
 
     const Mesh::Edge* toSplit = &t.AB();
     const Mesh::Vertex* opposing = &t.AC().B();
@@ -332,8 +331,6 @@ const Mesh::Edge* CutEdge::CutEdgeInTriangle(const Shape::LineSegment& l,
   const Shape::Point& pt1 = std::get<1>(intersections);
   const Shape::Point& pt2 = std::get<2>(intersections);
   const Mesh::Edge* toSplit[2];
-  const Mesh::Edge* triEdges[4] = {&t.AB(), &t.BC(), &t.AC(), nullptr};
-
 
   toSplit[0] = (Shape::Contains(t.AB(), pt1) ? &t.AB() :
                 Shape::Contains(t.BC(), pt1) ? &t.BC() :

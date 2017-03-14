@@ -105,17 +105,17 @@ void LegalizeEdges::operator()(const Mesh::Vertex* v,
     {
       isLegal = false;
 
-      for (Mesh::EdgeSet::iterator edge=I->edges.begin();edge!=I->edges.end();++edge)
-        if (&((*edge)->A()) == L || &((*edge)->B()) == L)
+      for (Mesh::EdgeSet::iterator e=I->edges.begin();e!=I->edges.end();++e)
+        if (&((*e)->A()) == L || &((*e)->B()) == L)
         {
-          il = *edge;
-          edges.insert(*edge);
+          il = *e;
+          edges.insert(*e);
         }
-      for (Mesh::EdgeSet::iterator edge=J->edges.begin();edge!=J->edges.end();++edge)
-        if (&((*edge)->A()) == L || &((*edge)->B()) == L)
+      for (Mesh::EdgeSet::iterator e=J->edges.begin();e!=J->edges.end();++e)
+        if (&((*e)->A()) == L || &((*e)->B()) == L)
         {
-          jl = *edge;
-          edges.insert(*edge);
+          jl = *e;
+          edges.insert(*e);
         }
       ik = &(*(this->GetEdges(mesh).emplace(*I, *K)).first);
       jk = &(*(this->GetEdges(mesh).emplace(*J, *K)).first);
