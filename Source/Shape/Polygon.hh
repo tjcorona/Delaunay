@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_SHAPE_POLYGON_HH
 #define DELAUNAY_SHAPE_POLYGON_HH
 
+#include <algorithm>
+
 #include "Shape/Point.hh"
 
 namespace Delaunay
@@ -28,15 +30,17 @@ class Polygon
 {
 public:
 
-  Polygon(const std::vector<Point>&);
-  Polygon(const PointVector&);
+  template <class PointIterator>
+  Polygon(const PointIterator& begin, const PointIterator& end) :
+    Points(Sort(begin, end)) {}
+  Polygon(const std::vector<Point>& points) :
+    Points(Sort(points.begin(), points.end())) {}
+  Polygon(const PointVector& points) :
+    Points(Sort(points.begin(), points.end())) {}
   ~Polygon() {}
 
   void SetPoints(const PointVector& p) { this->Points = p; }
   const PointVector& GetPoints() const { return this->Points; }
-
-  bool   Contains(const Point& p) const;
-  double Distance(const Point& p) const;
 
   friend bool operator<(const Polygon& p1,const Polygon& p2)
   {
@@ -63,6 +67,21 @@ public:
 
 protected:
   PointVector Points;
+
+private:
+  template <class Iterator>
+  PointVector Sort(const Iterator& begin, const Iterator& end)
+  {
+    PointVector sortedPoints;
+
+    Iterator smallest = std::min_element(begin, end);
+    for (Iterator it = smallest; it != end; ++it)
+      sortedPoints.push_back(std::cref(*it));
+    for (Iterator it = begin; it != smallest; ++it)
+      sortedPoints.push_back(std::cref(*it));
+
+    return sortedPoints;
+  }
 };
 
 }

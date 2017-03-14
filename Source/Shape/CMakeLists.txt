@@ -15,7 +15,6 @@ set(Shape_Header_Files
 set(Shape_Source_Files
   BezierCurve.cc
   CircleUtilities.cc
-  Polygon.cc
   PolygonUtilities.cc
   PointUtilities.cc
   LineSegment.cc
