@@ -16,9 +16,11 @@
 
 #include "Shape/PolygonUtilities.hh"
 
+#include <cassert>
 #include <cmath>
 #include <limits>
 
+#include "Shape/PointUtilities.hh"
 #include "Shape/Polygon.hh"
 
 namespace Delaunay
@@ -45,6 +47,19 @@ std::array<double, 4> Bounds(const Polygon& polygon)
   }
 
   return bounds;
+}
+
+int Orientation(const Polygon& polygon)
+{
+  // The first point in the polygon is guaranteed to be the point with the
+  // smallest x-coordinate (and, if there are multiple points with this
+  // x-coordinate, then it is the one with the smallest y-coordinate of this
+  // subgroup). To determine the orientation of the polygon, we therefore only
+  // need to cross the vectors that connect to this point.
+
+  assert(polygon.GetPoints().size() >= 3);
+  return Orientation(polygon.GetPoints().back(), polygon.GetPoints().front(),
+                     polygon.GetPoints()[1]);
 }
 
 }

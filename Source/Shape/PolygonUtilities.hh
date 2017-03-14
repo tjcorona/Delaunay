@@ -26,6 +26,10 @@ namespace Shape
 class Polygon;
 
 std::array<double, 4> Bounds(const Polygon&);
+
+  // +1: counterclockwise
+  // -1: clockwise
+int Orientation(const Polygon&);
 }
 }
 
