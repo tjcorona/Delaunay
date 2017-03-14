@@ -70,7 +70,7 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
       {
 	allLegal = false;
 	std::set<const Mesh::Edge*> encroachedByTriangle(
-	  std::move(Encroaches(triangle.circumcircle.Center, mesh)));
+	  Encroaches(triangle.circumcircle.Center, mesh));
 	if (encroachedByTriangle.empty())
 	  addInteriorPoint(triangle.circumcircle.Center, mesh);
 	else

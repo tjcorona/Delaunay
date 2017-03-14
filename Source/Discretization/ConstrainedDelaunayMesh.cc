@@ -29,7 +29,7 @@ namespace Discretization
 void ConstrainedDelaunayMesh::operator()(
   const Delaunay::Shape::Polygon& polygon, Delaunay::Mesh::Mesh& mesh)
 {
-  std::array<double, 4> bounds(std::move(Shape::Bounds(polygon)));
+  std::array<double, 4> bounds(Shape::Bounds(polygon));
   double xLen = bounds[1] - bounds[0];
   double yLen = bounds[3] - bounds[2];
   bounds[0] -= .2*xLen;

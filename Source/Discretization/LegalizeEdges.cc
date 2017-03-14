@@ -80,17 +80,17 @@ void LegalizeEdges::operator()(const Mesh::Vertex* v,
     if (d2 + EPSILON < t1->circumcircle.Radius*t1->circumcircle.Radius)
     {
       isLegal = false;
-      for (Mesh::EdgeSet::iterator edge=I->edges.begin();edge!=I->edges.end();++edge)
-        if (&((*edge)->A()) == K || &((*edge)->B()) == K)
+      for (Mesh::EdgeSet::iterator e=I->edges.begin();e!=I->edges.end();++e)
+        if (&((*e)->A()) == K || &((*e)->B()) == K)
         {
-          ik = *edge;
-          edges.insert(*edge);
+          ik = *e;
+          edges.insert(*e);
         }
-      for (Mesh::EdgeSet::iterator edge=J->edges.begin();edge!=J->edges.end();++edge)
-        if (&((*edge)->A()) == K || &((*edge)->B()) == K)
+      for (Mesh::EdgeSet::iterator e=J->edges.begin();e!=J->edges.end();++e)
+        if (&((*e)->A()) == K || &((*e)->B()) == K)
         {
-          jk = *edge;
-          edges.insert(*edge);
+          jk = *e;
+          edges.insert(*e);
         }
       il = &(*(this->GetEdges(mesh).emplace(*I, *L)).first);
       jl = &(*(this->GetEdges(mesh).emplace(*J, *L)).first);

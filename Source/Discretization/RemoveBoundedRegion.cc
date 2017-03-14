@@ -71,12 +71,12 @@ void RemoveBoundedRegion::operator()(const Mesh::Triangle& triangle,
     }
   }
 
-  for (auto triangle : trianglesToRemove)
+  for (auto t : trianglesToRemove)
   {
-    this->GetTriangles(mesh).erase(*triangle);
+    this->GetTriangles(mesh).erase(*t);
   }
-  for (auto edge : edgesToRemove)
-    this->GetEdges(mesh).erase(*edge);
+  for (auto e : edgesToRemove)
+    this->GetEdges(mesh).erase(*e);
 }
 
 }

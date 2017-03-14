@@ -48,9 +48,9 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex& v1, const Mesh::Vertex& v2)
 void RuppertsAlgorithm::operator()(
   const Delaunay::Shape::Polygon& polygon, Delaunay::Mesh::Mesh& mesh)
 {
-  double alpha = 20.7;
+  // double alpha = 20.7;
 
-  std::array<double, 4> bounds(std::move(Shape::Bounds(polygon)));
+  std::array<double, 4> bounds(Shape::Bounds(polygon));
   double xLen = bounds[1] - bounds[0];
   double yLen = bounds[3] - bounds[2];
   bounds[0] -= .1*xLen;
@@ -125,7 +125,7 @@ void RuppertsAlgorithm::operator()(
       {
 	isConverged = false;
 	std::vector<VertexList::const_iterator> encroached(
-	  std::move(Encroaches(triangle.circumcircle.Center, vertices)));
+	  Encroaches(triangle.circumcircle.Center, vertices));
 	if (!encroached.empty())
 	{
 	  for (auto& vtx1 : encroached)
@@ -209,7 +209,7 @@ double RuppertsAlgorithm::MinimumAngle(const Mesh::Triangle& t) const
 
 bool RuppertsAlgorithm::IsEncroached(const VertexList::const_iterator& vtx1,
 				     const VertexList::const_iterator& vtx2,
-				     const Mesh::Mesh& mesh) const
+				     const Mesh::Mesh&) const
 {
   Shape::Circle c((*vtx1 + *vtx2)/2., Shape::Distance(*vtx2, *vtx1)/2.);
 
