@@ -18,7 +18,6 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include <sys/time.h>
 
 namespace Delaunay
 {
@@ -29,9 +28,7 @@ Random* Random::fInstance = NULL;
 
 Random::Random()
 {
-  struct timeval time;
-  gettimeofday(&time,NULL);
-  srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
+  srand((unsigned)time(NULL));
 }
 
 Random& Random::GetInstance()
