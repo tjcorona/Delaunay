@@ -26,6 +26,7 @@
 #include "Shape/TriangleUtilities.hh"
 
 #include <cassert>
+#include <limits>
 
 namespace Delaunay
 {
