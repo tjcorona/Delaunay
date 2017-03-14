@@ -24,7 +24,7 @@ namespace Mesh
 {
 
 std::pair<Mesh::VertexSet::const_iterator,bool>
-Mesher::InsertVertex(const Shape::Point& p, Mesh::Mesh& mesh)
+Mesher::InsertVertex(const Shape::Point& p, Mesh& mesh)
 {
   return this->GetVertices(mesh).emplace(p);
 }

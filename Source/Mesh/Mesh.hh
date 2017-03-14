@@ -17,7 +17,7 @@
 #ifndef DELAUNAY_MESH_MESH_HH
 #define DELAUNAY_MESH_MESH_HH
 
-#include <vector>
+#include <set>
 
 #include "Mesh/Vertex.hh"
 #include "Mesh/Edge.hh"
@@ -34,10 +34,10 @@ class Mesh
 {
 public:
   typedef Delaunay::Shape::Polygon Polygon;
-  typedef std::set<const Polygon>  InteriorBoundarySet;
-  typedef std::set<const Vertex>   VertexSet;
-  typedef std::set<const Edge>     EdgeSet;
-  typedef std::set<const Triangle> TriangleSet;
+  typedef std::set<Polygon>        InteriorBoundarySet;
+  typedef std::set<Vertex>         VertexSet;
+  typedef std::set<Edge>           EdgeSet;
+  typedef std::set<Triangle>       TriangleSet;
 
   friend class Mesher;
 
