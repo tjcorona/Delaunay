@@ -111,7 +111,7 @@ const Triangle* Mesh::FindContainingTriangle(const Shape::Point& p) const
     double distance2 = std::numeric_limits<double>::max();
     const Triangle* nearest = nullptr;
 
-    std::array<const Edge*,3> edges = {&tri->AB(), &tri->BC(), &tri->AC()};
+    std::array<const Edge*,3> edges = {{&tri->AB(), &tri->BC(), &tri->AC()}};
 
     for (auto e : edges)
     {

@@ -27,10 +27,10 @@ namespace Shape
 {
 std::array<double, 4> Bounds(const Polygon& polygon)
 {
-  std::array<double, 4> bounds = {std::numeric_limits<double>::max(),
-				  std::numeric_limits<double>::lowest(),
-				  std::numeric_limits<double>::max(),
-				  std::numeric_limits<double>::lowest()};
+  std::array<double, 4> bounds = {{std::numeric_limits<double>::max(),
+                                   std::numeric_limits<double>::lowest(),
+                                   std::numeric_limits<double>::max(),
+                                   std::numeric_limits<double>::lowest()}};
 
   for (auto& point : polygon.GetPoints())
   {

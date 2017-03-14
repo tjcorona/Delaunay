@@ -73,8 +73,6 @@ void ExtendMesh::Extend(const Mesh::Vertex* v, Delaunay::Mesh::Mesh& mesh)
   if (vi == v)
     vi = &(*(++this->GetVertices(mesh).begin()));
 
-  unsigned vtx_counter = 0;
-
   const Mesh::Vertex* vfirst = vi;
 
   do

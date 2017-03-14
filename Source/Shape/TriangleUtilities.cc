@@ -309,8 +309,6 @@ double Distance(const Triangle& t1, const Triangle& t2)
   unsigned c2 = (d2[0] < d2[1] && d2[0] < d2[2] ? 0 :
 		 d2[1] < d2[2] ? 1 : 2);
 
-  const LineSegment& l2 = (c2 == 0 ? t2.AB : c2 == 1 ? t2.BC : t2.AC);
-
   return d1[c1] < d2[c2] ? d1[c1] : d2[c2];
 }
 

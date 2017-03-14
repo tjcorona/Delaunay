@@ -44,7 +44,7 @@ std::set<const Mesh::Edge*> CutEdge::operator()(
   std::set<const Mesh::Edge*> insertedEdges;
 
   std::set<const Mesh::Triangle*> intersected(
-    std::move(this->FindContainingTriangles(l, mesh)));
+    this->FindContainingTriangles(l, mesh));
 
   for (auto triangle : intersected)
   {
@@ -78,7 +78,6 @@ std::set<const Mesh::Triangle*> CutEdge::FindContainingTriangles(
   const Shape::LineSegment& l, Delaunay::Mesh::Mesh& mesh) const
 {
   const Mesh::Triangle* t1 = mesh.FindContainingTriangle(l.A);
-  const Mesh::Triangle* t2 = mesh.FindContainingTriangle(l.B);
 
   std::set<const Mesh::Triangle*> intersected;
 

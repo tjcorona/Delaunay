@@ -72,7 +72,7 @@ const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
 
   // Collect all of the triangles that contain the line
   std::set<const Mesh::Triangle*> intersected(
-    std::move(this->FindContainingTriangles(l, mesh)));
+    this->FindContainingTriangles(l, mesh));
 
   // Construct the containing polygon as the union of the containing triangles,
   // and mark the polygon edges as boundary edges
@@ -94,7 +94,7 @@ const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
 
   // Split the containing polygon along the edge we wish to insert
   std::pair<Shape::Polygon,Shape::Polygon> polys(
-    std::move(BisectPolygon(poly, *v1, *v2)));
+    BisectPolygon(poly, *v1, *v2));
 
   // Identify the polygon's orientation
   const Mesh::Edge* edge =
@@ -117,9 +117,9 @@ const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
   discretizePolygon(polys.first, mesh);
   discretizePolygon(polys.second, mesh);
 
-  for (auto& edge : temporaryBoundaries)
+  for (auto& e : temporaryBoundaries)
   {
-    edge->boundary = false;
+    e->boundary = false;
   }
 
   return GetEdge(v1,v2);
@@ -215,7 +215,6 @@ std::set<const Mesh::Triangle*> InsertLineSegment::FindContainingTriangles(
   const Shape::LineSegment& l, Delaunay::Mesh::Mesh& mesh) const
 {
   const Mesh::Triangle* t1 = mesh.FindContainingTriangle(l.A);
-  const Mesh::Triangle* t2 = mesh.FindContainingTriangle(l.B);
 
   std::set<const Mesh::Triangle*> intersected;
 

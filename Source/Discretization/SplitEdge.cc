@@ -36,7 +36,8 @@ namespace
 const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2,
 			  const Mesh::Triangle* t)
 {
-  std::array<const Mesh::Edge*, 3> edges = {&(t->AB()), &(t->BC()), &(t->AC())};
+  std::array<const Mesh::Edge*, 3> edges =
+    {{&(t->AB()), &(t->BC()), &(t->AC())}};
 
   for (auto& edge : edges)
     if ((&edge->A() == v1 && &edge->B() == v2) ||
