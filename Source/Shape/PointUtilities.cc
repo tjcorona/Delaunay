@@ -18,6 +18,7 @@
 
 #include "Shape/Point.hh"
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace Delaunay

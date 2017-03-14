@@ -20,6 +20,7 @@
 #include "Shape/Point.hh"
 #include "Shape/PointUtilities.hh"
 
+#include <algorithm>
 #include <limits>
 
 namespace Delaunay
