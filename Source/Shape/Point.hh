@@ -20,6 +20,7 @@
 #define EPSILON 1.e-10
 #define GRIDRES 12
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <functional>
 #include <ostream>
