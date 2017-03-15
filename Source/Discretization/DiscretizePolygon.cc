@@ -72,7 +72,7 @@ namespace
       }
     }
 
-    unsigned size() const { return Verts.size(); }
+    unsigned size() const { return static_cast<unsigned>(Verts.size()); }
 
     VtxIt first() { return this->Verts.begin(); }
 
