@@ -14,17 +14,18 @@
 
 ******************************************************************************/
 
+#define _USE_MATH_DEFINES
+#include <array>
+#include <cassert>
+#include <cmath>
+#include <limits>
+
 #include "Discretization/EnforceMinimumAngle.hh"
 
 #include "Discretization/AddInteriorPoint.hh"
 #include "Discretization/SplitEdge.hh"
 #include "Shape/CircleUtilities.hh"
 #include "Shape/LineSegmentUtilities.hh"
-
-#include <array>
-#include <cassert>
-#include <cmath>
-#include <limits>
 
 namespace Delaunay
 {

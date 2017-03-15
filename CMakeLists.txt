@@ -31,7 +31,10 @@ IF("${isSystemDir}" STREQUAL "-1")
    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF("${isSystemDir}" STREQUAL "-1")
 
-enable_testing()
+option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
+if (${PROJECT_NAME}_ENABLE_TESTING)
+  enable_testing()
+endif ()
 
 option (${PROJECT_NAME}_USE_OPENCV "Enables the use of OpenCV" OFF)
 option (${PROJECT_NAME}_USE_VTK "Enables the use of VTK" OFF)
