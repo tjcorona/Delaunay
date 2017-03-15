@@ -47,4 +47,6 @@ install(FILES
   DESTINATION include/${PROJECT_NAME}/Shape
   )
 
-add_subdirectory(Tests)
+if (${PROJECT_NAME}_ENABLE_TESTING)
+  add_subdirectory(Tests)
+endif()
