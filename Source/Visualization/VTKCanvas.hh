@@ -17,8 +17,9 @@
 #ifndef DELAUNAY_VISUALIZATION_VTKCANVAS_HH
 #define DELAUNAY_VISUALIZATION_VTKCANVAS_HH
 
-#include "Canvas.hh"
+#include "Visualization/Export.hh"
 
+#include "Canvas.hh"
 #include "Color.hh"
 
 namespace Delaunay
@@ -44,7 +45,7 @@ namespace Visualization
 
 class Color;
 
-class VTKCanvas : public Canvas
+class DELAUNAYVISUALIZATION_EXPORT VTKCanvas : public Canvas
 {
 public:
   VTKCanvas(double dim_x_min,

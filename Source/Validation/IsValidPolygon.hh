@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_VALIDATION_ISVALIDPOLYGON_HH
 #define DELAUNAY_VALIDATION_ISVALIDPOLYGON_HH
 
+#include "Validation/Export.hh"
+
 #include "Shape/Polygon.hh"
 
 namespace Delaunay
@@ -24,7 +26,7 @@ namespace Delaunay
 namespace Validation
 {
 
-class IsValidPolygon
+class DELAUNAYVALIDATION_EXPORT IsValidPolygon
 {
 public:
   IsValidPolygon() {}

@@ -19,6 +19,8 @@
 
 #include <vector>
 
+#include "Mesh/Export.hh"
+
 #include "Mesh/Vertex.hh"
 #include "Shape/Polygon.hh"
 
@@ -27,7 +29,7 @@ namespace Delaunay
 namespace Mesh
 {
 
-class Polygon : public Shape::Polygon
+class DELAUNAYMESH_EXPORT Polygon : public Shape::Polygon
 {
 public:
   Polygon(const Shape::PointVector&);

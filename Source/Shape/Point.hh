@@ -26,12 +26,14 @@
 #include <ostream>
 #include <vector>
 
+#include "Shape/Export.hh"
+
 namespace Delaunay
 {
 namespace Shape
 {
 
-class Point
+class DELAUNAYSHAPE_EXPORT Point
 {
 public:
   static double ToGrid(double x)

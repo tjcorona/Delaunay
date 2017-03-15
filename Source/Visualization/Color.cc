@@ -78,24 +78,32 @@ Color::Color(double range, Color::Palette palette, unsigned char al) : alpha(al)
 
     range *= 7.;
 
-    this->red = rainbow[floor].red*(1.-range) + rainbow[ceil].red*range;
-    this->green = rainbow[floor].green*(1.-range) + rainbow[ceil].green*range;
-    this->blue = rainbow[floor].blue*(1.-range) + rainbow[ceil].blue*range;
+    this->red = static_cast<unsigned char>(rainbow[floor].red*(1.-range) +
+                                           rainbow[ceil].red*range);
+    this->green = static_cast<unsigned char>(rainbow[floor].green*(1.-range) +
+                                             rainbow[ceil].green*range);
+    this->blue = static_cast<unsigned char>(rainbow[floor].blue*(1.-range) +
+                                            rainbow[ceil].blue*range);
     break;
   }
   case BlueToRed:
   {
-    this->red = Blue.red*(1.-range) + Red.red*range;
-    this->green = Blue.green*(1.-range) + Red.green*range;
-    this->blue = Blue.blue*(1.-range) + Red.blue*range;
+    this->red = static_cast<unsigned char>(Blue.red*(1.-range) + Red.red*range);
+    this->green = static_cast<unsigned char>(Blue.green*(1.-range) +
+                                             Red.green*range);
+    this->blue = static_cast<unsigned char>(Blue.blue*(1.-range) +
+                                            Red.blue*range);
 
     break;
   }
   case Grayscale:
   {
-    this->red = Black.red*(1.-range) + White.red*range;
-    this->green = Black.green*(1.-range) + White.green*range;
-    this->blue = Black.blue*(1.-range) + White.blue*range;
+    this->red = static_cast<unsigned char>(Black.red*(1.-range) +
+                                           White.red*range);
+    this->green = static_cast<unsigned char>(Black.green*(1.-range) +
+                                             White.green*range);
+    this->blue = static_cast<unsigned char>(Black.blue*(1.-range) +
+                                            White.blue*range);
     break;
   }
   }

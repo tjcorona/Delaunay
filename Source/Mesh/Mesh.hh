@@ -19,6 +19,8 @@
 
 #include <set>
 
+#include "Mesh/Export.hh"
+
 #include "Mesh/Vertex.hh"
 #include "Mesh/Edge.hh"
 #include "Mesh/Triangle.hh"
@@ -30,7 +32,7 @@ namespace Mesh
 {
 class Mesher;
 
-class Mesh
+class DELAUNAYMESH_EXPORT Mesh
 {
 public:
   typedef Delaunay::Shape::Polygon Polygon;

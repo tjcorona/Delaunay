@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_DISCRETIZATION_REMOVEBOUNDEDREGION_HH
 #define DELAUNAY_DISCRETIZATION_REMOVEBOUNDEDREGION_HH
 
+#include "Discretization/Export.hh"
+
 #include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
 
@@ -25,7 +27,7 @@ namespace Delaunay
 namespace Discretization
 {
 
-class RemoveBoundedRegion : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT RemoveBoundedRegion : public Mesh::Mesher
 {
 public:
   RemoveBoundedRegion() {}

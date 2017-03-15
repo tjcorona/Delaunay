@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_DISCRETIZATION_INSERTLINESEGMENT_HH
 #define DELAUNAY_DISCRETIZATION_INSERTLINESEGMENT_HH
 
+#include "Discretization/Export.hh"
+
 #include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
 
@@ -25,7 +27,7 @@ namespace Delaunay
 namespace Discretization
 {
 
-class InsertLineSegment : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT InsertLineSegment : public Mesh::Mesher
 {
 public:
   InsertLineSegment() {}

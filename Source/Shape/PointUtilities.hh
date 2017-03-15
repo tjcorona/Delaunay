@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_SHAPE_POINTUTILITIES_HH
 #define DELAUNAY_SHAPE_POINTUTILITIES_HH
 
+#include "Shape/Export.hh"
+
 namespace Delaunay
 {
 namespace Shape
@@ -27,23 +29,29 @@ class Point;
 // +1: counterclockwise
 //  0: colinear
 // -1: clockwise
+DELAUNAYSHAPE_EXPORT
 int Orientation(const Point& p1, const Point& p2, const Point& p3);
 
 // Assuming both points are vector valued with initial point at the origin,
 // return the dot product.
+DELAUNAYSHAPE_EXPORT
 double Dot(const Point& p1,const Point& p2);
 
 // Assuming both points are vector valued with initial point at the origin,
 // return the cross product Magnitude.
+DELAUNAYSHAPE_EXPORT
 double Cross(const Point& p1,const Point& p2);
 
 // Return the square of the distance between two points.
+DELAUNAYSHAPE_EXPORT
 double DistanceSquared(const Point& p1, const Point& p2);
 
 // Return the distance between two points.
+DELAUNAYSHAPE_EXPORT
 double Distance(const Point& p1, const Point& p2);
 
 // Returns the angle in radians formed by the three points
+DELAUNAYSHAPE_EXPORT
 double Angle(const Point& p1, const Point& p2, const Point& p3);
 }
 }

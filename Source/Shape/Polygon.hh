@@ -19,6 +19,8 @@
 
 #include <algorithm>
 
+#include "Shape/Export.hh"
+
 #include "Shape/Point.hh"
 
 namespace Delaunay
@@ -26,7 +28,7 @@ namespace Delaunay
 namespace Shape
 {
 
-class Polygon
+class DELAUNAYSHAPE_EXPORT Polygon
 {
 public:
 

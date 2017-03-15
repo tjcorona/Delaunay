@@ -17,11 +17,13 @@
 #ifndef DELAUNAY_DISCRETIZATION_RUPPERTSALGORITHM_HH
 #define DELAUNAY_DISCRETIZATION_RUPPERTSALGORITHM_HH
 
-#include "Shape/Polygon.hh"
-#include "Mesh/Mesher.hh"
-
 #include <forward_list>
 #include <functional>
+
+#include "Discretization/Export.hh"
+
+#include "Shape/Polygon.hh"
+#include "Mesh/Mesher.hh"
 
 namespace Delaunay
 {
@@ -29,7 +31,7 @@ namespace Discretization
 {
 
 // WIP
-class RuppertsAlgorithm : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT RuppertsAlgorithm : public Mesh::Mesher
 {
 public:
   typedef std::forward_list<

@@ -19,13 +19,15 @@
 
 #include <vector>
 
+#include "Mesh/Export.hh"
+
 #include "Mesh/Mesh.hh"
 
 namespace Delaunay
 {
 namespace Mesh
 {
-class Mesher
+class DELAUNAYMESH_EXPORT Mesher
 {
 public:
 

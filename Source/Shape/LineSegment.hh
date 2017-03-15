@@ -17,17 +17,19 @@
 #ifndef DELAUNAY_SHAPE_LINESEGMENT_HH
 #define DELAUNAY_SHAPE_LINESEGMENT_HH
 
-#include "Shape/Point.hh"
-
 #include <functional>
 #include <vector>
+
+#include "Shape/Export.hh"
+
+#include "Shape/Point.hh"
 
 namespace Delaunay
 {
 namespace Shape
 {
 
-class LineSegment
+class DELAUNAYSHAPE_EXPORT LineSegment
 {
 public:
   LineSegment(const Point& a,const Point& b);

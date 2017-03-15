@@ -19,16 +19,18 @@
 
 #include <set>
 
-#include "Point.hh"
-#include "LineSegment.hh"
-#include "Circle.hh"
+#include "Shape/Export.hh"
+
+#include "Shape/Point.hh"
+#include "Shape/LineSegment.hh"
+#include "Shape/Circle.hh"
 
 namespace Delaunay
 {
 namespace Shape
 {
 
-class Triangle
+class DELAUNAYSHAPE_EXPORT Triangle
 {
 public:
   Triangle(const LineSegment&,const LineSegment&,const LineSegment&);

@@ -17,12 +17,14 @@
 #ifndef DELAUNAY_VISUALIZATION_COLOR_HH
 #define DELAUNAY_VISUALIZATION_COLOR_HH
 
+#include "Visualization/Export.hh"
+
 namespace Delaunay
 {
 namespace Visualization
 {
 
-class Color
+class DELAUNAYVISUALIZATION_EXPORT Color
 {
 public:
   enum Palette
