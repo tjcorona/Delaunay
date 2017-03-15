@@ -99,7 +99,7 @@ const Triangle* Mesh::FindContainingTriangle(const Shape::Point& p) const
   {
     TriangleSet::const_iterator it(this->Triangles.begin());
     std::advance(it, Misc::Random::GetInstance().
-                 Uniform(this->Triangles.size()-1));
+                 Uniform(static_cast<unsigned int>(this->Triangles.size()-1)));
     tri = &(*it);
   }
 
