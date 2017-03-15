@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
 #define DELAUNAY_DISCRETIZATION_LEGALIZEEDGES_HH
 
+#include "Discretization/Export.hh"
+
 #include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
 #include "Mesh/TriangleSet.hh"
@@ -26,7 +28,7 @@ namespace Delaunay
 namespace Discretization
 {
 
-class LegalizeEdges : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT LegalizeEdges : public Mesh::Mesher
 {
 public:
   LegalizeEdges() {}

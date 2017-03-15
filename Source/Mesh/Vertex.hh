@@ -19,6 +19,8 @@
 
 #include <set>
 
+#include "Mesh/Export.hh"
+
 #include "Shape/Point.hh"
 
 #include "Mesh/EdgeSet.hh"
@@ -29,7 +31,7 @@ namespace Delaunay
 namespace Mesh
 {
 
-class Vertex : public Shape::Point
+class DELAUNAYMESH_EXPORT Vertex : public Shape::Point
 {
 public:
   Vertex(const Shape::Point& p) : Point(p) {}

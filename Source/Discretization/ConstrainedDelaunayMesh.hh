@@ -19,6 +19,8 @@
 
 #include <deque>
 
+#include "Discretization/Export.hh"
+
 #include "Shape/Polygon.hh"
 #include "Mesh/Mesher.hh"
 
@@ -27,7 +29,8 @@ namespace Delaunay
 namespace Discretization
 {
 
-class ConstrainedDelaunayMesh : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT ConstrainedDelaunayMesh :
+    public Mesh::Mesher
 {
 public:
   ConstrainedDelaunayMesh() {}

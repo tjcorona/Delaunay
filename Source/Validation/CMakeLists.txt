@@ -9,9 +9,13 @@ target_link_libraries (${PROJECT_NAME}Validation
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Visualization)
 set_property (TARGET ${PROJECT_NAME}Validation PROPERTY MACOSX_RPATH TRUE)
 
+generate_export_header(${PROJECT_NAME}Validation EXPORT_FILE_NAME Export.hh)
+list(APPEND Validation_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)
+
 target_include_directories(${PROJECT_NAME}Validation
   PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Source/>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Source/>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 install(TARGETS

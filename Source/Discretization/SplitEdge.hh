@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_DISCRETIZATION_SPLITEDGE_HH
 #define DELAUNAY_DISCRETIZATION_SPLITEDGE_HH
 
+#include "Discretization/Export.hh"
+
 #include "Mesh/Edge.hh"
 #include "Mesh/Mesher.hh"
 #include "Mesh/TriangleSet.hh"
@@ -26,7 +28,7 @@ namespace Delaunay
 namespace Discretization
 {
 
-class SplitEdge : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT SplitEdge : public Mesh::Mesher
 {
 public:
   SplitEdge() {}

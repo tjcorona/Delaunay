@@ -36,5 +36,7 @@ enable_testing()
 option (${PROJECT_NAME}_USE_OPENCV "Enables the use of OpenCV" OFF)
 option (${PROJECT_NAME}_USE_VTK "Enables the use of VTK" OFF)
 
+include(GenerateExportHeader)
+
 include_directories (Source)
 add_subdirectory (Source)

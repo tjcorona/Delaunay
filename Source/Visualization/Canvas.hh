@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_VISUALIZATION_CANVAS_HH
 #define DELAUNAY_VISUALIZATION_CANVAS_HH
 
+#include "Visualization/Export.hh"
+
 namespace Delaunay
 {
 
@@ -40,7 +42,7 @@ namespace Visualization
 
 class Color;
 
-class Canvas
+class DELAUNAYVISUALIZATION_EXPORT Canvas
 {
 public:
   virtual ~Canvas() {}

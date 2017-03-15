@@ -19,6 +19,8 @@
 
 #include <set>
 
+#include "Mesh/Export.hh"
+
 #include "Mesh/Vertex.hh"
 #include "Mesh/Edge.hh"
 
@@ -29,7 +31,7 @@ namespace Delaunay
 namespace Mesh
 {
 
-class Triangle : public Shape::Triangle
+class DELAUNAYMESH_EXPORT Triangle : public Shape::Triangle
 {
 public:
   Triangle(const Edge& ab,const Edge& bc,const Edge& ac);

@@ -17,15 +17,17 @@
 #ifndef DELAUNAY_SHAPE_CIRCLE_HH
 #define DELAUNAY_SHAPE_CIRCLE_HH
 
-#include "Point.hh"
-#include "PointUtilities.hh"
+#include "Shape/Export.hh"
+
+#include "Shape/Point.hh"
+#include "Shape/PointUtilities.hh"
 
 namespace Delaunay
 {
 namespace Shape
 {
 
-class Circle
+class DELAUNAYSHAPE_EXPORT Circle
 {
 public:
   Circle(const Point& c, double r) : Center(c), Radius(r) {}

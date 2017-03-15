@@ -19,15 +19,17 @@
 
 #include <vector>
 
-#include "ParametricCurve.hh"
-#include "Point.hh"
+#include "Shape/Export.hh"
+
+#include "Shape/ParametricCurve.hh"
+#include "Shape/Point.hh"
 
 namespace Delaunay
 {
 namespace Shape
 {
 
-class BezierCurve : public ParametricCurve
+class DELAUNAYSHAPE_EXPORT BezierCurve : public ParametricCurve
 {
 public:
   BezierCurve(const PointVector&,bool closed=false);

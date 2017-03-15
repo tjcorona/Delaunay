@@ -20,12 +20,14 @@
 #include <limits>
 #include <vector>
 
+#include "Misc/Export.hh"
+
 namespace Delaunay
 {
 namespace Misc
 {
 
-class Random
+class DELAUNAYMISC_EXPORT Random
 {
 public:
   static Random& GetInstance();

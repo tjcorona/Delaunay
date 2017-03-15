@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_SHAPE_PARAMETRICCURVE_HH
 #define DELAUNAY_SHAPE_PARAMETRICCURVE_HH
 
+#include "Shape/Export.hh"
+
 namespace Delaunay
 {
 namespace Shape
@@ -24,7 +26,7 @@ namespace Shape
 
 class Point;
 
-class ParametricCurve
+class DELAUNAYSHAPE_EXPORT ParametricCurve
 {
 public:
   ParametricCurve(bool c) : Closed(c) {}

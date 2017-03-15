@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_DISCRETIZATION_ADDINTERIORPOINT_HH
 #define DELAUNAY_DISCRETIZATION_ADDINTERIORPOINT_HH
 
+#include "Discretization/Export.hh"
+
 #include "Shape/Point.hh"
 #include "Mesh/Mesher.hh"
 #include "Mesh/TriangleSet.hh"
@@ -26,7 +28,7 @@ namespace Delaunay
 namespace Discretization
 {
 
-class AddInteriorPoint : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT AddInteriorPoint : public Mesh::Mesher
 {
 public:
   typedef Shape::Point Point;

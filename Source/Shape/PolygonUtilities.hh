@@ -19,16 +19,20 @@
 
 #include <array>
 
+#include "Shape/Export.hh"
+
 namespace Delaunay
 {
 namespace Shape
 {
 class Polygon;
 
+DELAUNAYSHAPE_EXPORT
 std::array<double, 4> Bounds(const Polygon&);
 
   // +1: counterclockwise
   // -1: clockwise
+DELAUNAYSHAPE_EXPORT
 int Orientation(const Polygon&);
 }
 }

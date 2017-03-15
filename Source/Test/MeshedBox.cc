@@ -20,7 +20,6 @@
 
 #include "Mesh/Mesh.hh"
 
-#include "Discretization/DelaunayDiscretizer.hh"
 #include "Discretization/DiscretizePolygon.hh"
 #include "Discretization/ExcisePolygon.hh"
 

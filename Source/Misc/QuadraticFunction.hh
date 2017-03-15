@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_MISC_QUADRATICFUNCTION_HH
 #define DELAUNAY_MISC_QUADRATICFUNCTION_HH
 
+#include "Misc/Export.hh"
+
 #include "Function.hh"
 
 namespace Delaunay
@@ -24,7 +26,7 @@ namespace Delaunay
 namespace Misc
 {
 
-class QuadraticFunction : public Function
+class DELAUNAYMISC_EXPORT QuadraticFunction : public Function
 {
 public:
   QuadraticFunction();

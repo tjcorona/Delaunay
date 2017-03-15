@@ -17,10 +17,11 @@
 #ifndef DELAUNAY_VISUALIZATION_CVCANVAS_HH
 #define DELAUNAY_VISUALIZATION_CVCANVAS_HH
 
-#include "Canvas.hh"
-
 #include <opencv2/opencv.hpp>
 
+#include "Visualization/Export.hh"
+
+#include "Canvas.hh"
 #include "Color.hh"
 
 namespace Delaunay
@@ -46,7 +47,7 @@ namespace Visualization
 
 class Color;
 
-class CVCanvas : public Canvas
+class DELAUNAYVISUALIZATION_EXPORT CVCanvas : public Canvas
 {
 public:
   CVCanvas(double dim_x_min,

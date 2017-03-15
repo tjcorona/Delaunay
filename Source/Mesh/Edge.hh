@@ -19,6 +19,8 @@
 
 #include <set>
 
+#include "Mesh/Export.hh"
+
 #include "Shape/LineSegment.hh"
 #include "Mesh/Vertex.hh"
 
@@ -30,7 +32,7 @@ namespace Mesh
 class Triangle;
 typedef std::set<const Triangle*> TriangleSet;
 
-class Edge : public Shape::LineSegment
+class DELAUNAYMESH_EXPORT Edge : public Shape::LineSegment
 {
 public:
   Edge(const Vertex& a, const Vertex& b, bool bndry = false) : LineSegment(a,b),

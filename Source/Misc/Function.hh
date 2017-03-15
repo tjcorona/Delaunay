@@ -17,12 +17,14 @@
 #ifndef DELAUNAY_MISC_FUNCTION_HH
 #define DELAUNAY_MISC_FUNCTION_HH
 
+#include "Misc/Export.hh"
+
 namespace Delaunay
 {
 namespace Misc
 {
 
-class Function
+class DELAUNAYMISC_EXPORT Function
 {
 public:
   virtual ~Function() {}

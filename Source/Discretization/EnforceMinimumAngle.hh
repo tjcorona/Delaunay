@@ -17,6 +17,8 @@
 #ifndef DELAUNAY_DISCRETIZATION_ENFORCEMINIMUMANGLE_HH
 #define DELAUNAY_DISCRETIZATION_ENFORCEMINIMUMANGLE_HH
 
+#include "Discretization/Export.hh"
+
 #include "Mesh/Mesher.hh"
 
 namespace Delaunay
@@ -25,7 +27,7 @@ namespace Discretization
 {
 
 // WIP
-class EnforceMinimumAngle : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT EnforceMinimumAngle : public Mesh::Mesher
 {
 public:
   EnforceMinimumAngle() {}

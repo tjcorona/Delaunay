@@ -19,6 +19,8 @@
 
 #include <functional>
 
+#include "Discretization/Export.hh"
+
 #include "Shape/Point.hh"
 #include "Shape/Polygon.hh"
 #include "Mesh/Mesh.hh"
@@ -32,7 +34,7 @@ namespace Discretization
 typedef std::function<double(const Shape::Point&)> WeightFunction;
 
 // WIP
-class WeightedDiscretizer : public Mesh::Mesher
+class DELAUNAYDISCRETIZATION_EXPORT WeightedDiscretizer : public Mesh::Mesher
 {
 public:
   WeightedDiscretizer();

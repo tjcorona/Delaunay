@@ -29,9 +29,13 @@ target_include_directories (${PROJECT_NAME}Visualization PUBLIC
   ${OpenCV_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
 set_property (TARGET ${PROJECT_NAME}Visualization PROPERTY MACOSX_RPATH TRUE)
 
+generate_export_header(${PROJECT_NAME}Visualization EXPORT_FILE_NAME Export.hh)
+list(APPEND Visualization_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)
+
 target_include_directories(${PROJECT_NAME}Visualization
   PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Source/>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Source/>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 install(TARGETS
