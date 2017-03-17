@@ -2,8 +2,12 @@ cmake_minimum_required (VERSION 2.8.11)
 
 project (Delaunay)
 
-get_filename_component(BUILD_PARENT_DIR ${CMAKE_BINARY_DIR} PATH)
-set(CMAKE_INSTALL_PREFIX "${BUILD_PARENT_DIR}/install" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+# if the project is being built by itself, set the install path to be inside the
+# source directory
+if ($PROJECT_SOURCE_DIR STREQUAL $CMAKE_CURRENT_SOURCE_DIR)
+  get_filename_component(BUILD_PARENT_DIR ${CMAKE_BINARY_DIR} PATH)
+  set(CMAKE_INSTALL_PREFIX "${BUILD_PARENT_DIR}/install" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+endif ()
 
 # use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -27,9 +31,9 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
   "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
 
-IF("${isSystemDir}" STREQUAL "-1")
-   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-ENDIF("${isSystemDir}" STREQUAL "-1")
+if ("${isSystemDir}" STREQUAL "-1")
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif ()
 
 option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
 if (${PROJECT_NAME}_ENABLE_TESTING)
