@@ -7,7 +7,6 @@ set(Validation_Source_Files
 add_library (${PROJECT_NAME}Validation SHARED ${Validation_Source_Files})
 target_link_libraries (${PROJECT_NAME}Validation
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Visualization)
-set_property (TARGET ${PROJECT_NAME}Validation PROPERTY MACOSX_RPATH TRUE)
 
 generate_export_header(${PROJECT_NAME}Validation EXPORT_FILE_NAME Export.hh)
 list(APPEND Validation_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)

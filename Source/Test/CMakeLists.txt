@@ -1,6 +1,8 @@
 set (APPLICATIONS)
 
 if (${PROJECT_NAME}_USE_OPENCV)
+  find_package(OpenCV REQUIRED)
+  list(APPEND CMAKE_INSTALL_RPATH ${OpenCV_INSTALL_PATH}/lib)
 
   list (APPEND APPLICATIONS Triangle)
   add_executable( Triangle Triangle.cc )
