@@ -1,39 +1,21 @@
-cmake_minimum_required (VERSION 2.8.11)
+if (CMAKE_CURRENT_LIST_DIR STREQUAL CMAKE_SOURCE_DIR)
+  cmake_minimum_required (VERSION 3.0)
+endif()
 
 project (Delaunay)
 
 # if the project is being built by itself, set the install path to be inside the
 # source directory
-if ($PROJECT_SOURCE_DIR STREQUAL $CMAKE_CURRENT_SOURCE_DIR)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   get_filename_component(BUILD_PARENT_DIR ${CMAKE_BINARY_DIR} PATH)
   set(CMAKE_INSTALL_PREFIX "${BUILD_PARENT_DIR}/install" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+  set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endif ()
-
-# use, i.e. don't skip the full RPATH for the build tree
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
 # enable c++11 standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS FALSE)
-
-# when building, don't use the install RPATH already
-# (but later on when installing)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# the RPATH to be used when installing, but only if it's not a system directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
-  "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-
-if ("${isSystemDir}" STREQUAL "-1")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-endif ()
 
 option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
 if (${PROJECT_NAME}_ENABLE_TESTING)

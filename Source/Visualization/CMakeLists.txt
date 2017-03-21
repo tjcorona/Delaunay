@@ -7,6 +7,8 @@ set(Visualization_Source_Files
 if (${PROJECT_NAME}_USE_OPENCV)
   find_package( OpenCV REQUIRED )
 
+  list(APPEND CMAKE_INSTALL_RPATH ${OpenCV_INSTALL_PATH}/lib)
+
   list (APPEND Visualization_Header_Files
     CVCanvas.hh)
   list (APPEND Visualization_Source_Files
@@ -27,7 +29,6 @@ target_link_libraries (${PROJECT_NAME}Visualization
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Misc ${OpenCV_LIBS} ${VTK_LIBRARIES})
 target_include_directories (${PROJECT_NAME}Visualization PUBLIC
   ${OpenCV_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
-set_property (TARGET ${PROJECT_NAME}Visualization PROPERTY MACOSX_RPATH TRUE)
 
 generate_export_header(${PROJECT_NAME}Visualization EXPORT_FILE_NAME Export.hh)
 list(APPEND Visualization_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)

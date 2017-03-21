@@ -17,7 +17,6 @@ set(Mesh_Source_Files
 add_library (${PROJECT_NAME}Mesh SHARED ${Mesh_Source_Files})
 target_link_libraries (${PROJECT_NAME}Mesh ${PROJECT_NAME}Shape
   ${PROJECT_NAME}Misc)
-set_property (TARGET ${PROJECT_NAME}Mesh PROPERTY MACOSX_RPATH TRUE)
 
 generate_export_header(${PROJECT_NAME}Mesh EXPORT_FILE_NAME Export.hh)
 list(APPEND Mesh_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)

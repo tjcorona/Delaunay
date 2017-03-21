@@ -33,7 +33,6 @@ set(Discretization_Source_Files
 add_library (${PROJECT_NAME}Discretization SHARED ${Discretization_Source_Files})
 target_link_libraries (${PROJECT_NAME}Discretization
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Visualization)
-set_property (TARGET ${PROJECT_NAME}Discretization PROPERTY MACOSX_RPATH TRUE)
 
 generate_export_header(${PROJECT_NAME}Discretization EXPORT_FILE_NAME Export.hh)
 list(APPEND Discretization_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)
