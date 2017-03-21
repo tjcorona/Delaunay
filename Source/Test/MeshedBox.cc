@@ -80,7 +80,7 @@ int main(int argc,char** argv)
   // create a polygon from the point vector
   Shape::Polygon polygon(vertices);
 
-  std::set<const Shape::Polygon> interiorBoundaries;
+  std::set<Shape::Polygon> interiorBoundaries;
   std::vector<std::vector<Shape::Point> > interiorPoints;
 
   {
