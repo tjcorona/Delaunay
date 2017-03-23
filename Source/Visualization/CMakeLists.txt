@@ -5,7 +5,9 @@ set(Visualization_Source_Files
   Color.cc)
 
 if (${PROJECT_NAME}_USE_OPENCV)
-  find_package( OpenCV REQUIRED )
+  find_package(OpenCV REQUIRED)
+  set(_opencv_libs ${OpenCV_LIBS})
+  set(_opencv_inc_dirs ${OpenCV_INCLUDE_DIRS})
 
   list(APPEND CMAKE_INSTALL_RPATH ${OpenCV_INSTALL_PATH}/lib)
 
@@ -16,7 +18,14 @@ if (${PROJECT_NAME}_USE_OPENCV)
 endif()
 
 if (${PROJECT_NAME}_USE_VTK)
-  find_package(VTK REQUIRED)
+  find_package(VTK REQUIRED COMPONENTS
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkRenderingCore
+    vtkRenderingOpenGL2
+    vtkInteractionStyle)
+  set(_vtk_libs ${VTK_LIBRARIES})
+  set(_vtk_inc_dirs ${VTK_INCLUDE_DIRS})
 
   list (APPEND Visualization_Header_Files
     VTKCanvas.hh)
@@ -26,9 +35,9 @@ endif()
 
 add_library (${PROJECT_NAME}Visualization SHARED ${Visualization_Source_Files})
 target_link_libraries (${PROJECT_NAME}Visualization
-  ${PROJECT_NAME}Shape ${PROJECT_NAME}Misc ${OpenCV_LIBS} ${VTK_LIBRARIES})
+  ${PROJECT_NAME}Shape ${PROJECT_NAME}Misc ${_opencv_libs} ${_vtk_libs})
 target_include_directories (${PROJECT_NAME}Visualization PUBLIC
-  ${OpenCV_INCLUDE_DIRS} ${VTK_INCLUDE_DIRS})
+  ${_opencv_libs} ${_vtk_inc_dirs})
 
 generate_export_header(${PROJECT_NAME}Visualization EXPORT_FILE_NAME Export.hh)
 list(APPEND Visualization_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)
