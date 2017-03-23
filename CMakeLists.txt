@@ -9,8 +9,9 @@ project (Delaunay)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   get_filename_component(BUILD_PARENT_DIR ${CMAKE_BINARY_DIR} PATH)
   set(CMAKE_INSTALL_PREFIX "${BUILD_PARENT_DIR}/install" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-  set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endif ()
+
+set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 
 # enable c++11 standard
 set(CMAKE_CXX_STANDARD 11)
