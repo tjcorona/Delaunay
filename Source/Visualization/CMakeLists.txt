@@ -23,6 +23,7 @@ if (${PROJECT_NAME}_USE_VTK)
     vtkCommonDataModel
     vtkRenderingCore
     vtkRenderingOpenGL2
+    vtkIOXML
     vtkInteractionStyle)
   set(_vtk_libs ${VTK_LIBRARIES})
   set(_vtk_inc_dirs ${VTK_INCLUDE_DIRS})
@@ -37,7 +38,7 @@ add_library (${PROJECT_NAME}Visualization SHARED ${Visualization_Source_Files})
 target_link_libraries (${PROJECT_NAME}Visualization
   ${PROJECT_NAME}Shape ${PROJECT_NAME}Misc ${_opencv_libs} ${_vtk_libs})
 target_include_directories (${PROJECT_NAME}Visualization PUBLIC
-  ${_opencv_libs} ${_vtk_inc_dirs})
+  ${_opencv_inc_dirs} ${_vtk_inc_dirs})
 
 generate_export_header(${PROJECT_NAME}Visualization EXPORT_FILE_NAME Export.hh)
 list(APPEND Visualization_Header_Files ${CMAKE_CURRENT_BINARY_DIR}/Export.hh)
