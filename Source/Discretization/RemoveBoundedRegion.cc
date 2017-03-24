@@ -71,12 +71,27 @@ void RemoveBoundedRegion::operator()(const Mesh::Triangle& triangle,
     }
   }
 
+  std::set<const Mesh::Vertex*> verticesToPossiblyRemove;
+
   for (auto t : trianglesToRemove)
   {
+    verticesToPossiblyRemove.insert(&(t->AB().A()));
+    verticesToPossiblyRemove.insert(&(t->AB().B()));
+    verticesToPossiblyRemove.insert(&(t->AC().B()));
     this->GetTriangles(mesh).erase(*t);
   }
   for (auto e : edgesToRemove)
+  {
+    verticesToPossiblyRemove.insert(&(e->A()));
+    verticesToPossiblyRemove.insert(&(e->B()));
     this->GetEdges(mesh).erase(*e);
+  }
+  for (auto v : verticesToPossiblyRemove)
+  {
+    if (v->triangles.empty() && v->edges.empty())
+      this->GetVertices(mesh).erase(*v);
+  }
+
 }
 
 }
