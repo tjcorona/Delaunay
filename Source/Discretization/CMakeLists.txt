@@ -1,5 +1,6 @@
 set(Discretization_Header_Files
   AddInteriorPoint.hh
+  CheckForEncroachment.hh
   ConstrainedDelaunayMesh.hh
   CutEdge.hh
   DiscretizePolygon.hh
@@ -16,6 +17,7 @@ set(Discretization_Header_Files
 
 set(Discretization_Source_Files
   AddInteriorPoint.cc
+  CheckForEncroachment.cc
   ConstrainedDelaunayMesh.cc
   CutEdge.cc
   DiscretizePolygon.cc

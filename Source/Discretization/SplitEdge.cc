@@ -61,7 +61,9 @@ SplitEdge::operator()(const Mesh::Edge& edge, double t,
 		 *(this->GetVertices(mesh).emplace((edge.A()*(1. - t) +
 						    edge.B()*t)).first);
   const Mesh::Edge& esA = *(this->GetEdges(mesh).emplace(v,edge.A()).first);
+  const_cast<Mesh::Edge&>(esA).boundary = true;
   const Mesh::Edge& esB = *(this->GetEdges(mesh).emplace(v,edge.B()).first);
+  const_cast<Mesh::Edge&>(esB).boundary = true;
 
   std::set<const Mesh::Edge*> toLegalize;
 

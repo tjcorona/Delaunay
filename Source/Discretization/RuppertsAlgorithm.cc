@@ -26,6 +26,7 @@
 #include "Shape/TriangleUtilities.hh"
 
 #include <cassert>
+#include <iostream>
 #include <limits>
 
 namespace Delaunay
@@ -48,7 +49,7 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex& v1, const Mesh::Vertex& v2)
 void RuppertsAlgorithm::operator()(
   const Delaunay::Shape::Polygon& polygon, Delaunay::Mesh::Mesh& mesh)
 {
-  // double alpha = 20.7;
+  double alpha = 20.7;
 
   std::array<double, 4> bounds(Shape::Bounds(polygon));
   double xLen = bounds[1] - bounds[0];
@@ -101,6 +102,7 @@ void RuppertsAlgorithm::operator()(
   std::size_t counter = 0;
   while (!isConverged)
   {
+    std::cout<<"counter: "<<counter<<std::endl;
     if (counter++ > 30)
       break;
     isConverged = true;
@@ -115,19 +117,22 @@ void RuppertsAlgorithm::operator()(
       if (IsEncroached(vtx1, vtx2, *augmentedMesh))
       {
 	isConverged = false;
+        std::cout<<"recursively splitting edge here"<<std::endl;
 	RecursivelySplitEdge(vtx1, vtx2, vertices, *augmentedMesh);
       }
     }
 
     for (auto& triangle : augmentedMesh->GetTriangles())
     {
-      if (MinimumAngle(triangle) < 20.7)
+      std::cout<<"minimum angle: "<<MinimumAngle(triangle)*180./M_PI<<std::endl;
+      if (MinimumAngle(triangle) < alpha*M_PI/180.)
       {
 	isConverged = false;
 	std::vector<VertexList::const_iterator> encroached(
 	  Encroaches(triangle.circumcircle.Center, vertices));
 	if (!encroached.empty())
 	{
+          std::cout<<"encroached edges!"<<std::endl;
 	  for (auto& vtx1 : encroached)
 	  {
 	    auto vtx2 = std::next(vtx1);
@@ -139,6 +144,7 @@ void RuppertsAlgorithm::operator()(
 	}
 	else
 	{
+          std::cout<<"let's just throw in a point"<<std::endl;
 	  addInteriorPoint(triangle.circumcircle.Center, *augmentedMesh);
 	}
 	break;

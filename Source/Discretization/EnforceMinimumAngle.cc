@@ -18,6 +18,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <iostream>
 #include <limits>
 
 #include "Discretization/EnforceMinimumAngle.hh"
@@ -48,6 +49,7 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
   SplitEdge splitEdge;
   AddInteriorPoint addInteriorPoint;
   bool allLegal = false;
+  std::set<const Mesh::Edge*> childrenOfPerimeter;
   while (!allLegal)
   {
     allLegal = true;
@@ -73,14 +75,51 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 	std::set<const Mesh::Edge*> encroachedByTriangle(
 	  Encroaches(triangle.circumcircle.Center, mesh));
 	if (encroachedByTriangle.empty())
+        {
+          std::cout<<"adding a point"<<std::endl;
 	  addInteriorPoint(triangle.circumcircle.Center, mesh);
+        }
 	else
 	{
+          std::cout<<"fancy edge things"<<std::endl;
 	  for (auto& edge : mesh.GetEdges())
 	  {
 	    if (encroachedByTriangle.find(&edge) != encroachedByTriangle.end())
 	    {
-	      splitEdge(edge, mesh);
+              // boundary edges are special. If the edge is from the original
+              // perimeter, split it in half and remember its children. If the
+              // edge is a first child of a perimeter edge, split it by a factor
+              // of 2^n for some integer n.
+              if (edge.boundary)
+              {
+                if (std::find(mesh.GetPerimeter().GetPoints().begin(),
+                              mesh.GetPerimeter().GetPoints().end(),
+                              edge.A()) !=
+                    mesh.GetPerimeter().GetPoints().end() &&
+                    std::find(mesh.GetPerimeter().GetPoints().begin(),
+                              mesh.GetPerimeter().GetPoints().end(),
+                              edge.B()) !=
+                    mesh.GetPerimeter().GetPoints().end())
+                {
+                  std::pair<const Mesh::Edge*, const Mesh::Edge*> children =
+                    splitEdge(edge, mesh);
+                  std::cout<<"adding "<<*children.first<<" and "<<*children.second<<" as children"<<std::endl;
+                  childrenOfPerimeter.insert(children.first);
+                  childrenOfPerimeter.insert(children.second);
+                }
+              }
+              else if (childrenOfPerimeter.find(&edge) !=
+                       childrenOfPerimeter.end())
+              {
+                // childrenOfPerimeter.erase(child);
+                std::cout<<"Ooh, a special boundary!"<<std::endl;
+                std::cout<<"boundary? "<<edge.boundary<<std::endl;
+                splitEdge(edge, mesh);
+              }
+              else
+              {
+                splitEdge(edge, mesh);
+              }
 	      break;
 	    }
 	  }

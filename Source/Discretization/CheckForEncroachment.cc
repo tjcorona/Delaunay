@@ -14,27 +14,34 @@
 
 ******************************************************************************/
 
-#include "Discretization/AddInteriorPoint.hh"
+#include "Discretization/CheckForEncroachment.hh"
 
-#include "Discretization/SplitTriangle.hh"
-
-#include <cassert>
+#include "Shape/Circle.hh"
+#include "Shape/CircleUtilities.hh"
+#include "Shape/LineSegmentUtilities.hh"
 
 namespace Delaunay
 {
 namespace Discretization
 {
 
-const Mesh::Vertex* AddInteriorPoint::operator()(
-  const Point& p, Delaunay::Mesh::Mesh& mesh) const
+bool CheckForEncroachment::operator()(
+  const Shape::Point& p, const Delaunay::Mesh::Edge& edge) const
 {
-  assert(this->GetTriangles(mesh).size() != 0);
+  Shape::Circle c((edge.A() + edge.B())/2., Shape::Length(edge)/2.);
+  return Shape::Contains(c,p);
+}
 
-  const Mesh::Triangle* containingTriangle = mesh.FindContainingTriangle(p);
+std::set<const Mesh::Edge*> CheckForEncroachment::operator()(
+  const Shape::Point& p, Delaunay::Mesh::Mesh& mesh) const
+{
+  std::set<const Mesh::Edge*> encroached;
 
-  static const SplitTriangle splitTriangle;
-  return (containingTriangle ? splitTriangle(*containingTriangle, p, mesh) :
-          nullptr);
+  for (auto& edge : mesh.GetEdges())
+    if (this->operator()(p, edge))
+      encroached.insert(&edge);
+
+  return encroached;
 }
 
 }

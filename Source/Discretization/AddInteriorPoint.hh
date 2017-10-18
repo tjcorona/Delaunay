@@ -36,7 +36,7 @@ public:
 
   AddInteriorPoint() {}
 
-  const Mesh::Vertex* operator()(const Point&, Delaunay::Mesh::Mesh&);
+  const Mesh::Vertex* operator()(const Point&, Delaunay::Mesh::Mesh&) const;
 };
 
 }
