@@ -87,7 +87,6 @@ void RuppertsAlgorithm::operator()(
 
   VertexList vertices;
   VertexList::const_iterator sentinel = vertices.before_begin();
-  std::pair<const Mesh::Edge*, bool> firstEdge;
   AddInteriorPoint addInteriorPoint;
   for (auto& p : polygon.GetPoints())
   {
