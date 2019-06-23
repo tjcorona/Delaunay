@@ -92,18 +92,18 @@ int main(int argc,char** argv)
 
   std::cout<<"there are "<<mesh.GetTriangles().size()<<" triangles, "<<mesh.GetEdges().size()<<" edges and "<<mesh.GetVertices().size()<<" vertices."<<std::endl;
 
-  Color faintRed(255,0,0,128);
+  // int i = 0;
+  // for (auto& triangle : mesh.GetTriangles())
+  // {
+  //   canvas.Draw(triangle, Visualization::Black,
+  //               Visualization::Color(i++/(7.),
+  // 				     Visualization::Color::Rainbow));
+  //   if (i == 7)
+  //     i = 0;
+  // }
 
-
-  int i = 0;
-  for (auto& triangle : mesh.GetTriangles())
-  {
-    canvas.Draw(triangle, Visualization::Black,
-                Visualization::Color(i++/(7.),
-  				     Visualization::Color::Rainbow));
-    if (i == 7)
-      i = 0;
-  }
+  canvas.Draw(mesh, { Visualization::Red, Visualization::Yellow, Visualization::Green,
+        Visualization::Blue });
 
   for (auto vtx : mesh.GetVertices())
     canvas.Draw(vtx, Black);

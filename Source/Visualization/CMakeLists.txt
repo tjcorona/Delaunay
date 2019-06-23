@@ -1,7 +1,9 @@
 set(Visualization_Header_Files
+  Canvas.hh
   Color.hh)
 
 set(Visualization_Source_Files
+  Canvas.cc
   Color.cc)
 
 if (${PROJECT_NAME}_USE_OPENCV)
@@ -19,12 +21,13 @@ endif()
 
 if (${PROJECT_NAME}_USE_VTK)
   find_package(VTK REQUIRED COMPONENTS
-    vtkCommonCore
-    vtkCommonDataModel
-    vtkRenderingCore
-    vtkRenderingOpenGL2
-    vtkIOXML
-    vtkInteractionStyle)
+    CommonCore
+    CommonDataModel
+    FiltersSources
+    RenderingCore
+    RenderingOpenGL2
+    IOXML
+    InteractionStyle)
   set(_vtk_libs ${VTK_LIBRARIES})
   set(_vtk_inc_dirs ${VTK_INCLUDE_DIRS})
 
@@ -36,7 +39,7 @@ endif()
 
 add_library (${PROJECT_NAME}Visualization SHARED ${Visualization_Source_Files})
 target_link_libraries (${PROJECT_NAME}Visualization
-  ${PROJECT_NAME}Shape ${PROJECT_NAME}Misc ${_opencv_libs} ${_vtk_libs})
+  ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Misc ${_opencv_libs} ${_vtk_libs})
 target_include_directories (${PROJECT_NAME}Visualization PUBLIC
   ${_opencv_inc_dirs} ${_vtk_inc_dirs})
 

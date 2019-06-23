@@ -48,6 +48,8 @@ class Color;
 class DELAUNAYVISUALIZATION_EXPORT VTKCanvas : public Canvas
 {
 public:
+  using Canvas::Draw;
+
   VTKCanvas(double dim_x_min,
 	    double dim_x_max,
 	    double dim_y_min,
