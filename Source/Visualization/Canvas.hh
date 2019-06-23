@@ -19,8 +19,17 @@
 
 #include "Visualization/Export.hh"
 
+#include "Visualization/Color.hh"
+
+#include <array>
+
 namespace Delaunay
 {
+
+namespace Mesh
+{
+class Mesh;
+}
 
 namespace Misc
 {
@@ -40,8 +49,6 @@ class Triangle;
 namespace Visualization
 {
 
-class Color;
-
 class DELAUNAYVISUALIZATION_EXPORT Canvas
 {
 public:
@@ -55,6 +62,7 @@ public:
   virtual void Draw(const Shape::Polygon&,const Color&,const Color&) = 0;
   virtual void Draw(const Shape::Circle&,const Color&,const Color&) = 0;
   virtual void Draw(const Shape::ParametricCurve&,const Color&) = 0;
+  virtual void Draw(const Mesh::Mesh&, const std::array<Color, 4>&);
   virtual void Update() {}
 };
 

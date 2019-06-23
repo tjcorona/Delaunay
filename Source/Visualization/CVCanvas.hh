@@ -50,6 +50,8 @@ class Color;
 class DELAUNAYVISUALIZATION_EXPORT CVCanvas : public Canvas
 {
 public:
+  using Canvas::Draw;
+
   CVCanvas(double dim_x_min,
 	   double dim_x_max,
 	   double dim_y_min,
