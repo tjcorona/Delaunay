@@ -36,12 +36,12 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 {
   assert(angle > 0.);
 
-  std::set<const Mesh::Edge*> encroached;
+  std::set<const Mesh::Edge*> boundaryEdges;
   for (auto& edge : mesh.GetEdges())
   {
-    if (IsEncroached(edge))
+    if (edge.boundary)
     {
-      encroached.insert(&edge);
+      boundaryEdges.insert(&edge);
     }
   }
 
@@ -52,13 +52,15 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
   {
     allLegal = true;
 
-    for (auto& edge : mesh.GetEdges())
+    for (auto& edge : boundaryEdges)
     {
-      if (encroached.find(&edge) != encroached.end())
+      if (IsEncroached(*edge))
       {
 	allLegal = false;
-	encroached.erase(&edge);
-  	splitEdge(edge, mesh);
+	boundaryEdges.erase(edge);
+  	std::pair<const Mesh::Edge*, const Mesh::Edge*> newEdges = splitEdge(*edge, mesh);
+        boundaryEdges.insert(newEdges.first);
+        boundaryEdges.insert(newEdges.second);
   	break;
       }
     }

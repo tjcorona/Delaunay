@@ -21,6 +21,8 @@
 
 #include "Shape/Point.hh"
 
+#include <array>
+
 namespace Delaunay
 {
 namespace Shape
@@ -43,6 +45,10 @@ double Area(const Triangle& t);
 // Return the centroid of the triangle;
 DELAUNAYSHAPE_EXPORT
 Point Centroid(const Triangle& t);
+
+// Return the angles of the triangle.
+DELAUNAYSHAPE_EXPORT
+std::array<double, 3> Angles(const Triangle& t);
 
 // Return the closest point on a triangle to a point.
 DELAUNAYSHAPE_EXPORT

@@ -17,6 +17,7 @@
 #include "Shape/LineSegment.hh"
 #include "Shape/Polygon.hh"
 #include "Shape/Point.hh"
+#include "Shape/TriangleUtilities.hh"
 
 #include "Mesh/Mesh.hh"
 
@@ -73,11 +74,11 @@ int main(int argc,char** argv)
       assert(false);
   }
 
-  if (testType != Regular)
-  {
-    std::cout<<"Currently, only regular polygons are supported."<<std::endl;
-    return 1;
-  }
+  // if (testType != Regular)
+  // {
+  //   std::cout<<"Currently, only regular polygons are supported."<<std::endl;
+  //   return 1;
+  // }
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
   double bounds[4] = {0.,10.,0.,10.};
@@ -101,6 +102,20 @@ int main(int argc,char** argv)
   enforceMinimumAngle(20.7, mesh);
 
   std::cout<<"there are "<<mesh.GetTriangles().size()<<" triangles, "<<mesh.GetEdges().size()<<" edges and "<<mesh.GetVertices().size()<<" vertices."<<std::endl;
+
+  std::size_t counter = 0;
+  double minimumAngle = 180.;
+  for (auto triangle : mesh.GetTriangles())
+  {
+    std::array<double, 3> angles = Shape::Angles(triangle);
+    for (std::size_t i = 0; i < 3; i++)
+      if (minimumAngle > angles[i] * 180. / M_PI)
+        minimumAngle = angles[i] * 180. / M_PI;
+    // std::cout<<"angles for triangle "<<counter<<": "<<angles[0]*180./M_PI<<", "<<angles[1]*180./M_PI<<", "<<angles[2]*180./M_PI<<std::endl;
+    ++counter;
+  }
+
+  std::cout<<"minimum angle: "<<minimumAngle<<std::endl;
 
   Color faintRed(255,0,0,128);
 

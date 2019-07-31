@@ -98,6 +98,13 @@ Point Centroid(const Triangle& t)
   return (A + B + C)/3.;;
 }
 
+std::array<double, 3> Angles(const Triangle& t)
+{
+  return { acos(Dot(t.AB.B - t.AB.A, t.AC.B - t.AB.A)/(Length(t.AB) * Length(t.AC))),
+           acos(Dot(t.AB.A - t.AB.B, t.AC.B - t.AB.B)/(Length(t.AB) * Length(t.BC))),
+           acos(Dot(t.AB.A - t.AC.B, t.AB.B - t.AC.B)/(Length(t.AC) * Length(t.BC)))};
+}
+
 Point ClosestPoint(const Point& p, const Triangle& t)
 {
    if (Contains(t,p))
@@ -311,6 +318,5 @@ double Distance(const Triangle& t1, const Triangle& t2)
 
   return d1[c1] < d2[c2] ? d1[c1] : d2[c2];
 }
-
 }
 }
