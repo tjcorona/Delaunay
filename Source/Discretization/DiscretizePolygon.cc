@@ -33,10 +33,10 @@ namespace Discretization
 void DiscretizePolygon::operator()(const Delaunay::Shape::Polygon& polygon,
 				   Delaunay::Mesh::Mesh& mesh)
 {
-  Shape::PointVector vec;
+  Shape::PointList list;
   const Mesh::Vertex* firstVtx = nullptr;
   const Mesh::Vertex* previousVtx = nullptr;
-  for (Shape::PointVector::const_iterator it=polygon.GetPoints().begin();
+  for (Shape::PointList::const_iterator it=polygon.GetPoints().begin();
        it!= polygon.GetPoints().end();++it)
   {
     const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(*it)).first;
@@ -44,11 +44,11 @@ void DiscretizePolygon::operator()(const Delaunay::Shape::Polygon& polygon,
       firstVtx = &vtx;
     if (previousVtx)
       this->GetEdges(mesh).emplace(*previousVtx, vtx, true);
-    vec.push_back(std::cref(static_cast<const Shape::Point&>(vtx)));
+    list.push_back(std::cref(static_cast<const Shape::Point&>(vtx)));
     previousVtx = &vtx;
   }
   this->GetEdges(mesh).emplace(*previousVtx, *firstVtx, true);
-  this->GetPerimeter(mesh).SetPoints(vec);
+  this->GetPerimeter(mesh).SetPoints(list);
 
   return this->EarCuttingMethod(mesh);
 }
@@ -62,12 +62,13 @@ namespace
     typedef Vertices::iterator VtxIt;
     typedef std::map<const Mesh::Vertex*, bool> EarMap;
 
-    Ring(const Delaunay::Shape::Polygon& p)
+    Ring(const Delaunay::Shape::Polygon& polygon)
     {
-      for (unsigned i=0; i<p.GetPoints().size(); i++)
+      for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+           it != polygon.GetPoints().end(); ++it)
       {
 	this->Verts.push_back(static_cast<const Mesh::Vertex*>(
-				&p.GetPoints()[i].get()));
+				&(*it).get()));
 	this->Ear[this->Verts.back()] = false;
       }
     }

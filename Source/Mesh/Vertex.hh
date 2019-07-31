@@ -42,6 +42,8 @@ public:
   mutable EdgeSet edges;
 };
 
+typedef std::list<std::reference_wrapper<const Vertex> > VertexList;
+
 }
 }
 

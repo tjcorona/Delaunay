@@ -32,7 +32,7 @@ namespace Shape
 class DELAUNAYSHAPE_EXPORT BezierCurve : public ParametricCurve
 {
 public:
-  BezierCurve(const PointVector&,bool closed=false);
+  BezierCurve(const PointList&,bool closed=false);
 
   const Point operator() (double) const;
 
@@ -40,7 +40,7 @@ protected:
   const Point RecursiveBezier(double,std::vector<Point>&,
 			      std::vector<Point>&) const;
 
-  PointVector Points;
+  PointList Points;
 };
 
 }

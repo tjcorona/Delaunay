@@ -32,7 +32,7 @@ namespace Mesh
 class DELAUNAYMESH_EXPORT Polygon : public Shape::Polygon
 {
 public:
-  Polygon(const Shape::PointVector&);
+  Polygon(const Shape::PointList&);
   ~Polygon() {}
 
   unsigned size() const { return this->Points.size(); }

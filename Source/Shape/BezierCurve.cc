@@ -23,7 +23,7 @@ namespace Delaunay
 namespace Shape
 {
 
-BezierCurve::BezierCurve(const PointVector& pts, bool closed) :
+BezierCurve::BezierCurve(const PointList& pts, bool closed) :
   ParametricCurve(closed), Points(pts)
 {
 

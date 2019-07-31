@@ -23,8 +23,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <functional>
+#include <list>
 #include <ostream>
-#include <vector>
 
 #include "Shape/Export.hh"
 
@@ -112,7 +112,7 @@ public:
   const double y;
 };
 
-typedef std::vector<std::reference_wrapper<const Point> > PointVector;
+typedef std::list<std::reference_wrapper<const Point> > PointList;
 
 }
 }

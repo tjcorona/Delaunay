@@ -121,6 +121,8 @@ int main(int argc,char** argv)
 
   canvas.Draw(mesh.GetPerimeter(),Red,faintRed);
 
+  // canvas.Draw(mesh, {Red, Blue, Green, Yellow});
+
   for (auto triangle : mesh.GetTriangles())
     canvas.Draw(triangle, Visualization::Black);
 

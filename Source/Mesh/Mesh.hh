@@ -43,7 +43,7 @@ public:
 
   friend class Mesher;
 
-  Mesh() : Perimeter(Shape::PointVector()) {}
+  Mesh() : Perimeter(Shape::PointList()) {}
   virtual ~Mesh() {}
 
   const Polygon&     GetPerimeter() const { return this->Perimeter; }

@@ -24,25 +24,29 @@ namespace Delaunay
 namespace Validation
 {
 
-bool IsValidPolygon::operator()(const Delaunay::Shape::Polygon& poly) const
+bool IsValidPolygon::operator()(const Delaunay::Shape::Polygon& polygon) const
 {
-  std::size_t nPoints = poly.GetPoints().size();
-
-  for (std::size_t i=0; i<nPoints; i++)
+  for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+       it != polygon.GetPoints().end(); ++it)
   {
-    std::size_t ipp = (i+1)%nPoints;
-    for (std::size_t j=i+1; j<nPoints; j++)
+    Shape::PointList::const_iterator next = std::next(it);
+    if (next == polygon.GetPoints().end())
+      next = polygon.GetPoints().begin();
+
+    for (Shape::PointList::const_iterator it2 = next;
+         it2 != polygon.GetPoints().end(); ++it2)
     {
       // Check for duplicate points
-      if (poly.GetPoints()[i] == poly.GetPoints()[j])
+      if (*it == *it2)
         return false;
 
-      std::size_t jpp = (j+1)%nPoints;
+      Shape::PointList::const_iterator next2 = std::next(it2);
+      if (next2 == polygon.GetPoints().end())
+        next2 = polygon.GetPoints().begin();
 
       // Check for intersecting edges
-      if (Shape::Intersect(
-            Shape::LineSegment(poly.GetPoints()[i],poly.GetPoints()[ipp]),
-            Shape::LineSegment(poly.GetPoints()[j], poly.GetPoints()[jpp])))
+      if (Shape::Intersect(Shape::LineSegment(*it,*next),
+                           Shape::LineSegment(*it2, *next2)))
         return false;
     }
   }

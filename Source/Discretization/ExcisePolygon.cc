@@ -34,17 +34,19 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
   InsertLineSegment insertLineSegment;
 
   std::pair<const Mesh::Edge*, bool> firstEdge;
-  for (unsigned i = 0; i < polygon.GetPoints().size(); ++i)
+  for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+       it != polygon.GetPoints().end(); ++it)
   {
-    unsigned ipp = (i+1)%polygon.GetPoints().size();
-    Shape::LineSegment l(polygon.GetPoints()[i], polygon.GetPoints()[ipp]);
+    Shape::PointList::const_iterator next = std::next(it);
+    if (next == polygon.GetPoints().end())
+      next = polygon.GetPoints().begin();
+    Shape::LineSegment l(*it, *next);
     const Mesh::Edge* edge = insertLineSegment(l, mesh);
     innerEdges.insert(edge);
-    if (i == 0)
+    if (it == polygon.GetPoints().begin())
     {
       bool isCCW =
-	Shape::Dot(edge->B() - edge->A(),
-		   polygon.GetPoints()[ipp] - polygon.GetPoints()[i]) > 0.;
+	Shape::Dot(edge->B() - edge->A(), *next - *it) > 0.;
       firstEdge = std::make_pair(edge, isCCW);
     }
   }
