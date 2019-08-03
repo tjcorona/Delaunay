@@ -33,6 +33,7 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
   std::set<const Mesh::Edge*> innerEdges;
   InsertLineSegment insertLineSegment;
 
+  Mesh::VertexList list;
   std::pair<const Mesh::Edge*, bool> firstEdge;
   for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
        it != polygon.GetPoints().end(); ++it)
@@ -42,6 +43,8 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
       next = polygon.GetPoints().begin();
     Shape::LineSegment l(*it, *next);
     const Mesh::Edge* edge = insertLineSegment(l, mesh);
+    list.push_back((static_cast<const Shape::Point&>(edge->A()) == *it ?
+                    edge->A() : edge->B()));
     innerEdges.insert(edge);
     if (it == polygon.GetPoints().begin())
     {
@@ -53,6 +56,8 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
 
   RemoveBoundedRegion removeBoundedRegion;
   removeBoundedRegion(*firstEdge.first, firstEdge.second, mesh);
+
+  this->GetInteriorBoundaries(mesh).emplace(list);
 
   return innerEdges;
 }

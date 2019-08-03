@@ -63,6 +63,32 @@ SplitEdge::operator()(const Mesh::Edge& edge, double t,
   const Mesh::Edge& esA = *(this->GetEdges(mesh).emplace(v,edge.A()).first);
   const Mesh::Edge& esB = *(this->GetEdges(mesh).emplace(v,edge.B()).first);
 
+  if (edge.boundary)
+  {
+    const_cast<Mesh::Edge&>(esA).boundary = true;
+    const_cast<Mesh::Edge&>(esB).boundary = true;
+
+    if (this->GetPerimeter(mesh).GetVertices().find(edge.A()) !=
+        this->GetPerimeter(mesh).GetVertices().end())
+    {
+      this->GetPerimeter(mesh).GetVertices().insert(edge.A(), edge.B(), v);
+    }
+    else
+    {
+      // set iteration must be const
+      for (const Mesh::Polygon& boundary : this->GetInteriorBoundaries(mesh))
+      {
+        if (boundary.GetVertices().find(edge.A()) !=
+            boundary.GetVertices().end())
+        {
+          const_cast<Mesh::Polygon&>(boundary).GetVertices()
+            .insert(edge.A(), edge.B(), v);
+          break;
+        }
+      }
+    }
+  }
+
   std::set<const Mesh::Edge*> toLegalize;
 
   Mesh::TriangleSet triangles = edge.triangles;

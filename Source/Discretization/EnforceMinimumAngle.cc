@@ -24,8 +24,10 @@
 
 #include "Discretization/AddInteriorPoint.hh"
 #include "Discretization/SplitEdge.hh"
+#include "Mesh/Triangle.hh"
 #include "Shape/CircleUtilities.hh"
 #include "Shape/LineSegmentUtilities.hh"
+#include "Shape/TriangleUtilities.hh"
 
 namespace Delaunay
 {
@@ -37,12 +39,15 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
   assert(angle > 0.);
 
   std::set<const Mesh::Edge*> boundaryEdges;
+  double maximumLength = 0.;
   for (auto& edge : mesh.GetEdges())
   {
+    double length = Length(edge);
+    if (length > maximumLength)
+      maximumLength = length;
+
     if (edge.boundary)
-    {
       boundaryEdges.insert(&edge);
-    }
   }
 
   SplitEdge splitEdge;
@@ -57,6 +62,7 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
       if (IsEncroached(*edge))
       {
 	allLegal = false;
+
 	boundaryEdges.erase(edge);
   	std::pair<const Mesh::Edge*, const Mesh::Edge*> newEdges = splitEdge(*edge, mesh);
         boundaryEdges.insert(newEdges.first);
@@ -69,11 +75,11 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 
     for (auto& triangle : mesh.GetTriangles())
     {
-      if (MinimumAngle(triangle) < angle*M_PI/180.)
+      if (MinimumAngle(triangle) < angle*M_PI/180. && Shape::Area(triangle) > 1.e-6)
       {
 	allLegal = false;
 	std::set<const Mesh::Edge*> encroachedByTriangle(
-	  Encroaches(triangle.circumcircle.Center, mesh));
+	  Encroaches(triangle.circumcircle.Center, boundaryEdges));
 	if (encroachedByTriangle.empty())
 	  addInteriorPoint(triangle.circumcircle.Center, mesh);
 	else
@@ -124,6 +130,7 @@ bool EnforceMinimumAngle::IsEncroached(const Mesh::Edge& e) const
 
   for (auto& triangle : e.triangles)
   {
+    assert(triangle);
     const Mesh::Vertex* v = &triangle->AB().A();
     if (v == &e.A() || v == &e.B())
       v = &triangle->AB().B();
@@ -137,29 +144,17 @@ bool EnforceMinimumAngle::IsEncroached(const Mesh::Edge& e) const
 }
 
 std::set<const Mesh::Edge*> EnforceMinimumAngle::Encroaches(
-  const Shape::Point& p, const Delaunay::Mesh::Mesh& mesh) const
+  const Shape::Point& p, const std::set<const Mesh::Edge*>& edges) const
 {
   std::set<const Mesh::Edge*> encroached;
-  for (auto& edge : mesh.GetEdges())
+  for (auto edge : edges)
   {
-    Shape::Circle c((edge.A() + edge.B())/2., Shape::Length(edge)/2.);
+    Shape::Circle c((edge->A() + edge->B())/2., Shape::Length(*edge)/2.);
 
     if (Shape::Contains(c,p))
-      encroached.insert(&edge);
+      encroached.insert(edge);
   }
   return encroached;
-}
-
-void EnforceMinimumAngle::RecursivelySplitEdge(
-  const Mesh::Edge& edge, Delaunay::Mesh::Mesh& mesh) const
-{
-  SplitEdge splitEdge;
-  auto splitEdges = splitEdge(edge, mesh);
-
-  if (IsEncroached(*splitEdges.first))
-    RecursivelySplitEdge(*splitEdges.first, mesh);
-  if (IsEncroached(*splitEdges.second))
-    RecursivelySplitEdge(*splitEdges.second, mesh);
 }
 
 }

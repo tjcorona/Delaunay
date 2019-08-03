@@ -32,7 +32,6 @@ namespace Shape
 class DELAUNAYSHAPE_EXPORT Polygon
 {
 public:
-
   template <class PointIterator>
   Polygon(const PointIterator& begin, const PointIterator& end) :
     Points(Sort(begin, end)) {}
@@ -73,6 +72,12 @@ public:
   }
 
 protected:
+  PointList::const_iterator Insert(PointList::const_iterator pos,
+                                   const Point& point)
+  {
+    return Points.insert(pos, point);
+  }
+
   PointList Points;
 
 private:

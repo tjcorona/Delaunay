@@ -227,7 +227,6 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
 
     const cv::Point* p = &points[0];
     const int sz = static_cast<int>(points.size());
-
     fillPoly(*im,&p,&sz,1,ColorToCVScalar(fillColor),0);
 
     if (lineColor.alpha != fillColor.alpha)

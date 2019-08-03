@@ -17,8 +17,6 @@
 #include "Discretization/SplitTriangle.hh"
 #include "Discretization/LegalizeEdges.hh"
 
-#include <iostream>
-
 namespace Delaunay
 {
 namespace Discretization

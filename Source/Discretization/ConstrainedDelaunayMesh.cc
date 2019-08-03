@@ -70,7 +70,7 @@ void ConstrainedDelaunayMesh::operator()(
 
   InsertLineSegment insertLineSegment;
 
-  Shape::PointList list;
+  Mesh::VertexList list;
   std::pair<const Mesh::Edge*, bool> firstEdge;
   for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
        it != polygon.GetPoints().end(); ++it)
@@ -80,9 +80,7 @@ void ConstrainedDelaunayMesh::operator()(
       next = polygon.GetPoints().begin();
     Shape::LineSegment l(*it, *next);
     const Mesh::Edge* edge = insertLineSegment(l, mesh);
-    list.push_back(std::cref(static_cast<const Shape::Point&>(
-                               edge->A() == *it ? edge->A() :
-                               edge->B())));
+    list.push_back(std::cref(edge->A() == *it ? edge->A() : edge->B()));
     if (it == polygon.GetPoints().begin())
     {
       bool isCCW =
@@ -96,7 +94,7 @@ void ConstrainedDelaunayMesh::operator()(
 
   if (inSitu)
   {
-    this->GetPerimeter(mesh).SetPoints(list);
+    this->GetPerimeter(mesh).SetVertices(list);
   }
   else
   {

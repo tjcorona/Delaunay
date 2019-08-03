@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 #include "Shape/LineSegment.hh"
+#include "Shape/LineSegmentUtilities.hh"
 #include "Shape/Polygon.hh"
 #include "Shape/Point.hh"
 #include "Shape/TriangleUtilities.hh"
@@ -84,7 +85,9 @@ int main(int argc,char** argv)
   double bounds[4] = {0.,10.,0.,10.};
   Visualization::CVCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
 
-  const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(20);
+  const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(2000);
+
+  std::cout<<"creating a polygon with "<<nPoints<<" sides"<<std::endl;
 
   std::vector<Shape::Point> vertices(std::move(GeneratePolygonPoints(testType,
 								     nPoints,
@@ -116,6 +119,8 @@ int main(int argc,char** argv)
   }
 
   std::cout<<"minimum angle: "<<minimumAngle<<std::endl;
+
+  std::cout<<"boundary size: "<<mesh.GetPerimeter().GetPoints().size()<<std::endl;
 
   Color faintRed(255,0,0,128);
 
