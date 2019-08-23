@@ -19,6 +19,7 @@ export(EXPORT ${PROJECT_NAME}
   )
 
 install(EXPORT ${PROJECT_NAME}
+  FILE "${PROJECT_NAME}-targets.cmake"
   DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
   )
 
