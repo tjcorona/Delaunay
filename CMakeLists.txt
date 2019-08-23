@@ -4,6 +4,8 @@ endif()
 
 project (Delaunay)
 
+include(GNUInstallDirs)
+
 # if the project is being built by itself, set the install path to be inside the
 # source directory
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -21,13 +23,24 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
+if (NOT DEFINED CMAKE_INSTALL_CMAKEDIR)
+  set(CMAKE_INSTALL_CMAKEDIR
+    "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+endif ()
+
+if (NOT DEFINED "${PROJECT_NAME}_ENABLE_TESTING")
+  option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
+endif ()
 if (${PROJECT_NAME}_ENABLE_TESTING)
   enable_testing()
 endif ()
 
-option (${PROJECT_NAME}_USE_OPENCV "Enables the use of OpenCV" OFF)
-option (${PROJECT_NAME}_USE_VTK "Enables the use of VTK" OFF)
+if (NOT DEFINED "${PROJECT_NAME}_USE_OPENCV")
+  option (${PROJECT_NAME}_USE_OPENCV "Enables the use of OpenCV" OFF)
+endif ()
+if (NOT DEFINED "${PROJECT_NAME}_USE_VTK")
+  option (${PROJECT_NAME}_USE_VTK "Enables the use of VTK" OFF)
+endif ()
 
 include(GenerateExportHeader)
 
