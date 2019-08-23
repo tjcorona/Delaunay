@@ -23,13 +23,19 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
+if (NOT DEFINED "${PROJECT_NAME}_ENABLE_TESTING")
+  option (${PROJECT_NAME}_ENABLE_TESTING "Enable testing" OFF)
+endif ()
 if (${PROJECT_NAME}_ENABLE_TESTING)
   enable_testing()
 endif ()
 
-option (${PROJECT_NAME}_USE_OPENCV "Enables the use of OpenCV" OFF)
-option (${PROJECT_NAME}_USE_VTK "Enables the use of VTK" OFF)
+if (NOT DEFINED "${PROJECT_NAME}_USE_OPENCV")
+  option (${PROJECT_NAME}_USE_OPENCV "Enables the use of OpenCV" OFF)
+endif ()
+if (NOT DEFINED "${PROJECT_NAME}_USE_VTK")
+  option (${PROJECT_NAME}_USE_VTK "Enables the use of VTK" OFF)
+endif ()
 
 include(GenerateExportHeader)
 
