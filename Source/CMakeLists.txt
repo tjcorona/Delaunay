@@ -9,7 +9,7 @@ add_subdirectory(Visualization)
 include(CMakePackageConfigHelpers)
 configure_package_config_file(${PROJECT_SOURCE_DIR}/CMake/Config.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-Config.cmake"
-  INSTALL_DESTINATION "lib/cmake/${PROJECT_NAME}"
+  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
   )
@@ -19,10 +19,10 @@ export(EXPORT ${PROJECT_NAME}
   )
 
 install(EXPORT ${PROJECT_NAME}
-  DESTINATION lib/cmake/${PROJECT_NAME}
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
   )
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-Config.cmake
-  DESTINATION lib/cmake/${PROJECT_NAME}
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
   )

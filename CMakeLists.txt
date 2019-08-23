@@ -4,6 +4,8 @@ endif()
 
 project (Delaunay)
 
+include(GNUInstallDirs)
+
 # if the project is being built by itself, set the install path to be inside the
 # source directory
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
