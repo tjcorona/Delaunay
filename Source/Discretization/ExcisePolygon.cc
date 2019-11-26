@@ -33,7 +33,7 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
   std::set<const Mesh::Edge*> innerEdges;
   InsertLineSegment insertLineSegment;
 
-  std::pair<const Mesh::Edge*, bool> firstEdge;
+  std::pair<const Mesh::Edge*, bool> firstEdge = std::make_pair(nullptr, false);
   for (unsigned i = 0; i < polygon.GetPoints().size(); ++i)
   {
     unsigned ipp = (i+1)%polygon.GetPoints().size();
@@ -49,8 +49,11 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
     }
   }
 
-  RemoveBoundedRegion removeBoundedRegion;
-  removeBoundedRegion(*firstEdge.first, firstEdge.second, mesh);
+  if (firstEdge.first != nullptr)
+  {
+    RemoveBoundedRegion removeBoundedRegion;
+    removeBoundedRegion(*firstEdge.first, firstEdge.second, mesh);
+  }
 
   return innerEdges;
 }
