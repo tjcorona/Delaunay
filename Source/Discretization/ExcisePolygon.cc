@@ -54,8 +54,11 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
     }
   }
 
-  RemoveBoundedRegion removeBoundedRegion;
-  removeBoundedRegion(*firstEdge.first, firstEdge.second, mesh);
+  if (firstEdge.first != nullptr)
+  {
+    RemoveBoundedRegion removeBoundedRegion;
+    removeBoundedRegion(*firstEdge.first, firstEdge.second, mesh);
+  }
 
   this->GetInteriorBoundaries(mesh).emplace(list);
 

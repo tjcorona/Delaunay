@@ -98,18 +98,28 @@ void ConstrainedDelaunayMesh::operator()(
   }
   else
   {
-    for (auto& triangle : mesh_.GetTriangles())
+    RemoveBoundedRegion removeBoundedRegion;
+    removeBoundedRegion(*firstEdge.first, !firstEdge.second, *augmentedMesh);
+
+    if (inSitu)
     {
-      const Mesh::Vertex& a = *(this->InsertVertex(
-                                  triangle.AB().A(),mesh)).first;
-      const Mesh::Vertex& b = *(this->InsertVertex(
-                                  triangle.AB().B(),mesh)).first;
-      const Mesh::Vertex& c = *(this->InsertVertex(
-                                  triangle.AC().B(),mesh)).first;
-      const Mesh::Edge& ab = *(this->InsertEdge(a,b,mesh)).first;
-      const Mesh::Edge& bc = *(this->InsertEdge(b,c,mesh)).first;
-      const Mesh::Edge& ac = *(this->InsertEdge(a,c,mesh)).first;
-      this->InsertTriangle(ab,bc,ac,mesh);
+      this->GetPerimeter(mesh).SetPoints(vec);
+    }
+    else
+    {
+      for (auto& triangle : mesh_.GetTriangles())
+      {
+        const Mesh::Vertex& a = *(this->InsertVertex(
+                                    triangle.AB().A(),mesh)).first;
+        const Mesh::Vertex& b = *(this->InsertVertex(
+                                    triangle.AB().B(),mesh)).first;
+        const Mesh::Vertex& c = *(this->InsertVertex(
+                                    triangle.AC().B(),mesh)).first;
+        const Mesh::Edge& ab = *(this->InsertEdge(a,b,mesh)).first;
+        const Mesh::Edge& bc = *(this->InsertEdge(b,c,mesh)).first;
+        const Mesh::Edge& ac = *(this->InsertEdge(a,c,mesh)).first;
+        this->InsertTriangle(ab,bc,ac,mesh);
+      }
     }
   }
 }
