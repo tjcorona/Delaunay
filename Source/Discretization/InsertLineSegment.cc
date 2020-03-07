@@ -45,6 +45,9 @@ namespace
 {
 const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 {
+  assert(v1);
+  assert(v2);
+
   for (auto edge : v1->edges)
     if (&edge->A() == v2 || &edge->B() == v2)
       return edge;
@@ -56,12 +59,16 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
                                          Mesh::Mesh& mesh)
 {
-// TODO: deal with the case where l lies on preexisting edges (Touches() returns// false, so 0 triangles are described as between the two points in this case)
+// TODO: deal with the case where l lies on preexisting edges (Touches() returns
+// false, so 0 triangles are described as between the two points in this case)
 
   // First, add the two points of the line segment
   AddInteriorPoint addInteriorPoint;
   const Mesh::Vertex* v1 = addInteriorPoint(l.A, mesh);
   const Mesh::Vertex* v2 = addInteriorPoint(l.B, mesh);
+
+  if (v1 == nullptr || v2 == nullptr)
+    return nullptr;
 
   // If there is already an edge present, mark it as a boundary and return
   if (const Mesh::Edge* edge = GetEdge(v1,v2))

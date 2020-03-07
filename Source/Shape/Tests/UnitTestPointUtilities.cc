@@ -46,5 +46,11 @@ int UnitTestPointUtilities(int /*argc*/,char** /*argv*/)
   test(std::abs(Distance(p0,p1) - std::sqrt(2.))<EPSILON,
        "Distance squared between two points returned unexpected result.");
 
+  test(std::abs(Angle(p2,p1,p3) - M_PI/2.)<EPSILON,
+       "Angle between three points returned unexpected result.");
+
+  test(std::abs(Angle(p3,p1,p2) - 3.*M_PI/2.)<EPSILON,
+       "Angle between three points returned unexpected result.");
+
   return 0;
 }

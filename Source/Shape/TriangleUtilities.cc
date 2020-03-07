@@ -77,7 +77,7 @@ bool Contains(const Triangle& tri, const Point& p)
   const double& s = st.first;
   const double& t = st.second;
 
-  return (s >= -EPSILON && t >= -EPSILON && (s + t) <= 1. ? true : false);
+  return (s >= -EPSILON && t >= -EPSILON && (s + t) <= 1. + EPSILON ? true : false);
 }
 
 double Area(const Triangle& t)

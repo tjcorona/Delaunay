@@ -181,14 +181,11 @@ void CVCanvas::Draw(const Triangle& triangle,const Color& lineColor,
       PostDraw();
   }
 
-  if (lineColor.alpha != fillColor.alpha)
+  if (lineColor.alpha)
   {
     SetAlpha(lineColor.alpha);
     im = PreDraw();
-  }
 
-  if (lineColor.alpha)
-  {
     if (points[0] == points[1])
       cv::line(*im,points[0],points[2],ColorToCVScalar(lineColor),1,8);
     else if (points[0] == points[2] || points[1] == points[2])

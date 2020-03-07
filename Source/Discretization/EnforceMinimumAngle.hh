@@ -37,6 +37,8 @@ public:
   bool IsEncroached(const Mesh::Edge&) const;
 
 protected:
+  bool SplitBoundaryEdge(
+    const Mesh::Edge&, std::set<const Mesh::Edge*>&, Delaunay::Mesh::Mesh&) const;
   double MinimumAngle(const Mesh::Triangle&) const;
   std::set<const Mesh::Edge*> Encroaches(
     const Shape::Point& p, const std::set<const Mesh::Edge*>&) const;
