@@ -24,8 +24,10 @@
 
 #include "Discretization/AddInteriorPoint.hh"
 #include "Discretization/SplitEdge.hh"
+#include "Mesh/Triangle.hh"
 #include "Shape/CircleUtilities.hh"
 #include "Shape/LineSegmentUtilities.hh"
+#include "Shape/TriangleUtilities.hh"
 
 namespace Delaunay
 {
@@ -36,13 +38,16 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 {
   assert(angle > 0.);
 
-  std::set<const Mesh::Edge*> encroached;
+  std::set<const Mesh::Edge*> boundaryEdges;
+  double maximumLength = 0.;
   for (auto& edge : mesh.GetEdges())
   {
-    if (IsEncroached(edge))
-    {
-      encroached.insert(&edge);
-    }
+    double length = Length(edge);
+    if (length > maximumLength)
+      maximumLength = length;
+
+    if (edge.boundary)
+      boundaryEdges.insert(&edge);
   }
 
   SplitEdge splitEdge;
@@ -52,14 +57,15 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
   {
     allLegal = true;
 
-    for (auto& edge : mesh.GetEdges())
+    for (auto& edge : boundaryEdges)
     {
-      if (encroached.find(&edge) != encroached.end())
+      if (IsEncroached(*edge))
       {
-	allLegal = false;
-	encroached.erase(&edge);
-  	splitEdge(edge, mesh);
-  	break;
+        if (SplitBoundaryEdge(*edge, boundaryEdges, mesh))
+        {
+          allLegal = false;
+          break;
+        }
       }
     }
     if (!allLegal)
@@ -67,28 +73,189 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 
     for (auto& triangle : mesh.GetTriangles())
     {
+      // if (MinimumAngle(triangle) < angle*M_PI/180. && Shape::Area(triangle) > 1.e-6)
       if (MinimumAngle(triangle) < angle*M_PI/180.)
       {
-	allLegal = false;
 	std::set<const Mesh::Edge*> encroachedByTriangle(
-	  Encroaches(triangle.circumcircle.Center, mesh));
+	  Encroaches(triangle.circumcircle.Center, boundaryEdges));
 	if (encroachedByTriangle.empty())
-	  addInteriorPoint(triangle.circumcircle.Center, mesh);
+        {
+          if (addInteriorPoint(triangle.circumcircle.Center, mesh))
+          {
+            allLegal = false;
+          }
+        }
 	else
 	{
-	  for (auto& edge : mesh.GetEdges())
-	  {
-	    if (encroachedByTriangle.find(&edge) != encroachedByTriangle.end())
-	    {
-	      splitEdge(edge, mesh);
-	      break;
-	    }
-	  }
+	  for (const Mesh::Edge* edge : encroachedByTriangle)
+          {
+            if (edge->boundary)
+            {
+              if (SplitBoundaryEdge(*edge, boundaryEdges, mesh))
+              {
+                allLegal = false;
+              }
+            }
+            else
+            {
+              splitEdge(*edge, mesh);
+              allLegal = false;
+            }
+          }
 	}
-	break;
+        if (allLegal == false)
+          break;
       }
     }
   }
+}
+
+bool EnforceMinimumAngle::SplitBoundaryEdge(
+  const Mesh::Edge& edge, std::set<const Mesh::Edge*>& boundaryEdges, Mesh::Mesh& mesh) const
+{
+  assert(edge.boundary);
+  assert(edge.triangles.size() == 1);
+
+  const Mesh::Triangle& t = **edge.triangles.begin();
+
+  // Bail if the triangle's shortest edge is seditious
+  {
+    const Mesh::Edge* edges[3] = {&t.AB(), &t.BC(), &t.AC()};
+    const Mesh::Vertex* vertices[3] = { &t.C(), &t.A(), &t.B() };
+    double lengths[3] = {Shape::Length(*edges[0]), Shape::Length(*edges[1]),
+                         Shape::Length(*edges[2])};
+
+    std::size_t b = 0;
+    for (std::size_t i=0; i<3; i++)
+    {
+      if (i == b)
+        continue;
+
+      if (lengths[i] < lengths[b])
+        b = i;
+    }
+    std::size_t c = (b+1)%3;
+    std::size_t a = (b+2)%3;
+
+    if (edges[c]->boundary && edges[a]->boundary)
+    {
+      double angle = std::acos((lengths[a]*lengths[a] + lengths[c]*lengths[c] -
+                                lengths[b]*lengths[b])/(2.*lengths[a]*lengths[c]));
+      if (angle < M_PI/3.)
+      {
+        bool evenSplitA = false;
+        for (const auto& e: vertices[a]->edges)
+        {
+          if (e != edges[a] && e->boundary && fabs(Shape::Length(*e) - lengths[a]) < EPSILON)
+            evenSplitA = true;
+        }
+
+        bool evenSplitC = false;
+        for (const auto& e: vertices[c]->edges)
+        {
+          if (e != edges[c] && e->boundary && fabs(Shape::Length(*e) - lengths[c]) < EPSILON)
+            evenSplitC = true;
+        }
+        if (evenSplitA || evenSplitC)
+        {
+          return false;
+        }
+      }
+    }
+  }
+
+  bool splitUnevenly[2] = { false, false };
+  std::array<const Mesh::Vertex*, 2> v = { &edge.A(), &edge.B() };
+
+  const Mesh::Vertex* w = &t.A();
+  if (w == v[0] || w == v[1])
+    w = &t.B();
+  if (w == v[0] || w == v[1])
+    w = &t.C();
+
+  int orientation = Shape::Orientation(*v[0], *v[1], *w);
+  // TODO: I shouldn't have orientation == 0 cases! Need to prevent seditious
+  //       edges
+  // assert(orientation != 0);
+  if (orientation == 0)
+    return false;
+
+  if (orientation == 1)
+    std::swap(v[0], v[1]);
+
+  for (std::size_t i = 0; i < 2; i++)
+  {
+    for (const auto& e : v[i]->edges)
+    {
+      if (e == &edge)
+        continue;
+
+      if (e->boundary == false)
+        continue;
+
+      const Mesh::Vertex* v2 = &e->A();
+      if (v2 == v[i])
+        v2 = &e->B();
+
+      double angle;
+      if (i == 0)
+        angle = Shape::Angle(*v2, *v[0], *v[1]);
+      else
+        angle = Shape::Angle(*v[0], *v[1], *v2);
+
+
+      if (Shape::Angle(*v[(i+1)%2], *v[i], *v2) >= M_PI/2.)
+        continue;
+
+      splitUnevenly[i] = true;
+    }
+  }
+
+  boundaryEdges.erase(&edge);
+
+  if (splitUnevenly[0] != splitUnevenly[1])
+  {
+    double length = Shape::Length(edge);
+    int i = std::round(std::log2(length/2.));
+
+    double newLength = std::pow(2,i);
+    double fraction = splitUnevenly[0] ? newLength/length : 1. - newLength/length;
+
+    std::pair<const Mesh::Edge*, const Mesh::Edge*> newEdges = SplitEdge()(edge, fraction, mesh);
+
+    boundaryEdges.insert(newEdges.first);
+    boundaryEdges.insert(newEdges.second);
+  }
+  else if (splitUnevenly[0]) // && splitUnvenly[1]; implied
+  {
+    double length = Shape::Length(edge);
+    int i = std::round(std::log2(length*.375));
+
+    double newLength = std::pow(2,i);
+    double fraction = newLength/length;
+
+    std::pair<const Mesh::Edge*, const Mesh::Edge*> newEdges = SplitEdge()(edge, fraction, mesh);
+    boundaryEdges.insert(newEdges.first);
+
+    length = Shape::Length(*newEdges.second);
+    i = std::round(std::log2(length/2.));
+
+    newLength = std::pow(2,i);
+    fraction = 1. - newLength/length;
+
+    newEdges = SplitEdge()(*newEdges.second, fraction, mesh);
+
+    boundaryEdges.insert(newEdges.first);
+    boundaryEdges.insert(newEdges.second);
+  }
+  else
+  {
+    std::pair<const Mesh::Edge*, const Mesh::Edge*> newEdges = SplitEdge()(edge, mesh);
+    boundaryEdges.insert(newEdges.first);
+    boundaryEdges.insert(newEdges.second);
+  }
+
+  return true;
 }
 
 double EnforceMinimumAngle::MinimumAngle(const Mesh::Triangle& t) const
@@ -122,6 +289,7 @@ bool EnforceMinimumAngle::IsEncroached(const Mesh::Edge& e) const
 
   for (auto& triangle : e.triangles)
   {
+    assert(triangle);
     const Mesh::Vertex* v = &triangle->AB().A();
     if (v == &e.A() || v == &e.B())
       v = &triangle->AB().B();
@@ -135,29 +303,17 @@ bool EnforceMinimumAngle::IsEncroached(const Mesh::Edge& e) const
 }
 
 std::set<const Mesh::Edge*> EnforceMinimumAngle::Encroaches(
-  const Shape::Point& p, const Delaunay::Mesh::Mesh& mesh) const
+  const Shape::Point& p, const std::set<const Mesh::Edge*>& edges) const
 {
   std::set<const Mesh::Edge*> encroached;
-  for (auto& edge : mesh.GetEdges())
+  for (auto edge : edges)
   {
-    Shape::Circle c((edge.A() + edge.B())/2., Shape::Length(edge)/2.);
+    Shape::Circle c((edge->A() + edge->B())/2., Shape::Length(*edge)/2.);
 
     if (Shape::Contains(c,p))
-      encroached.insert(&edge);
+      encroached.insert(edge);
   }
   return encroached;
-}
-
-void EnforceMinimumAngle::RecursivelySplitEdge(
-  const Mesh::Edge& edge, Delaunay::Mesh::Mesh& mesh) const
-{
-  SplitEdge splitEdge;
-  auto splitEdges = splitEdge(edge, mesh);
-
-  if (IsEncroached(*splitEdges.first))
-    RecursivelySplitEdge(*splitEdges.first, mesh);
-  if (IsEncroached(*splitEdges.second))
-    RecursivelySplitEdge(*splitEdges.second, mesh);
 }
 
 }

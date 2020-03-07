@@ -23,8 +23,8 @@
 
 #include "Mesh/Vertex.hh"
 #include "Mesh/Edge.hh"
+#include "Mesh/Polygon.hh"
 #include "Mesh/Triangle.hh"
-#include "Shape/Polygon.hh"
 
 namespace Delaunay
 {
@@ -35,18 +35,18 @@ class Mesher;
 class DELAUNAYMESH_EXPORT Mesh
 {
 public:
-  typedef Delaunay::Shape::Polygon Polygon;
-  typedef std::set<Polygon>        InteriorBoundarySet;
-  typedef std::set<Vertex>         VertexSet;
-  typedef std::set<Edge>           EdgeSet;
-  typedef std::set<Triangle>       TriangleSet;
+  typedef Polygon            ExteriorBoundary;
+  typedef std::set<Polygon>  InteriorBoundarySet;
+  typedef std::set<Vertex>   VertexSet;
+  typedef std::set<Edge>     EdgeSet;
+  typedef std::set<Triangle> TriangleSet;
 
   friend class Mesher;
 
-  Mesh() : Perimeter(Shape::PointVector()) {}
+  Mesh() : Perimeter(VertexList()) {}
   virtual ~Mesh() {}
 
-  const Polygon&     GetPerimeter() const { return this->Perimeter; }
+  const ExteriorBoundary& GetPerimeter() const { return this->Perimeter; }
   const InteriorBoundarySet&
             GetInteriorBoundaries() const { return this->InteriorBoundaries; }
   const VertexSet&   GetVertices()  const { return this->Vertices;  }
@@ -56,7 +56,7 @@ public:
   virtual const Triangle* FindContainingTriangle(const Shape::Point& p) const;
 
 protected:
-  Polygon             Perimeter;
+  ExteriorBoundary    Perimeter;
   InteriorBoundarySet InteriorBoundaries;
   VertexSet           Vertices;
   EdgeSet             Edges;

@@ -11,6 +11,7 @@ set(Mesh_Header_Files
 set(Mesh_Source_Files
   Mesh.cc
   Mesher.cc
+  Polygon.cc
   Triangle.cc
 )
 

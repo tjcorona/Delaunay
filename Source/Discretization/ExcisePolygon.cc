@@ -33,18 +33,23 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
   std::set<const Mesh::Edge*> innerEdges;
   InsertLineSegment insertLineSegment;
 
-  std::pair<const Mesh::Edge*, bool> firstEdge = std::make_pair(nullptr, false);
-  for (unsigned i = 0; i < polygon.GetPoints().size(); ++i)
+  Mesh::VertexList list;
+  std::pair<const Mesh::Edge*, bool> firstEdge;
+  for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+       it != polygon.GetPoints().end(); ++it)
   {
-    unsigned ipp = (i+1)%polygon.GetPoints().size();
-    Shape::LineSegment l(polygon.GetPoints()[i], polygon.GetPoints()[ipp]);
+    Shape::PointList::const_iterator next = std::next(it);
+    if (next == polygon.GetPoints().end())
+      next = polygon.GetPoints().begin();
+    Shape::LineSegment l(*it, *next);
     const Mesh::Edge* edge = insertLineSegment(l, mesh);
+    list.push_back((static_cast<const Shape::Point&>(edge->A()) == *it ?
+                    edge->A() : edge->B()));
     innerEdges.insert(edge);
-    if (i == 0)
+    if (it == polygon.GetPoints().begin())
     {
       bool isCCW =
-	Shape::Dot(edge->B() - edge->A(),
-		   polygon.GetPoints()[ipp] - polygon.GetPoints()[i]) > 0.;
+	Shape::Dot(edge->B() - edge->A(), *next - *it) > 0.;
       firstEdge = std::make_pair(edge, isCCW);
     }
   }
@@ -54,6 +59,8 @@ std::set<const Mesh::Edge*> ExcisePolygon::operator()(
     RemoveBoundedRegion removeBoundedRegion;
     removeBoundedRegion(*firstEdge.first, firstEdge.second, mesh);
   }
+
+  this->GetInteriorBoundaries(mesh).emplace(list);
 
   return innerEdges;
 }

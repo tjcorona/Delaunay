@@ -70,26 +70,33 @@ void ConstrainedDelaunayMesh::operator()(
 
   InsertLineSegment insertLineSegment;
 
-  Shape::PointVector vec;
-  std::pair<const Mesh::Edge*, bool> firstEdge = std::make_pair(nullptr, false);
-  for (unsigned i = 0; i < polygon.GetPoints().size(); ++i)
+  Mesh::VertexList list;
+  std::pair<const Mesh::Edge*, bool> firstEdge;
+  for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+       it != polygon.GetPoints().end(); ++it)
   {
-    unsigned ipp = (i+1)%polygon.GetPoints().size();
-    Shape::LineSegment l(polygon.GetPoints()[i], polygon.GetPoints()[ipp]);
+    Shape::PointList::const_iterator next = std::next(it);
+    if (next == polygon.GetPoints().end())
+      next = polygon.GetPoints().begin();
+    Shape::LineSegment l(*it, *next);
     const Mesh::Edge* edge = insertLineSegment(l, mesh);
-    vec.push_back(std::cref(static_cast<const Shape::Point&>(
-			      edge->A() == polygon.GetPoints()[i] ? edge->A() :
-			      edge->B())));
-    if (i == 0)
+    list.push_back(std::cref(edge->A() == *it ? edge->A() : edge->B()));
+    if (it == polygon.GetPoints().begin())
     {
       bool isCCW =
-	Shape::Dot(edge->B() - edge->A(),
-		   polygon.GetPoints()[ipp] - polygon.GetPoints()[i]) > 0.;
+	Shape::Dot(edge->B() - edge->A(), *next - *it) > 0.;
       firstEdge = std::make_pair(edge, isCCW);
     }
   }
 
-  if (firstEdge.first != nullptr)
+  RemoveBoundedRegion removeBoundedRegion;
+  removeBoundedRegion(*firstEdge.first, !firstEdge.second, *augmentedMesh);
+
+  if (inSitu)
+  {
+    this->GetPerimeter(mesh).SetVertices(list);
+  }
+  else
   {
     RemoveBoundedRegion removeBoundedRegion;
     removeBoundedRegion(*firstEdge.first, !firstEdge.second, *augmentedMesh);

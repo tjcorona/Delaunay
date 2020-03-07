@@ -181,14 +181,11 @@ void CVCanvas::Draw(const Triangle& triangle,const Color& lineColor,
       PostDraw();
   }
 
-  if (lineColor.alpha != fillColor.alpha)
+  if (lineColor.alpha)
   {
     SetAlpha(lineColor.alpha);
     im = PreDraw();
-  }
 
-  if (lineColor.alpha)
-  {
     if (points[0] == points[1])
       cv::line(*im,points[0],points[2],ColorToCVScalar(lineColor),1,8);
     else if (points[0] == points[2] || points[1] == points[2])
@@ -211,10 +208,11 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
     return;
 
   std::vector<cv::Point> points;
-  const unsigned size = polygon.GetPoints().size();
-  for (unsigned i=0;i<size;i++)
+  points.reserve(polygon.GetPoints().size());
+  for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+       it != polygon.GetPoints().end(); ++it)
   {
-    points.push_back(PointToCVPoint(polygon.GetPoints()[i]));
+    points.push_back(PointToCVPoint(*it));
   }
 
   cv::Mat* im;
@@ -225,8 +223,7 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
     im = PreDraw();
 
     const cv::Point* p = &points[0];
-    const int sz = static_cast<int>(size);
-
+    const int sz = static_cast<int>(points.size());
     fillPoly(*im,&p,&sz,1,ColorToCVScalar(fillColor),0);
 
     if (lineColor.alpha != fillColor.alpha)
@@ -239,9 +236,9 @@ void CVCanvas::Draw(const Polygon& polygon,const Color& lineColor,
     im = PreDraw();
   }
 
-  for (unsigned i=0;i<size;i++)
+  for (unsigned i=0;i<points.size();i++)
   {
-    cv::line(*im,points[i],points[(i+1)%size],ColorToCVScalar(lineColor),1,8);
+    cv::line(*im,points[i],points[(i+1)%points.size()],ColorToCVScalar(lineColor),1,8);
   }
 
   PostDraw();

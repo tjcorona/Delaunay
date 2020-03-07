@@ -234,7 +234,8 @@ int main(int argc,char** argv)
   //   return 1;
   // }
 
-  unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(20);
+  // unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(20);
+  unsigned nPoints = 3;
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
   double bounds[4] = {0.,20.,0.,20.};
@@ -326,7 +327,8 @@ int main(int argc,char** argv)
   // for (auto edge : insertedEdges)
   //   canvas.Draw(*edge, White);
 
-  canvas.SetTimeDelay(2.);
+  // canvas.SetTimeDelay(2.);
+  canvas.SetTimeDelay(0.);
   canvas.Update();
 #endif
 

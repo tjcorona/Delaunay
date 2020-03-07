@@ -33,7 +33,8 @@ public:
 
   virtual ~Mesher() {}
 
-  Mesh::Polygon&       GetPerimeter(Mesh& mesh) const { return mesh.Perimeter; }
+  Mesh::ExteriorBoundary& GetPerimeter(Mesh& mesh) const
+  { return mesh.Perimeter; }
   Mesh::InteriorBoundarySet& GetInteriorBoundaries(Mesh& mesh) const
     { return mesh.InteriorBoundaries; }
   Mesh::VertexSet&     GetVertices(Mesh& mesh)  const { return mesh.Vertices;  }

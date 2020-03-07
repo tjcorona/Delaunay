@@ -33,11 +33,11 @@ namespace Discretization
 
 void ExtendMesh::operator()(const Point& p, Delaunay::Mesh::Mesh& mesh)
 {
-  Shape::PointVector vec(this->GetPerimeter(mesh).GetPoints());
+  Shape::PointList list(this->GetPerimeter(mesh).GetPoints());
 
   const Mesh::Vertex& vtx = *(this->GetVertices(mesh).emplace(p)).first;
 
-  this->GetPerimeter(mesh).SetPoints(vec);
+  this->GetPerimeter(mesh).SetPoints(list);
   this->GetVertices(mesh).insert(vtx);
 
   if (this->GetVertices(mesh).size()<3)

@@ -45,6 +45,9 @@ namespace
 {
 const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 {
+  assert(v1);
+  assert(v2);
+
   for (auto edge : v1->edges)
     if (&edge->A() == v2 || &edge->B() == v2)
       return edge;
@@ -56,14 +59,18 @@ const Mesh::Edge* GetEdge(const Mesh::Vertex* v1, const Mesh::Vertex* v2)
 const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
                                          Mesh::Mesh& mesh)
 {
-// TODO: deal with the case where l lies on preexisting edges (Touches() returns// false, so 0 triangles are described as between the two points in this case)
+// TODO: deal with the case where l lies on preexisting edges (Touches() returns
+// false, so 0 triangles are described as between the two points in this case)
 
   // First, add the two points of the line segment
   AddInteriorPoint addInteriorPoint;
   const Mesh::Vertex* v1 = addInteriorPoint(l.A, mesh);
   const Mesh::Vertex* v2 = addInteriorPoint(l.B, mesh);
 
-  // If there is already present, mark it as a boundary and return
+  if (v1 == nullptr || v2 == nullptr)
+    return nullptr;
+
+  // If there is already an edge present, mark it as a boundary and return
   if (const Mesh::Edge* edge = GetEdge(v1,v2))
   {
     const_cast<Mesh::Edge*>(edge)->boundary = true;
@@ -77,13 +84,16 @@ const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
   // Construct the containing polygon as the union of the containing triangles,
   // and mark the polygon edges as boundary edges
   std::set<Mesh::Edge*> temporaryBoundaries;
-  Shape::Polygon poly(std::move(this->PolygonFromTriangleSet(intersected)));
-  for (std::size_t i=0;i<poly.GetPoints().size();i++)
+  Shape::Polygon polygon(std::move(this->PolygonFromTriangleSet(intersected)));
+  for (Shape::PointList::const_iterator it = polygon.GetPoints().begin();
+       it != polygon.GetPoints().end(); ++it)
   {
-    std::size_t ipp = (i+1)%poly.GetPoints().size();
+    Shape::PointList::const_iterator next = std::next(it);
+    if (next == polygon.GetPoints().end())
+      next = polygon.GetPoints().begin();
     const Mesh::Edge* edge =
-      GetEdge(static_cast<const Mesh::Vertex*>(&poly.GetPoints()[i].get()),
-              static_cast<const Mesh::Vertex*>(&poly.GetPoints()[ipp].get()));
+      GetEdge(static_cast<const Mesh::Vertex*>(&(*it).get()),
+              static_cast<const Mesh::Vertex*>(&(*next).get()));
     if (!edge->boundary)
     {
       Mesh::Edge* e = const_cast<Mesh::Edge*>(edge);
@@ -93,16 +103,16 @@ const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
   }
 
   // Split the containing polygon along the edge we wish to insert
-  std::pair<Shape::Polygon,Shape::Polygon> polys(
-    BisectPolygon(poly, *v1, *v2));
+  std::pair<Shape::Polygon,Shape::Polygon> polygons(
+    BisectPolygon(polygon, *v1, *v2));
 
   // Identify the polygon's orientation
   const Mesh::Edge* edge =
-    GetEdge(static_cast<const Mesh::Vertex*>(&poly.GetPoints()[0].get()),
-            static_cast<const Mesh::Vertex*>(&poly.GetPoints()[1].get()));
+    GetEdge(static_cast<const Mesh::Vertex*>(&(*polygon.GetPoints().begin()).get()),
+            static_cast<const Mesh::Vertex*>(&(*std::next(polygon.GetPoints().begin())).get()));
   bool isCCW =
     Shape::Dot(edge->B() - edge->A(),
-               poly.GetPoints()[1] - poly.GetPoints()[0]) > 0.;
+               *std::next(polygon.GetPoints().begin()) - *polygon.GetPoints().begin()) > 0.;
 
   // Remove the containing polygon from the mesh
   RemoveBoundedRegion removeBoundedRegion;
@@ -114,8 +124,8 @@ const Mesh::Edge* InsertLineSegment::operator()(const Shape::LineSegment& l,
 #else
   DiscretizePolygon discretizePolygon;
 #endif
-  discretizePolygon(polys.first, mesh);
-  discretizePolygon(polys.second, mesh);
+  discretizePolygon(polygons.first, mesh);
+  discretizePolygon(polygons.second, mesh);
 
   for (auto& e : temporaryBoundaries)
   {
@@ -181,7 +191,7 @@ Shape::Polygon InsertLineSegment::PolygonFromTriangleSet(
 
   assert(!edges.empty());
 
-  Shape::PointVector polyVertices;
+  Shape::PointList polyVertices;
 
   EdgeMap::iterator edgeIt = edges.begin();
   OrderedEdge edge = *(edgeIt);
@@ -276,16 +286,18 @@ std::set<const Mesh::Triangle*> InsertLineSegment::FindContainingTriangles(
 std::pair<Shape::Polygon,Shape::Polygon> InsertLineSegment::BisectPolygon(
   const Shape::Polygon& p, const Mesh::Vertex& v1, const Mesh::Vertex& v2) const
 {
-  Shape::PointVector::const_iterator it1, it2;
-  for (it1 = p.GetPoints().begin(); *it1 != v1; ++it1)
+  Shape::PointList::const_iterator it1, it2;
+  std::size_t i1 = 0;
+  std::size_t i2 = 0;
+  for (it1 = p.GetPoints().begin(); *it1 != v1; ++it1, ++i1)
     assert(it1 != p.GetPoints().end());
-  for (it2 = p.GetPoints().begin(); *it2 != v2; ++it2)
+  for (it2 = p.GetPoints().begin(); *it2 != v2; ++it2, ++i2)
     assert(it2 != p.GetPoints().end());
-  if (it1 > it2)
+  if (i1 > i2)
     std::swap(it1,it2);
 
-  Shape::PointVector p1(it1,std::next(it2));
-  Shape::PointVector p2(it2,p.GetPoints().end());
+  Shape::PointList p1(it1,std::next(it2));
+  Shape::PointList p2(it2,p.GetPoints().end());
   p2.insert(p2.end(), p.GetPoints().begin(), std::next(it1));
 
   return std::make_pair(Shape::Polygon(p1),Shape::Polygon(p2));

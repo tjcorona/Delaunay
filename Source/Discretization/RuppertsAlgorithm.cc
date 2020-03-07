@@ -145,7 +145,7 @@ void RuppertsAlgorithm::operator()(
     }
   }
 
-  Shape::PointVector vec;
+  Shape::PointList list;
 
   for (VertexList::const_iterator vtx1 = vertices.begin();
        vtx1 != vertices.end(); ++vtx1)
@@ -155,13 +155,13 @@ void RuppertsAlgorithm::operator()(
       vtx2 = vertices.begin();
 
     const_cast<Mesh::Edge*>(GetEdge(*vtx1, *vtx2))->boundary = true;
-    vec.push_back(std::cref(static_cast<const Shape::Point&>(*vtx1)));
+    list.push_back(std::cref(static_cast<const Shape::Point&>(*vtx1)));
   }
 
   RemoveBoundedRegion removeBoundedRegion;
   removeBoundedRegion(**(v0.triangles.begin()), *augmentedMesh);
 
-  this->GetPerimeter(*augmentedMesh).SetPoints(vec);
+  this->GetPerimeter(*augmentedMesh).SetPoints(list);
 
   if (!inSitu)
   {

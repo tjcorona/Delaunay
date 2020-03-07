@@ -18,6 +18,7 @@
 #define DELAUNAY_SHAPE_POLYGON_HH
 
 #include <algorithm>
+#include <vector>
 
 #include "Shape/Export.hh"
 
@@ -31,50 +32,59 @@ namespace Shape
 class DELAUNAYSHAPE_EXPORT Polygon
 {
 public:
-
   template <class PointIterator>
   Polygon(const PointIterator& begin, const PointIterator& end) :
     Points(Sort(begin, end)) {}
   Polygon(const std::vector<Point>& points) :
     Points(Sort(points.begin(), points.end())) {}
-  Polygon(const PointVector& points) :
+  Polygon(const PointList& points) :
     Points(Sort(points.begin(), points.end())) {}
   ~Polygon() {}
 
-  void SetPoints(const PointVector& p) { this->Points = p; }
-  const PointVector& GetPoints() const { return this->Points; }
+  void SetPoints(const PointList& p) { this->Points = p; }
+  const PointList& GetPoints() const { return this->Points; }
 
   friend bool operator<(const Polygon& p1,const Polygon& p2)
   {
     if (p1.Points.size() != p2.Points.size())
       return p1.Points.size() < p2.Points.size();
 
-    for (unsigned i=0;i<p1.Points.size();i++)
+
+    PointList::const_iterator it1 = p1.Points.begin();
+    PointList::const_iterator it2 = p2.Points.begin();
+
+    for (; it1 != p1.Points.end(); ++it1, ++it2)
     {
-      if (p1.Points[i] != p2.Points[i])
-	return p1.Points[i] < p2.Points[i];
+      if (*it1 != *it2)
+        return *it1 < *it2;
     }
     return false;
   }
 
   friend std::ostream& operator<<(std::ostream& s,const Polygon& p)
   {
-    s<<"(";
-    for (std::size_t i=0;i<p.Points.size();i++)
-      s<<p.Points[i] << (i < p.Points.size()-1 ? "," : "");
+    s<<"( ";
+    for (PointList::const_iterator it = p.Points.begin(); it != p.Points.end(); ++it)
+      s << *it << " ";
     s<<")";
 
     return s;
   }
 
 protected:
-  PointVector Points;
+  PointList::const_iterator Insert(PointList::const_iterator pos,
+                                   const Point& point)
+  {
+    return Points.insert(pos, point);
+  }
+
+  PointList Points;
 
 private:
   template <class Iterator>
-  PointVector Sort(const Iterator& begin, const Iterator& end)
+  PointList Sort(const Iterator& begin, const Iterator& end)
   {
-    PointVector sortedPoints;
+    PointList sortedPoints;
 
     Iterator smallest = std::min_element(begin, end);
     for (Iterator it = smallest; it != end; ++it)

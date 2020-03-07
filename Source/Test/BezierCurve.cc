@@ -45,7 +45,7 @@ int main(int /*argc*/,char** /*argv*/)
   }
 
   // create a point vector from the above-defined Bezier points
-  Shape::PointVector points(bPoints.begin(),bPoints.end());
+  Shape::PointList points(bPoints.begin(),bPoints.end());
 
   // create a closed Bezier curve from the point vector
   Shape::BezierCurve c(points,false);

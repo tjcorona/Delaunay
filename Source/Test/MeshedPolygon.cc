@@ -22,7 +22,7 @@
 
 #include "Discretization/ConstrainedDelaunayMesh.hh"
 #include "Discretization/DiscretizePolygon.hh"
-// #include "Discretization/RuppertsAlgorithm.hh"
+#include "Discretization/RuppertsAlgorithm.hh"
 
 #include "Misc/Random.hh"
 
@@ -106,8 +106,8 @@ int main(int argc,char** argv)
 
   Mesh::Mesh mesh;
   // Discretization::DiscretizePolygon discretize;
-  Discretization::ConstrainedDelaunayMesh discretize;
-  // Discretization::RuppertsAlgorithm discretize;
+  // Discretization::ConstrainedDelaunayMesh discretize;
+  Discretization::RuppertsAlgorithm discretize;
   discretize(polygon, mesh);
 
   Color faintRed(255,0,0,128);

@@ -71,11 +71,11 @@ void WriteToVTK(const Mesh::Mesh& mesh, const std::string& name)
   vtkNew<vtkCellArray> lines;
   vtkNew<vtkPolyLine> line;
   line->GetPointIds()->SetNumberOfIds(mesh.GetPerimeter().GetPoints().size());
-  for (unsigned i=0;i<mesh.GetPerimeter().GetPoints().size();i++)
+  int id = 0;
+  for (Shape::PointList::const_iterator i = mesh.GetPerimeter().GetPoints().begin();
+       i != mesh.GetPerimeter().GetPoints().end(); ++i, ++id)
   {
-    line->GetPointIds()->SetId(i,
-			       IndexOf(mesh.GetPerimeter().GetPoints().at(i),
-				       mesh.GetVertices()));
+    line->GetPointIds()->SetId(id, IndexOf(*i, mesh.GetVertices()));
   }
   lines->InsertNextCell(line.GetPointer());
 

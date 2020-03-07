@@ -59,7 +59,7 @@ int Orientation(const Polygon& polygon)
 
   assert(polygon.GetPoints().size() >= 3);
   return Orientation(polygon.GetPoints().back(), polygon.GetPoints().front(),
-                     polygon.GetPoints()[1]);
+                     *std::next(polygon.GetPoints().begin()));
 }
 
 }

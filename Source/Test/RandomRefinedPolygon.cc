@@ -105,11 +105,12 @@ int main(int argc,char** argv)
 
   canvas.Draw(mesh.GetPerimeter(),Red,faintRed);
 
-  for (unsigned i=0;i<mesh.GetPerimeter().GetPoints().size();i++)
-    canvas.Draw(mesh.GetPerimeter().GetPoints()[i],
-  		Visualization::Color(i/(mesh.GetPerimeter()
-					.GetPoints().size()-1.),
-  				     Visualization::Color::BlueToRed));
+  int color = 0;
+  for (Shape::PointList::const_iterator i = mesh.GetPerimeter().GetPoints().begin();
+       i != mesh.GetPerimeter().GetPoints().end(); ++i, ++color)
+    canvas.Draw(*i, Visualization::Color(color/(mesh.GetPerimeter()
+                                             .GetPoints().size()-1.),
+                                          Visualization::Color::BlueToRed));
 
   for (auto i = mesh.GetTriangles().begin(); i != mesh.GetTriangles().end(); i++)
     canvas.Draw(*i, Visualization::Black);

@@ -75,12 +75,12 @@ int main(int argc,char** argv)
   {
     canvas.Draw(polygon,Red,faintRed);
 
-    for (unsigned i=0;i<polygon.GetPoints().size();i++)
-    {
-      canvas.Draw(polygon.GetPoints().at(i),
-    		  Visualization::Color(i/(polygon.GetPoints().size()-1.),
-    				       Visualization::Color::BlueToRed));
-    }
+    int color = 0;
+    for (Shape::PointList::const_iterator i = polygon.GetPoints().begin();
+         i != polygon.GetPoints().end(); ++i, ++color)
+      canvas.Draw(*i,
+                  Visualization::Color(color/(polygon.GetPoints().size()-1.),
+                                       Visualization::Color::BlueToRed));
 
     Mesh::Mesh mesh;
     Discretization::DiscretizePolygon discretize;
