@@ -103,7 +103,7 @@ void ConstrainedDelaunayMesh::operator()(
 
     if (inSitu)
     {
-      this->GetPerimeter(mesh).SetPoints(vec);
+      this->GetPerimeter(mesh).SetVertices(list);
     }
     else
     {
