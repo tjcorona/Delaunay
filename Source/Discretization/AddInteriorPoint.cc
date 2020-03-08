@@ -37,5 +37,18 @@ const Mesh::Vertex* AddInteriorPoint::operator()(const Point& p,
           nullptr);
 }
 
+const Mesh::Vertex* AddInteriorPoint::operator()(const Point& p,
+                                                 const Mesh::Triangle& t,
+						 Delaunay::Mesh::Mesh& mesh)
+{
+  assert(this->GetTriangles(mesh).size() != 0);
+
+  const Mesh::Triangle* containingTriangle = mesh.FindContainingTriangle(p, &t);
+
+  static const SplitTriangle splitTriangle;
+  return (containingTriangle ? splitTriangle(*containingTriangle, p, mesh) :
+          nullptr);
+}
+
 }
 }
