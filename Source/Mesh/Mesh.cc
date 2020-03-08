@@ -94,8 +94,17 @@ namespace Mesh
 
 const Triangle* Mesh::FindContainingTriangle(const Shape::Point& p) const
 {
-  std::unordered_set<const Triangle*> visited;
   const Triangle* tri = nullptr;
+
+  {
+    auto closestVertexIt = Vertices.lower_bound(p);
+    if (closestVertexIt != Vertices.end())
+    {
+      tri = *closestVertexIt->triangles.begin();
+    }
+  }
+
+  if (tri == nullptr)
   {
     TriangleSet::const_iterator it(this->Triangles.begin());
     std::advance(it, Misc::Random::GetInstance().
@@ -103,10 +112,19 @@ const Triangle* Mesh::FindContainingTriangle(const Shape::Point& p) const
     tri = &(*it);
   }
 
+  return FindContainingTriangle(p, tri);
+}
+
+const Triangle* Mesh::FindContainingTriangle(const Shape::Point& p, const Triangle* tri) const
+{
+  std::unordered_set<const Triangle*> visited;
+
   while (tri != nullptr)
   {
     if (Shape::Contains(*tri, p))
+    {
       break;
+    }
 
     visited.insert(tri);
     double distance2 = std::numeric_limits<double>::max();
@@ -133,11 +151,29 @@ const Triangle* Mesh::FindContainingTriangle(const Shape::Point& p) const
   }
 
   if (tri != nullptr)
+  {
     return tri;
+  }
   else
+  {
+    auto closestVertexIt = Vertices.lower_bound(p);
+    if (closestVertexIt != Vertices.end())
+    {
+      for (auto& t : closestVertexIt->triangles)
+      {
+        if (Contains(*t, p))
+        {
+          return t;
+        }
+      }
+    }
+
     for (auto it = this->Triangles.begin(); it != this->Triangles.end(); ++it)
+    {
       if (Contains(*it, p))
         return &(*it);
+    }
+  }
 
   return nullptr;
 }

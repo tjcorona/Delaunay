@@ -54,6 +54,8 @@ public:
   const TriangleSet& GetTriangles() const { return this->Triangles; }
 
   virtual const Triangle* FindContainingTriangle(const Shape::Point& p) const;
+  virtual const Triangle* FindContainingTriangle(
+    const Shape::Point&, const Triangle*) const;
 
 protected:
   ExteriorBoundary    Perimeter;

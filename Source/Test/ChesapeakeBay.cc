@@ -39,6 +39,7 @@
 #include "Discretization/ConstrainedDelaunayMesh.hh"
 #include "Discretization/DiscretizePolygon.hh"
 #include "Discretization/AddInteriorPoint.hh"
+#include "Discretization/EnforceMinimumAngle.hh"
 #include "Discretization/ExcisePolygon.hh"
 
 #include "Visualization/Color.hh"
@@ -218,6 +219,9 @@ int main(int argc,char** argv)
   Discretization::ConstrainedDelaunayMesh discretize;
   discretize(polygon, mesh);
   // discretize(polygonToExcise, mesh);
+
+  Discretization::EnforceMinimumAngle enforceMinimumAngle;
+  enforceMinimumAngle(20.7, mesh);
 
   Discretization::ExcisePolygon excise;
   std::set<const Mesh::Edge*> insertedEdges = excise(polygonToExcise, mesh);

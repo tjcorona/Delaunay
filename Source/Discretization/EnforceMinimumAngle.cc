@@ -73,14 +73,13 @@ void EnforceMinimumAngle::operator()(double angle, Delaunay::Mesh::Mesh& mesh) c
 
     for (auto& triangle : mesh.GetTriangles())
     {
-      // if (MinimumAngle(triangle) < angle*M_PI/180. && Shape::Area(triangle) > 1.e-6)
       if (MinimumAngle(triangle) < angle*M_PI/180.)
       {
 	std::set<const Mesh::Edge*> encroachedByTriangle(
 	  Encroaches(triangle.circumcircle.Center, boundaryEdges));
 	if (encroachedByTriangle.empty())
         {
-          if (addInteriorPoint(triangle.circumcircle.Center, mesh))
+          if (addInteriorPoint(triangle.circumcircle.Center, triangle, mesh))
           {
             allLegal = false;
           }
