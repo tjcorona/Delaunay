@@ -29,7 +29,8 @@
 #include "Misc/Random.hh"
 
 #include "Visualization/Color.hh"
-#include "Visualization/CVCanvas.hh"
+//#include "Visualization/CVCanvas.hh"
+#include "Visualization/VTKCanvas.hh"
 
 #include <algorithm>
 #include <cstdlib>
@@ -98,7 +99,8 @@ int main(int argc,char** argv)
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
   double bounds[4] = {0.,10.,0.,10.};
-  Visualization::CVCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
+//  Visualization::CVCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
+  Visualization::VTKCanvas canvas(bounds[0],bounds[1],bounds[2],bounds[3]);
 
   // const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(2000);
   const unsigned nPoints = 3 + Misc::Random::GetInstance().Uniform(100);

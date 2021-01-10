@@ -21,8 +21,8 @@
 #include "Shape/TriangleUtilities.hh"
 
 #include "Visualization/Color.hh"
-#include "Visualization/CVCanvas.hh"
-// #include "Visualization/VTKCanvas.hh"
+// #include "Visualization/CVCanvas.hh"
+#include "Visualization/VTKCanvas.hh"
 
 #include <iostream>
 
@@ -34,8 +34,8 @@ int main(int /*argc*/,char** /*argv*/)
   Misc::Random::GetInstance().Seed(1);
 
   // create a canvas with x span from 0 to 10, and y span from 0 to 10
-  // Visualization::VTKCanvas canvas(0.,10.,0.,10.);
-  Visualization::CVCanvas canvas(0.,10.,0.,10.);
+  Visualization::VTKCanvas canvas(0.,10.,0.,10.);
+  // Visualization::CVCanvas canvas(0.,10.,0.,10.);
 
   // create three points
   Shape::Point A(Misc::Random::GetInstance().Uniform(1000)/100.,

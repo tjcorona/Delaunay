@@ -48,7 +48,7 @@ int main(int /*argc*/,char** /*argv*/)
   Shape::PointList points(bPoints.begin(),bPoints.end());
 
   // create a closed Bezier curve from the point vector
-  Shape::BezierCurve c(points,false);
+  Shape::BezierCurve c(points, true);
 
   // draw the curve
   canvas.Draw(c,Red);

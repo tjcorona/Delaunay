@@ -53,6 +53,8 @@
 #include <vtkUnsignedCharArray.h>
 #include <vtkVertex.h>
 
+#include <vtkXMLPolyDataWriter.h>
+
 using namespace Delaunay::Misc;
 using namespace Delaunay::Shape;
 
@@ -239,7 +241,7 @@ void VTKCanvas::Draw(const Polygon& polygon,const Color& lineColor,
   double p[3] = {0.,0.,0.};
   for (auto& pt : polygon.GetPoints())
   {
-    p[0] = pt.get().x; p[1] = pt.get().x;
+    p[0] = pt.get().x; p[1] = pt.get().y;
     points->InsertNextPoint(p);
   }
 
@@ -318,7 +320,84 @@ void VTKCanvas::Draw(const Circle& circle,const Color& lineColor,
 
 void VTKCanvas::Draw(const ParametricCurve& curve,const Color& color)
 {
+  double min_step =
+    (this->internals->Dim_x_max - this->internals->Dim_x_min)/1.e2;
 
+  double t = 0;
+
+  std::vector<Point> pointVec;
+  pointVec.push_back(Point(curve(0.)));
+
+  while (t < 1.)
+  {
+    double step_t = .1;
+    double step = 2.*min_step;
+    while (step>min_step)
+    {
+      Point p = curve(t+step_t);
+      step = Distance(p,pointVec.back());
+      step_t *= .5;
+    }
+    t += step_t;
+    pointVec.push_back(Point(curve(t)));
+  }
+
+  pointVec.push_back(Point(curve(1.)));
+
+  vtkNew<vtkPoints> points;
+  points->SetNumberOfPoints(pointVec.size());
+
+  double p[3] = {0.,0.,0.};
+  vtkIdType ptCtr = 0;
+  for (auto& pt : pointVec)
+  {
+    p[0] = pt.x; p[1] = pt.y;
+    points->SetPoint(ptCtr++, p);
+  }
+
+  vtkNew<vtkPolyLine> line;
+  line->GetPointIds()->SetNumberOfIds(pointVec.size() + (curve.Closed ? 1 : 0));
+  for (std::size_t i=0;i<pointVec.size();i++)
+  {
+    line->GetPointIds()->SetId(i,i);
+  }
+
+  if (curve.Closed)
+  {
+    line->GetPointIds()->SetId(pointVec.size(), 0);
+  }
+
+  vtkNew<vtkCellArray> lines;
+  lines->SetNumberOfCells(1);
+  lines->InsertNextCell(line.Get());
+
+  unsigned char c[4];
+  c[0] = color.red;
+  c[1] = color.green;
+  c[2] = color.blue;
+  c[3] = color.alpha;
+
+  vtkNew<vtkUnsignedCharArray> colors;
+  colors->SetNumberOfComponents(4);
+  colors->InsertNextTypedTuple(c);
+
+  vtkNew<vtkPolyData> polyData;
+  polyData->SetPoints(points.Get());
+  polyData->SetLines(lines.Get());
+  polyData->GetCellData()->SetScalars(colors.Get());
+
+  vtkNew<vtkAppendPolyData> append;
+  append->AddInputData(this->internals->Polydata);
+  append->AddInputData(polyData.Get());
+  append->Update();
+  this->internals->Polydata->ShallowCopy(append->GetOutput());
+
+  {
+    vtkNew<vtkXMLPolyDataWriter> writer;
+    writer->SetFileName("bezier.vtp");
+    writer->SetInputData(this->internals->Polydata);
+    writer->Write();
+  }
 }
 
 void VTKCanvas::SetTimeDelay(double d)
