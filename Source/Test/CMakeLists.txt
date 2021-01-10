@@ -84,6 +84,11 @@ if (${PROJECT_NAME}_USE_OPENCV)
 
 endif ()
 
+list(APPEND APPLICATIONS ReadSVG)
+add_executable( ReadSVG ReadSVG.cc )
+target_link_libraries(ReadSVG LINK_PUBLIC
+  ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Discretization ${PROJECT_NAME}Visualization)
+
 install(TARGETS
         ${APPLICATIONS}
   EXPORT ${PROJECT_NAME}
