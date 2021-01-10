@@ -20,14 +20,7 @@ if (${PROJECT_NAME}_USE_OPENCV)
 endif()
 
 if (${PROJECT_NAME}_USE_VTK)
-  find_package(VTK REQUIRED COMPONENTS
-    CommonCore
-    CommonDataModel
-    FiltersSources
-    RenderingCore
-    RenderingOpenGL2
-    IOXML
-    InteractionStyle)
+  find_package(VTK REQUIRED)
   set(_vtk_libs ${VTK_LIBRARIES})
   set(_vtk_inc_dirs ${VTK_INCLUDE_DIRS})
 
