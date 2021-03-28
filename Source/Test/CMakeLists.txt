@@ -70,6 +70,11 @@ if (${PROJECT_NAME}_USE_OPENCV)
   target_link_libraries(SeditiousEdge LINK_PUBLIC
     ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Discretization ${PROJECT_NAME}Visualization)
 
+list(APPEND APPLICATIONS ReadSVG)
+add_executable( ReadSVG ReadSVG.cc )
+target_link_libraries(ReadSVG LINK_PUBLIC
+  ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Discretization ${PROJECT_NAME}Visualization)
+
   if (${PROJECT_NAME}_USE_VTK)
 
     add_executable( vtkPolyDataToPolygon vtkPolyDataToPolygon.cc )
@@ -83,11 +88,6 @@ if (${PROJECT_NAME}_USE_OPENCV)
   endif ()
 
 endif ()
-
-list(APPEND APPLICATIONS ReadSVG)
-add_executable( ReadSVG ReadSVG.cc )
-target_link_libraries(ReadSVG LINK_PUBLIC
-  ${PROJECT_NAME}Shape ${PROJECT_NAME}Mesh ${PROJECT_NAME}Discretization ${PROJECT_NAME}Visualization)
 
 install(TARGETS
         ${APPLICATIONS}
