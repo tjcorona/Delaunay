@@ -25,6 +25,8 @@
 #include "Mesh/Vertex.hh"
 #include "Shape/Polygon.hh"
 
+#include <cassert>
+
 namespace Delaunay
 {
 namespace Mesh
