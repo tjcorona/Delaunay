@@ -201,7 +201,7 @@ bool EnforceMinimumAngle::SplitBoundaryEdge(
         angle = Shape::Angle(*v2, *v[0], *v[1]);
       else
         angle = Shape::Angle(*v[0], *v[1], *v2);
-
+      (void)angle;
 
       if (Shape::Angle(*v[(i+1)%2], *v[i], *v2) >= M_PI/2.)
         continue;
@@ -215,7 +215,7 @@ bool EnforceMinimumAngle::SplitBoundaryEdge(
   if (splitUnevenly[0] != splitUnevenly[1])
   {
     double length = Shape::Length(edge);
-    int i = std::round(std::log2(length/2.));
+    auto i = static_cast<int>(std::round(std::log2(length/2.)));
 
     double newLength = std::pow(2,i);
     double fraction = splitUnevenly[0] ? newLength/length : 1. - newLength/length;
@@ -228,7 +228,7 @@ bool EnforceMinimumAngle::SplitBoundaryEdge(
   else if (splitUnevenly[0]) // && splitUnvenly[1]; implied
   {
     double length = Shape::Length(edge);
-    int i = std::round(std::log2(length*.375));
+    auto i = static_cast<int>(std::round(std::log2(length*.375)));
 
     double newLength = std::pow(2,i);
     double fraction = newLength/length;
@@ -237,7 +237,7 @@ bool EnforceMinimumAngle::SplitBoundaryEdge(
     boundaryEdges.insert(newEdges.first);
 
     length = Shape::Length(*newEdges.second);
-    i = std::round(std::log2(length/2.));
+    i = static_cast<int>(std::round(std::log2(length/2.)));
 
     newLength = std::pow(2,i);
     fraction = 1. - newLength/length;
