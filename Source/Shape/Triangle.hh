@@ -34,7 +34,7 @@ class DELAUNAYSHAPE_EXPORT Triangle
 {
 public:
   Triangle(const LineSegment&,const LineSegment&,const LineSegment&);
-  ~Triangle() {}
+  ~Triangle() = default;
 
   friend bool operator==(const Triangle& t1,const Triangle& t2)
   {
