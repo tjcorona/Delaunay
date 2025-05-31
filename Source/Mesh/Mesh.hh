@@ -44,7 +44,7 @@ public:
   friend class Mesher;
 
   Mesh() : Perimeter(VertexList()) {}
-  virtual ~Mesh() {}
+  virtual ~Mesh() = default;
 
   const ExteriorBoundary& GetPerimeter() const { return this->Perimeter; }
   const InteriorBoundarySet&
