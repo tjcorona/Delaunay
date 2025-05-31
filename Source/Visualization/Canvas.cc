@@ -61,7 +61,7 @@ void Canvas::Draw(const Mesh::Mesh& mesh, const std::array<Color, 4>& triangleCo
   {
     colorAssignments[&triangle] = counter++;
 
-    if (counter == triangleColors.size())
+    if (counter == static_cast<int>(triangleColors.size()))
       counter = 0;
   }
 
